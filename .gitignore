@@ -1,10 +1,21 @@
+# dependencies
 node_modules/
-dist/
-dist-single/
-dist-preview/
-.DS_Store
 
-# local secrets (Google Maps API key)
-.env
-.env.local
-.env.*.local
+# build output (dist, dist-single, dist-preview)
+dist*/
+
+# local environment and secrets (Google Maps API key); the template is committed
+.env*
+!.env.example
+
+# logs and caches
+*.log
+.eslintcache
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/

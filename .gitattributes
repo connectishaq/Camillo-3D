@@ -1,0 +1,9 @@
+# Normalise line endings (LF in the repo and working tree, matching .editorconfig)
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.wasm binary
+*.glb binary

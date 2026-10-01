@@ -2,15 +2,21 @@
   "name": "camillo-3d-landing",
   "version": "0.1.0",
   "private": true,
-  "description": "Camillo Builders — immersive 3D landing page (MapLibre + Three.js)",
+  "description": "Camillo Builders — immersive 3D website (Vite + Three.js)",
   "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "vite",
     "dev:city": "vite --mode preview --port 5174",
     "build": "vite build",
     "build:single": "vite build --mode single",
+    "build:preview": "vite build --mode preview",
     "preview": "vite preview",
-    "build:preview": "vite build --mode preview"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "3d-tiles-renderer": "^0.5.3",
@@ -20,6 +26,11 @@
     "three": "^0.186.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.9",
     "vite": "^8.3.0",
     "vite-plugin-singlefile": "^2.3.3"
   }
