@@ -1,35 +1,51 @@
 .rail {
   position: fixed;
   z-index: 30;
-  right: var(--gutter);
+  right: calc(var(--gutter) / 2 - 12px);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  padding: 12px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+  transition: opacity 0.4s var(--ease);
+}
+/* hidden while the hero is still a split layout */
+body:not(.is-map-full) .rail {
+  opacity: 0;
+  pointer-events: none;
 }
 .rail__dot {
   position: relative;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--brand-line);
+  background: var(--surface);
   transition: all 0.4s var(--ease);
 }
 .rail__dot.is-active {
-  background: var(--brass);
-  border-color: var(--brass);
+  background: var(--brand);
+  border-color: var(--brand);
   transform: scale(1.3);
 }
 .rail__dot span {
   position: absolute;
-  right: 22px;
+  right: 24px;
   top: 50%;
   transform: translateY(-50%);
   white-space: nowrap;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: var(--text-dim);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  color: var(--text);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;

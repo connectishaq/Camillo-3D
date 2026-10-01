@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { facadeTexture, FACADE_KINDS, groundTexture } from './proctex.js';
+import { palette } from './palette.js';
 
 /*
  * Material patches that map textures in world space, so one unit-box InstancedMesh
@@ -16,9 +17,9 @@ export function createFacadeMaterial(
   {
     bay = 3.2,
     floor = 3.3,
-    glass = '#5b7384',
-    roof = '#8d8c88',
-    lit = '#ffcf8a',
+    glass = palette().glass,
+    roof = palette().roof,
+    lit = palette().windowLit,
     litStrength = 0.9,
     glassRough = 0.12,
     glassMetal = 0.72,
@@ -105,7 +106,14 @@ export function createFacadeMaterial(
  */
 export function createWorldUVMaterial(
   textureKind,
-  { scale = 40, color = '#ffffff', roughness = 0.95, metalness = 0, texture = null, ...rest } = {},
+  {
+    scale = 40,
+    color = 0xffffff /* white: the texture carries the colour */,
+    roughness = 0.95,
+    metalness = 0,
+    texture = null,
+    ...rest
+  } = {},
 ) {
   const map = texture || groundTexture(textureKind);
   const mat = new THREE.MeshStandardMaterial({ color, roughness, metalness, map, ...rest });

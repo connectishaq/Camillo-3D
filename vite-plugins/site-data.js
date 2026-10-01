@@ -82,7 +82,7 @@ export function pageScope(data, page, site) {
       description,
       url: site.url + pagePath,
       image: `${site.url}/images/og-image.jpg`,
-      imageAlt: 'Camillo’s generated 3D Melbourne, looking over the CBD and the Yarra',
+      imageAlt: 'Camillo, Residential & Commercial Builders, beside a 3D map of Melbourne’s CBD',
       type: project ? 'article' : 'website',
     },
   };

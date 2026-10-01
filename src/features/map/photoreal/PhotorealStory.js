@@ -14,12 +14,13 @@ import { chapterCamera, zoomToDistance, sideOffset } from '../camera.js';
 import { createPin } from '../../../components/pin/pin.js';
 import { isMobile, supportsWebGL } from '../../../utils/dom.js';
 import { lerp } from '../../../utils/math.js';
+import { horizonColor } from '../../../gfx/sky.js';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const ORIGIN = [144.9631, -37.8136]; // Melbourne CBD: origin of the local ENU frame
 const FOV = 40;
 const D2R = Math.PI / 180;
-const HAZE = new THREE.Color('#c3cfd9');
+
 // Late-afternoon sun from the north-west (southern hemisphere)
 const SUN = { elevation: 38, azimuth: 318 };
 
@@ -103,8 +104,9 @@ export class PhotorealStory {
     this.container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = HAZE.clone();
-    scene.fog = new THREE.Fog(HAZE, 6000, 40000);
+    const haze = horizonColor(); // --map-sky: the page background
+    scene.background = haze;
+    scene.fog = new THREE.Fog(haze, 6000, 40000);
 
     const sky = new Sky();
     sky.scale.setScalar(1000);
@@ -296,8 +298,15 @@ export class PhotorealStory {
     });
   }
 
+  /** Hero expand: centre the view on the visible panel (same as CityStory.setIntro). */
+  setIntro({ x = 0, y = 0, zoom = 1 } = {}) {
+    this.intro = { x, y, zoom };
+  }
+
   applyCamera() {
-    const { x, y, z, dist, pitch, bearing } = this.cam;
+    const { x, y, z, pitch, bearing } = this.cam;
+    const intro = this.intro || { x: 0, y: 0, zoom: 1 };
+    const dist = this.cam.dist * intro.zoom;
     const p = pitch * D2R;
     const b = bearing * D2R;
     const cam = this.camera;
@@ -310,7 +319,7 @@ export class PhotorealStory {
     cam.near = Math.max(2, alt * 0.02);
     cam.far = Math.max(60000, alt * 90);
     const { w, h } = this.size || {};
-    if (w) cam.setViewOffset(w, h, this.cam.offsetX, 0, w, h);
+    if (w) cam.setViewOffset(w, h, this.cam.offsetX - intro.x, -intro.y, w, h);
     else cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
 

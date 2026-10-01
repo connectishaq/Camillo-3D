@@ -5,7 +5,7 @@
   align-items: end;
 }
 .project-page__title {
-  font-size: clamp(3rem, 7vw, 6rem);
+  font-size: clamp(2.75rem, 6vw, 5rem);
   margin: 0 0 18px;
 }
 .project-page__facts {
@@ -20,8 +20,8 @@
 }
 .project-page__hint {
   margin: 8px 0 20px;
-  font-size: 0.86rem;
-  color: var(--text-faint);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
 }
 
 @media (max-width: 860px) {

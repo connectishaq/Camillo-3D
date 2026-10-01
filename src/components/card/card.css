@@ -1,21 +1,21 @@
-/* Glass card that floats over the city */
+/* Light card that floats over the city */
 .card {
   width: var(--card-w);
-  padding: clamp(24px, 3vw, 36px);
-  border: 1px solid var(--line);
+  padding: clamp(24px, 3vw, 40px);
   border-radius: var(--radius);
-  background: var(--glass);
-  backdrop-filter: blur(18px) saturate(1.2);
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 .card__title {
   font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
   margin-bottom: 18px;
 }
 .card__body p,
 .card__body-text {
-  color: var(--text-dim);
-  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
 }
 .card__body p + p {
   margin-top: 12px;
@@ -33,14 +33,15 @@
   gap: 16px;
   padding: 11px 0;
   border-top: 1px solid var(--line);
-  font-size: 0.86rem;
+  font-size: var(--fs-small);
 }
 .facts dt {
-  color: var(--text-faint);
+  color: var(--text-muted);
 }
 .facts dd {
   margin: 0;
   text-align: right;
+  font-weight: var(--fw-regular);
 }
 
 @media (max-width: 860px) {

@@ -1,16 +1,16 @@
-/* ---------- Intro ---------- */
+/* ---------- Intro (text straight on the map, over a light scrim) ---------- */
 .intro {
   max-width: 760px;
   padding: 40px 0;
 }
 .intro__title {
   font-size: var(--fs-h2);
-  text-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
 }
 .intro__text {
   margin: 22px auto 0;
   max-width: 460px;
-  color: var(--text-dim);
+  font-size: var(--fs-lede);
+  color: var(--text);
 }
 
 /* ---------- Project card ---------- */
@@ -21,13 +21,13 @@
   gap: 16px;
 }
 .project-card__index {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  color: var(--text-faint);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-regular);
+  color: var(--text-muted);
 }
 .project-card__title {
-  font-size: clamp(2rem, 3.6vw, 3rem);
-  margin: 6px 0 10px;
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  margin: 4px 0 14px;
 }
 .project-card__actions {
   display: flex;

@@ -80,6 +80,36 @@ Every page is **static HTML written at build time**, which is good for search en
 - The project template is rendered once per project into `dist/projects/<slug>.html`, served at `/projects/<slug>`. `sitemap.xml` and `robots.txt` are generated alongside.
 - The Three.js code is split out: the map is loaded with the page, but in its own chunk, and the Building Explorer only downloads on the first "Explore in 3D" click (or when you hover or focus that button). Three.js itself is one shared, long-cached `three-*.js` chunk.
 
+## Brand
+
+The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au), with values read from its stylesheet (`wp-content/themes/camillo/assets/app.min.css`) and computed styles in October 2026. All of them live in [`src/styles/tokens.css`](src/styles/tokens.css); nothing else in the CSS or JS hard-codes a colour.
+
+| Token           | Value     | Source on camillo.com.au                                                        |
+| --------------- | --------- | ------------------------------------------------------------------------------- |
+| `--bg`          | `#E6E6E4` | `body` background, `rgb(230, 230, 228)`                                         |
+| `--brand`       | `#5D0024` | logo, nav links, `.btn` background, `rgb(93, 0, 36)`                            |
+| `--text`        | `#000000` | body and `h1` colour                                                            |
+| `--surface-2`   | `#F2F2F1` | light panels                                                                    |
+| `--brand-hover` | `#737579` | `.btn:hover` is `#75777B`; one step darker so white text passes WCAG AA (4.6:1) |
+| `--line-strong` | `#A8A9AB` | their light grey                                                                |
+| `--text-muted`  | `#55575B` | ours: their greys are too light for body copy (5.8:1 on `--bg`)                 |
+
+**Type.** Their typeface is **PP Telegraf** (Pangram Pangram, a commercial font self-hosted on their server), so it isn't copied here. The site uses **Manrope** from Google Fonts (`font-display: swap`, fallback `"Helvetica Neue", Helvetica, Arial, sans-serif`). Compared with Hanken Grotesk, Instrument Sans and Plus Jakarta Sans, Manrope's x-height is the closest (0.750 vs Telegraf's 0.746), its width is within 1%, and it shares the double-storey `a`, single-storey open-tail `g` and round geometric `e`. Manrope's caps are ~7% taller, so the hero heading is 56px where theirs is 60px. Weights follow theirs: 300 body, 400 headings and nav, 500 for small labels. If Camillo can license Telegraf for this domain, swap `--font-display` / `--font-body` and the font link in `src/layouts/head.html`.
+
+**Logo.** `public/brand/camillo-logo.svg` (and `-burgundy.svg`) is their wordmark from `assets/app.svg#logo-camillo`; the header and loader inline it via `src/components/logo/logo.html` so it takes `currentColor`.
+
+**3D colours.** The `--map-*` tokens (ground, park, water, buildings, roofs, glass, lights, highlight) are read at runtime by [`src/gfx/palette.js`](src/gfx/palette.js); per-building variety is generated as small shade shifts of those tokens. The sky and fog are `--bg`, and both renderers use Neutral tone mapping so that colour reaches the screen unchanged and the canvas edge meets the page. Façade and interior colours inside each project model stay with the model specs, because they describe the real buildings.
+
+## The hero: split layout → full-screen map
+
+[`src/sections/hero/hero.js`](src/sections/hero/hero.js), with GSAP ScrollTrigger (Lenis feeds it through `lenis.on('scroll', ScrollTrigger.update)`, and GSAP's ticker drives Lenis):
+
+- At rest the hero copies camillo.com.au: heading and buttons on the left, a panel from 36.4% across and 158px down to the right and bottom edges, top-left corner 24.7% of its width (`HERO_PANEL` in `config.js`).
+- The map canvas is **always full screen** and never resized. `.stage` gets a `clip-path: inset(top right bottom left round R 0 0 0)` measured from the empty `[data-hero-panel]` placeholder, recalculated on resize and ScrollTrigger refresh.
+- The hero is pinned for 100vh of scroll and one scrubbed timeline takes the clip to `inset(0)`, eases the corner to 0, slides the text out and switches the header to its translucent "over map" style. It is fully reversible.
+- While the panel is small, `stage.setIntro({ x, y, zoom })` offsets the camera's view (`setViewOffset`) so the CBD is centred in the panel, and eases to the normal framing at full screen. From there the chapter system takes over unchanged.
+- Mobile: text on top, the panel below at full width with rounded top corners, same expand. With `prefers-reduced-motion` there is no pin or scrub, just a short cross-fade to the full map.
+
 ## Structure
 
 ```
@@ -96,12 +126,12 @@ src/
                                reveal (fade-ins), explorer (lazy explorer launcher)
   sections/                    One folder per page section: <name>.html + <name>.css + <name>.js (exports init())
     header/ hero/ about/ projects/ services/ contact/ footer/
-  components/                  Reusable UI: button, card, tag, chapter, pin, toast, loader, rail, locator
+  components/                  Reusable UI: logo, button, card, tag, chapter, pin, toast, loader, rail, locator
   features/
     map/                       CityStory (generated city), MapStory (MapLibre), photoreal/, geo, camera helpers,
                                city/ (land, layout, roads, buildings, trees, water, detail, projects, markers, instances)
     explorer/                  Explorer, building (parametric generator), glb (Path A), interior, materials, textures
-  gfx/                         Shared offline graphics: proctex (canvas textures), sky, facade shader, merge
+  gfx/                         Shared offline graphics: palette (3D colours from tokens), proctex, sky, facade, merge
   data/
     company.js                 Copy, services, stats, contact details, other portfolio names
     cameras.js                 Map camera per chapter, head office location
@@ -160,7 +190,8 @@ All stages share one interface: `constructor(container, { cameras, office, proje
 - One `h1` per page and a logical heading order. A "Skip to content" link appears on keyboard focus, and focus is always visible (brass outline).
 - The 3D map is decorative (`aria-hidden`); every action on it (map pins) is also a button in the story cards.
 - The explorer is a modal dialog: focus moves into it, Tab stays inside it, and Esc steps back (inside → floor → closed). Focus then returns to the button that opened it.
-- With `prefers-reduced-motion`, smooth scrolling, fade-ins, count-ups and the hero orbit are off, and the map cuts between chapters instead of flying.
+- With `prefers-reduced-motion`, smooth scrolling, fade-ins, count-ups and the hero orbit are off, the hero swaps to the full map with a short cross-fade instead of the scrubbed expand, and the map cuts between chapters instead of flying.
+- Colour contrast meets WCAG AA: body copy 5.8:1 or more, burgundy on the background 11.3:1, white on burgundy 14.1:1. Text placed straight on the map sits on a light scrim.
 
 ## The generated city (`src/features/map/city/`)
 

@@ -1,8 +1,10 @@
 import * as THREE from 'three';
-import { COLORS, FLOOR_H } from '../../../config.js';
+import { FLOOR_H } from '../../../config.js';
+import { palette } from '../../../gfx/palette.js';
 
-export const BRASS = new THREE.Color(COLORS.brass);
-export const BRASS_HOT = new THREE.Color(COLORS.brassHot);
+/** Site highlight colours: the brand burgundy (--map-highlight, --map-highlight-hot). */
+export const HIGHLIGHT = new THREE.Color(palette().highlight);
+export const HIGHLIGHT_HOT = new THREE.Color(palette().highlightHot);
 
 /*
  * Our own overlay shapes for the photoreal city. Nothing here is traced from the
@@ -13,7 +15,7 @@ export const BRASS_HOT = new THREE.Color(COLORS.brassHot);
 let ringTex;
 let beamTex;
 
-/** Soft brass halo: a thin bright band fading out on both sides. */
+/** Soft HIGHLIGHT halo: a thin bright band fading out on both sides. */
 function ringTexture() {
   if (ringTex) return ringTex;
   const c = document.createElement('canvas');
@@ -51,7 +53,7 @@ function beamTexture() {
 
 const glow = (params) =>
   new THREE.MeshBasicMaterial({
-    color: BRASS,
+    color: HIGHLIGHT,
     transparent: true,
     depthWrite: false,
     toneMapped: false,
@@ -90,7 +92,7 @@ export function createSiteMarker({ radius, model = null, ghost = false, beamHeig
 
   if (ghost && model) {
     const lineMat = new THREE.LineBasicMaterial({
-      color: BRASS,
+      color: HIGHLIGHT,
       transparent: true,
       opacity: 0.5,
       depthWrite: false,
@@ -118,7 +120,7 @@ export function createSiteMarker({ radius, model = null, ghost = false, beamHeig
 /** Tween a marker between idle and active. */
 export function setMarkerActive(marker, on, gsap, idle = { ring: 0.45, beam: 0.28 }, active = { ring: 0.95, beam: 0.75 }) {
   const { mats } = marker;
-  const color = on ? BRASS_HOT : BRASS;
+  const color = on ? HIGHLIGHT_HOT : HIGHLIGHT;
   Object.values(mats).forEach((m) => gsap.to(m.color, { r: color.r, g: color.g, b: color.b, duration: 0.8 }));
   gsap.to(mats.ring, { opacity: on ? active.ring : idle.ring, duration: 0.8 });
   gsap.to(mats.beam, { opacity: on ? active.beam : idle.beam, duration: 0.8 });

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { rng } from '../../../gfx/proctex.js';
 import { createFacadeMaterial, createWorldUVMaterial } from '../../../gfx/facade.js';
+import { palette, variants, shade } from '../../../gfx/palette.js';
 import { Instances, GEO, setRangeVisible } from './instances.js';
 import { lotOK } from './layout.js';
 import { EXTENT, hoddleUV } from './land.js';
@@ -15,16 +16,25 @@ import { EXTENT, hoddleUV } from './land.js';
  * on demand, then cached).
  */
 
+/*
+ * Wall and roof colours per building type: subtle shade variations of the light-concrete
+ * and muted-warm tokens (`--map-building`, `--map-building-warm`, `--map-roof`, `--map-glass`),
+ * so the whole city reads as one light, calm palette.
+ */
+const P = palette();
 export const PAL = {
-  brick: ['#8a4a36', '#9b5a42', '#7a4434', '#a8764f', '#c9b48f', '#6e5a4e', '#b07a58'],
-  render: ['#e7e1d6', '#d8d0c2', '#f0ece4', '#c9c2b5', '#b9b3a8', '#dcd3c3'],
-  timber: ['#9a7654', '#7d5f45', '#b08a62'],
-  houseWall: ['#e8e2d6', '#d9cfbf', '#c9a888', '#a86a4e', '#9b5a42', '#f1ede5', '#bdb3a2', '#8f8a80'],
-  roof: ['#a4553a', '#b86b4b', '#8e4a35', '#5b6064', '#3f4448', '#8b8f8d', '#c8c6bc', '#6d5a4c'],
-  office: ['#d4d0c7', '#c2bdb3', '#e1ddd5', '#b3b0aa', '#cfc8ba'],
-  glassWall: ['#c5ccd2', '#aeb8c0', '#d8dde0', '#9aa6ae'],
-  podium: ['#b9b3a8', '#a79f94', '#cfc8bb', '#8f8a82'],
+  brick: variants(P.buildingWarm, [0, -0.04, 0.03, -0.07, 0.06, [-0.02, -0.05]]),
+  render: variants(P.building, [0, -0.03, 0.02, -0.06, -0.09, -0.045]),
+  timber: variants(P.buildingWarm, [-0.08, -0.12, -0.05]),
+  houseWall: [...variants(P.building, [0, -0.04, 0.02, -0.08]), ...variants(P.buildingWarm, [0, 0.04, -0.05])],
+  roof: [...variants(P.roof, [0, -0.06, 0.05, -0.12, -0.18]), ...variants(P.buildingWarm, [-0.1, -0.16])],
+  office: variants(P.building, [-0.02, -0.06, 0.01, -0.1, -0.04]),
+  glassWall: variants(P.glass, [0.2, 0.14, 0.26, 0.08]),
+  podium: variants(P.building, [-0.08, -0.12, -0.05, -0.16]),
 };
+const FENCES = [...variants(P.building, [0, -0.05]), ...variants(P.roof, [-0.2, -0.3])];
+const glassTone = (l) => shade(P.glass, l);
+const roofTone = (l) => shade(P.roof, l);
 const pick = (r, list) => list[Math.floor(r() * list.length) % list.length];
 
 /** Mesh recipe per bucket key: [geometry, material key, casts shadow]. */
@@ -53,24 +63,24 @@ export function createCityMaterials() {
     glass: createFacadeMaterial('glass', {
       bay: 3,
       floor: 3.8,
-      glass: '#7390a6',
-      roof: '#7d7f82',
-      litStrength: 0.5,
+      glass: glassTone(0.06),
+      roof: roofTone(-0.04),
+      litStrength: 0.3,
       glassRough: 0.06,
       glassMetal: 0.88,
       roughness: 0.6,
     }),
-    office: createFacadeMaterial('office', { bay: 3.4, floor: 3.8, glass: '#405869', roof: '#838380', litStrength: 0.7 }),
-    podium: createFacadeMaterial('podium', { bay: 5, floor: 4.5, glass: '#3a4a55', roof: '#7c7b77' }),
-    apartment: createFacadeMaterial('apartment', { bay: 3.4, floor: 3.1, glass: '#44535e', roof: '#8a8984' }),
-    brick: createFacadeMaterial('brick', { bay: 3, floor: 3.1, glass: '#34414a', roof: '#7e7c77' }),
-    terrace: createFacadeMaterial('terrace', { bay: 3.2, floor: 3.4, glass: '#2f3a42', roof: '#6f6d68' }),
-    house: createFacadeMaterial('house', { bay: 3, floor: 3, glass: '#2f3a42', roof: '#6f6d68', litStrength: 0.4 }),
+    office: createFacadeMaterial('office', { bay: 3.4, floor: 3.8, glass: glassTone(-0.06), roof: roofTone(0), litStrength: 0.4 }),
+    podium: createFacadeMaterial('podium', { bay: 5, floor: 4.5, glass: glassTone(-0.1), roof: roofTone(-0.05) }),
+    apartment: createFacadeMaterial('apartment', { bay: 3.4, floor: 3.1, glass: glassTone(-0.1), roof: roofTone(0.02) }),
+    brick: createFacadeMaterial('brick', { bay: 3, floor: 3.1, glass: glassTone(-0.14), roof: roofTone(-0.03) }),
+    terrace: createFacadeMaterial('terrace', { bay: 3.2, floor: 3.4, glass: glassTone(-0.16), roof: roofTone(-0.08) }),
+    house: createFacadeMaterial('house', { bay: 3, floor: 3, glass: glassTone(-0.16), roof: roofTone(-0.08), litStrength: 0.25 }),
     roof: createWorldUVMaterial('roof', { scale: 5, roughness: 0.7 }),
-    plant: std('#a2a4a6', 0.55, 0.35),
-    crown: std('#c9ced3', 0.28, 0.85),
-    fence: std('#d8d2c6', 0.9),
-    drive: std('#b3afa7', 0.95),
+    plant: std(roofTone(-0.02), 0.55, 0.35),
+    crown: std(glassTone(0.22), 0.28, 0.85),
+    fence: std(P.building, 0.9),
+    drive: std(P.footpath, 0.95),
   };
 }
 
@@ -224,13 +234,12 @@ export function outerBlock(b, r, T, skip, fine = false) {
         const a = side > 0 ? uc - lw / 2 + 0.2 : du + dw / 2;
         const bEnd = side > 0 ? du - dw / 2 : uc + lw / 2 - 0.2;
         const [fx, fz] = at(b, f, (a + bEnd) / 2, s * (b.lenB / 2 - 0.4));
-        if (r() < 0.8)
-          T.fence.push(fx, 0, fz, bEnd - a, 0.9 + r() * 0.5, 0.1, f.rot, pick(r, ['#d8d2c6', '#6b5a48', '#2f3133', '#e6e1d8']));
+        if (r() < 0.8) T.fence.push(fx, 0, fz, bEnd - a, 0.9 + r() * 0.5, 0.1, f.rot, pick(r, FENCES));
         const [dx, dz] = at(b, f, du, s * (b.lenB / 2 - setback / 2 - 0.2));
         T.drive.push(dx, 0.02, dz, dw, 0.06, setback + 0.6, f.rot);
         if (r() < 0.3) {
           const [gx, gz] = at(b, f, du, s * (b.lenB / 2 - setback - 3));
-          T.house.push(gx, 0, gz, dw + 0.4, 2.6, 6, f.rot, '#cfcac1');
+          T.house.push(gx, 0, gz, dw + 0.4, 2.6, 6, f.rot, PAL.render[3]);
           T.gable.push(gx, 2.6, gz, dw + 0.8, 0.6, 6.4, f.rot + Math.PI / 2, pick(r, PAL.roof));
         }
       }

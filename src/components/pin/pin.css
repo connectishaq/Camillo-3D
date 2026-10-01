@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
   transition: opacity 0.4s;
 }
@@ -10,32 +10,34 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--brass);
-  border: 3px solid var(--ink-900);
-  box-shadow: 0 0 0 1px var(--brass);
+  background: var(--brand);
+  border: 3px solid var(--surface);
+  box-shadow: var(--shadow-sm);
 }
 .pin.is-active .pin__dot {
   animation: pulse 1.8s infinite;
 }
 .pin__label {
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: var(--glass);
-  border: 1px solid var(--line);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
   backdrop-filter: blur(8px);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  box-shadow: var(--shadow-sm);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  color: var(--text);
   white-space: nowrap;
-  opacity: 0.75;
+  opacity: 0.85;
   transition:
     opacity 0.3s,
-    border-color 0.3s;
+    background 0.3s,
+    color 0.3s;
 }
 .pin.is-active .pin__label,
 .pin:hover .pin__label {
   opacity: 1;
-  border-color: var(--brass);
+  background: var(--brand);
+  color: var(--brand-ink);
 }
 .pin--hq .pin__dot {
   width: 18px;

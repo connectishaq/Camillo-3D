@@ -1,11 +1,15 @@
 import * as THREE from 'three';
 import { materialTexture } from '../../gfx/proctex.js';
-import { COLORS } from '../../config.js';
+import { palette, shade } from '../../gfx/palette.js';
 
 /*
  * PBR materials for the parametric buildings, textured with procedural canvas maps
  * (gfx/proctex.js): colour + bump per façade system, at real-world scale (UVs are in
  * metres). No image downloads, so this works offline and in the single-file preview.
+ *
+ * Façade and interior colours describe each building's real materials (from the model specs
+ * and typical finishes), so they live here rather than in the brand tokens. The scene around
+ * the model (context blocks, ground) uses the --map-* tokens.
  */
 
 const ROUGH = {
@@ -101,14 +105,14 @@ export function createInteriorMaterials() {
       emissiveIntensity: 0.6,
     }),
     glow: new THREE.MeshStandardMaterial({ color: '#7fd6f0', emissive: '#4fc4e8', emissiveIntensity: 1.4 }),
-    brass: s(COLORS.brass, { metalness: 0.8, roughness: 0.3 }),
   };
 }
 
-/** Neighbouring context blocks and ground: light, realistic concrete tones. */
+/** Neighbouring context blocks and ground: the light city tones from the tokens. */
 export function createContextMaterials() {
+  const p = palette();
   return {
-    block: new THREE.MeshStandardMaterial(textured('render', '#d3cec5')),
-    ground: new THREE.MeshStandardMaterial({ ...textured('concrete', '#9b9892'), roughness: 1 }),
+    block: new THREE.MeshStandardMaterial(textured('render', shade(p.building, -0.04))),
+    ground: new THREE.MeshStandardMaterial({ ...textured('concrete', p.ground), roughness: 1 }),
   };
 }

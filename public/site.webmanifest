@@ -4,8 +4,8 @@
   "description": "Melbourne residential and commercial builders, backed by 70 years' experience.",
   "start_url": "/",
   "display": "browser",
-  "background_color": "#0d0e10",
-  "theme_color": "#0d0e10",
+  "background_color": "#e6e6e4",
+  "theme_color": "#5d0024",
   "icons": [
     { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
     { "src": "/images/icon-192.png", "type": "image/png", "sizes": "192x192" },

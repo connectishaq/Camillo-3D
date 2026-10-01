@@ -13,6 +13,7 @@ import './components/tag/tag.css';
 import './components/chapter/chapter.css';
 
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import * as header from './sections/header/header.js';
 import * as hero from './sections/hero/hero.js';
@@ -56,8 +57,11 @@ const stage = startStage(document.getElementById('map'), {
   onPinClick: (project) => explorer.open(project),
 });
 
-const context = { projects, explorer, ready: loader.finished };
+const context = { projects, explorer, stage, ready: loader.finished };
 [header, hero, about, projectsSection, services, contact, footer].forEach((section) => section.init(context));
 
 initChapters({ scrollTo: scroll.scrollTo, onChange: (chapter) => stage.go(chapter) });
 initReveal();
+
+// re-measure the pinned hero once web fonts and the loader have settled the layout
+Promise.all([document.fonts?.ready, loader.finished]).then(() => ScrollTrigger.refresh());

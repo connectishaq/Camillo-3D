@@ -5,10 +5,9 @@
   display: grid;
   place-content: center;
   justify-items: center;
-  gap: 22px;
-  /* warm dusk tone instead of solid black, so the reveal into the bright city is gentle */
-  background:
-    radial-gradient(120% 90% at 50% 110%, rgba(201, 165, 107, 0.22), transparent 60%), linear-gradient(180deg, #23262b 0%, #1a1c20 100%);
+  gap: 24px;
+  background: var(--bg);
+  color: var(--brand);
   transition:
     opacity 0.9s var(--ease),
     visibility 0.9s;
@@ -18,14 +17,17 @@
   visibility: hidden;
 }
 .loader__mark {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  letter-spacing: 0.4em;
-  padding-left: 0.4em;
+  width: clamp(150px, 16vw, 210px);
+}
+.loader__mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .loader__bar {
   width: 180px;
-  height: 1px;
+  height: 2px;
+  border-radius: 2px;
   background: var(--line);
   overflow: hidden;
 }
@@ -33,12 +35,10 @@
   display: block;
   height: 100%;
   width: 0;
-  background: var(--brass);
+  background: var(--brand);
   transition: width 0.4s var(--ease);
 }
 .loader__hint {
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-faint);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
 }

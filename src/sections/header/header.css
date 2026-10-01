@@ -1,64 +1,87 @@
+/* After camillo.com.au: burgundy logo left, burgundy 16px nav links right, 64px apart */
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 40;
   height: var(--header-h);
-  padding: 0 var(--gutter);
+  padding: 30px var(--gutter) 0; /* their logo and nav sit low in the 135px bar */
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  background: linear-gradient(to bottom, rgba(13, 14, 16, 0.85), rgba(13, 14, 16, 0));
-  transition: background 0.4s var(--ease);
+  color: var(--brand);
+  border-bottom: 1px solid transparent;
+  transition:
+    height 0.4s var(--ease),
+    background-color 0.4s var(--ease),
+    border-color 0.4s var(--ease),
+    backdrop-filter 0.4s var(--ease);
 }
-.site-header.is-scrolled {
-  background: rgba(13, 14, 16, 0.72);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--line);
+/* Over the full-screen map (and on standalone pages once scrolled): light glass bar */
+.site-header.is-over-map {
+  height: 84px;
+  padding-top: 0;
+  background: var(--surface-glass);
+  backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom-color: var(--line);
 }
 .brand {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
+  display: block;
+  width: 170px;
+  color: var(--brand);
+  transition: width 0.4s var(--ease);
 }
-.brand__word {
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  letter-spacing: 0.32em;
+.site-header.is-over-map .brand {
+  width: 136px;
 }
-.brand__sub {
-  font-size: 0.66rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--text-faint);
+.brand .logo {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .site-nav {
   display: flex;
-  gap: clamp(18px, 3vw, 40px);
-  font-size: 0.86rem;
-  color: var(--text-dim);
+  gap: clamp(28px, 4.4vw, 64px);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
 }
 .site-nav a {
   position: relative;
-  transition: color 0.25s;
+  padding-bottom: 8px;
+  margin-top: 8px;
+  color: var(--brand);
 }
-.site-nav a:hover,
-.site-nav a.is-active {
-  color: var(--text);
-}
-.site-nav a.is-active::after {
+.site-nav a::after {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -6px;
+  bottom: 0;
   height: 1px;
-  background: var(--brass);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease);
+}
+.site-nav a:hover::after,
+.site-nav a.is-active::after {
+  transform: scaleX(1);
 }
 
 @media (max-width: 860px) {
-  .site-nav,
-  .site-header__cta {
+  .site-header {
+    padding-top: 0;
+  }
+  .site-nav {
     display: none;
+  }
+  .brand {
+    width: 98px; /* their mobile logo */
+  }
+  .site-header.is-over-map {
+    height: var(--header-h);
+  }
+  .site-header.is-over-map .brand {
+    width: 98px;
   }
 }

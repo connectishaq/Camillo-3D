@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { HIT_LAYER } from './building.js';
-import { COLORS, FLOOR_H } from '../../config.js';
+import { FLOOR_H } from '../../config.js';
+import { palette } from '../../gfx/palette.js';
 
 /*
  * Path A: a project model from an image-to-3D tool, saved as public/models/<slug>.glb.
@@ -139,7 +140,7 @@ export function buildGLBBuilding(model, source) {
 
     const edges = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.BoxGeometry(w + 0.3, fh, d + 0.3)),
-      new THREE.LineBasicMaterial({ color: COLORS.brass, transparent: true, opacity: 0 }),
+      new THREE.LineBasicMaterial({ color: palette().highlight, transparent: true, opacity: 0 }),
     );
     edges.position.y = fh / 2;
     group.add(edges);

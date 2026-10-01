@@ -11,7 +11,7 @@ import { toXZ } from '../geo.js';
  * Camillo's projects on the city map, using the same model as the Building Explorer:
  * the parametric model from src/data/models/<slug>.json, or public/models/<slug>.glb
  * when one exists. Merged per material for a handful of draw calls. The street front
- * (+Z) is turned towards the nearest road. The active project gets a brass ring,
+ * (+Z) is turned towards the nearest road. The active project gets a burgundy ring,
  * a pulse and a soft light column.
  */
 const HQ_MODEL = {

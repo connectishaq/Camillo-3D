@@ -1,6 +1,7 @@
 /*
  * Story chapters: each section is a tall "chapter" laid over the fixed map.
  * The map flies when a chapter crosses the middle of the viewport (app/chapters.js).
+ * The hero chapter's split layout lives in sections/hero/hero.css.
  */
 .story {
   position: relative;
@@ -16,12 +17,6 @@
 }
 .chapter > * {
   pointer-events: auto;
-}
-.chapter--hero {
-  min-height: 100vh;
-  position: relative;
-  align-items: flex-end;
-  padding-bottom: 14vh;
 }
 .chapter--right {
   justify-content: flex-end;
@@ -48,8 +43,7 @@
   padding-bottom: 28px;
 }
 
-/* Readability scrims for text that sits straight on the bright city (no card) */
-.chapter--hero::before,
+/* Readability scrims (page background colour) for text that sits straight on the city */
 .chapter--center::before,
 .chapter--contact::before {
   content: '';
@@ -58,16 +52,22 @@
   z-index: -1;
   pointer-events: none;
 }
-.chapter--hero::before {
-  background:
-    linear-gradient(90deg, rgba(13, 14, 16, 0.62) 0%, rgba(13, 14, 16, 0.35) 40%, transparent 70%),
-    linear-gradient(to top, rgba(13, 14, 16, 0.45), transparent 50%);
-}
 .chapter--center::before {
-  background: radial-gradient(60% 45% at 50% 50%, rgba(13, 14, 16, 0.55), transparent 75%);
+  background: radial-gradient(
+    55% 42% at 50% 50%,
+    color-mix(in srgb, var(--bg) 92%, transparent),
+    color-mix(in srgb, var(--bg) 70%, transparent) 55%,
+    transparent 80%
+  );
 }
 .chapter--contact::before {
-  background: linear-gradient(to top, rgba(13, 14, 16, 0.78) 0%, rgba(13, 14, 16, 0.5) 45%, transparent 85%);
+  background: linear-gradient(
+    to top,
+    var(--bg) 0%,
+    color-mix(in srgb, var(--bg) 94%, transparent) 50%,
+    color-mix(in srgb, var(--bg) 60%, transparent) 75%,
+    transparent 95%
+  );
 }
 
 @media (max-width: 860px) {

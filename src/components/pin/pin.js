@@ -2,7 +2,7 @@ import './pin.css';
 import { escapeHtml } from '../../utils/escape.js';
 
 /**
- * Map pin: a brass dot and a label. `hq` gets the diamond marker.
+ * Map pin: a brand-coloured dot and a label. `hq` gets the diamond marker.
  * Pins sit inside the decorative (aria-hidden) map stage, so they're mouse/touch only;
  * keyboard and screen-reader users get the same actions from the story cards.
  */

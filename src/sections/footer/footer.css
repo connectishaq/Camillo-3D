@@ -7,13 +7,17 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
-  font-size: 0.76rem;
-  color: var(--text-faint);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
 }
 .footer__links {
   display: flex;
   gap: 20px;
 }
+.footer__links a {
+  color: var(--brand);
+}
 .footer__links a:hover {
-  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

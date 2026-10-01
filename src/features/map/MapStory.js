@@ -1,16 +1,17 @@
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { COLORS, FLOOR_H } from '../../config.js';
+import { FLOOR_H } from '../../config.js';
+import { palette, shade } from '../../gfx/palette.js';
 import { chapterCamera, chapterSide, cardClearance, isNarrow } from './camera.js';
 import { createPin } from '../../components/pin/pin.js';
 import { supportsWebGL } from '../../utils/dom.js';
 
-const STYLE_URL = 'https://tiles.openfreemap.org/styles/dark';
-const BRASS = COLORS.brass;
+// light basemap to match the brand theme
+const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron';
 
 /**
  * The fixed background map. Chapters call `go(chapterId)` and the camera flies there.
- * Camillo's projects are drawn as brass floor-by-floor extrusions on top of the
+ * Camillo's projects are drawn as burgundy floor-by-floor extrusions on top of the
  * OpenStreetMap 3D city.
  */
 export class MapStory {
@@ -97,13 +98,13 @@ export class MapStory {
             ['linear'],
             ['coalesce', ['get', 'render_height'], 8],
             0,
-            '#1b1d21',
+            palette().building,
             40,
-            '#262a30',
+            shade(palette().building, -0.04),
             120,
-            '#343941',
+            shade(palette().building, -0.08),
             250,
-            '#3f454e',
+            shade(palette().building, -0.12),
           ],
           'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 12, 0, 13.5, ['coalesce', ['get', 'render_height'], 8]],
           'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
@@ -116,9 +117,9 @@ export class MapStory {
 
     try {
       map.setSky({
-        'sky-color': COLORS.ink,
-        'horizon-color': '#2b2621',
-        'fog-color': COLORS.ink,
+        'sky-color': palette().sky,
+        'horizon-color': palette().sky,
+        'fog-color': palette().sky,
         'sky-horizon-blend': 0.6,
         'horizon-fog-blend': 0.7,
         'fog-ground-blend': 0.55,
@@ -127,10 +128,10 @@ export class MapStory {
     } catch {
       /* older engines */
     }
-    map.setLight({ anchor: 'viewport', color: '#fff4e6', intensity: 0.35, position: [1.4, 210, 35] });
+    map.setLight({ anchor: 'viewport', color: palette().sun, intensity: 0.3, position: [1.4, 210, 35] });
   }
 
-  /** Each project becomes a stack of brass floor plates at its site. */
+  /** Each project becomes a stack of burgundy floor plates at its site. */
   addProjects() {
     const features = [];
     this.projects.forEach((p) => {
@@ -167,7 +168,7 @@ export class MapStory {
       type: 'fill-extrusion',
       source: 'camillo-projects',
       paint: {
-        'fill-extrusion-color': BRASS,
+        'fill-extrusion-color': palette().highlight,
         'fill-extrusion-base': ['get', 'base'],
         'fill-extrusion-height': ['get', 'top'],
         'fill-extrusion-opacity': 0.95,
@@ -212,6 +213,15 @@ export class MapStory {
     this.map.once('moveend', () => (this.flying = false));
   }
 
+  /**
+   * Hero expand: while the map is only a panel, pad the view so the subject sits in the
+   * panel's centre (padding = 2 × the panel centre's offset from the screen centre).
+   */
+  setIntro({ x = 0, y = 0 } = {}) {
+    if (!this.loaded) return;
+    this.map.setPadding({ left: Math.max(0, 2 * x), right: Math.max(0, -2 * x), top: Math.max(0, 2 * y), bottom: Math.max(0, -2 * y) });
+  }
+
   /** Keep the subject clear of the text card. */
   paddingFor(chapter) {
     const w = window.innerWidth;
@@ -234,8 +244,8 @@ export class MapStory {
       this.map.setPaintProperty('camillo-projects-3d', 'fill-extrusion-color', [
         'case',
         ['==', ['get', 'slug'], slug || ''],
-        COLORS.brassLight,
-        BRASS,
+        palette().highlightHot,
+        palette().highlight,
       ]);
     }
   }

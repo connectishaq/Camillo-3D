@@ -4,18 +4,17 @@
   gap: 8px;
   margin-bottom: 18px;
 }
+/* Small pills: type in grey outline, status in burgundy outline */
 .tag {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 5px 10px;
-  border-radius: 999px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0.02em;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--line-strong);
-  color: var(--text-dim);
+  color: var(--text-muted);
 }
 .tag--status {
-  border-color: rgba(201, 165, 107, 0.5);
-  color: var(--brass);
-  background: var(--brass-soft);
+  border-color: var(--brand);
+  color: var(--brand);
 }

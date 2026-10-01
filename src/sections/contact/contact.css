@@ -3,8 +3,8 @@
   margin: 0 auto;
 }
 .contact__title {
-  font-size: clamp(3rem, 8vw, 7rem);
-  text-shadow: 0 10px 60px rgba(0, 0, 0, 0.6);
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  line-height: 1.05;
 }
 .contact__grid {
   margin-top: 44px;
@@ -14,26 +14,27 @@
 }
 .contact__item {
   padding: 22px 24px;
-  border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--glass);
-  backdrop-filter: blur(14px);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid transparent;
   display: grid;
   gap: 6px;
   transition: border-color 0.3s;
 }
 a.contact__item:hover {
-  border-color: var(--brass);
+  border-color: var(--brand);
 }
 .contact__item span {
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-faint);
+  color: var(--brand);
 }
 .contact__item strong {
-  font-weight: 500;
-  font-size: 1.02rem;
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-lede);
 }
 
 @media (max-width: 860px) {

@@ -17,11 +17,12 @@ html.lenis body {
 
 body {
   margin: 0;
-  background: var(--ink-900);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -33,14 +34,18 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 300;
-  line-height: 1.02;
-  letter-spacing: -0.02em;
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.01em;
   margin: 0;
 }
+/* accent words in headings: brand colour, not italic (Manrope has no true italic) */
 em {
-  font-style: italic;
-  color: var(--brass);
+  font-style: normal;
+  color: var(--brand);
+}
+strong {
+  font-weight: var(--fw-medium);
 }
 p {
   margin: 0;
@@ -67,15 +72,18 @@ ol {
   padding: 0;
 }
 :focus-visible {
-  outline: 2px solid var(--brass);
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* Shared animation: brass halo (locator dot, active map pin) */
+/* Shared animation: brand halo (locator dot, active map pin) */
 @keyframes pulse {
+  from {
+    box-shadow: 0 0 0 0 var(--brand-line);
+  }
   to {
-    box-shadow: 0 0 0 10px rgba(201, 165, 107, 0);
+    box-shadow: 0 0 0 10px transparent;
   }
 }
 

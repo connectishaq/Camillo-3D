@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { createFloorMaterials, createContextMaterials, featureMaterial } from './materials.js';
 import { metricBoxUV } from './textures.js';
-import { COLORS, FLOOR_H } from '../../config.js';
+import { FLOOR_H } from '../../config.js';
+import { palette } from '../../gfx/palette.js';
 
 /** Layer for invisible raycast volumes, so they never reach the render or AO passes. */
 export const HIT_LAYER = 1;
@@ -156,7 +157,7 @@ export function buildBuilding(input) {
     // hover outline
     const edges = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.BoxGeometry(w + 0.3, fh, d + 0.3)),
-      new THREE.LineBasicMaterial({ color: COLORS.brass, transparent: true, opacity: 0 }),
+      new THREE.LineBasicMaterial({ color: palette().highlight, transparent: true, opacity: 0 }),
     );
     edges.position.y = fh / 2;
     group.add(edges);

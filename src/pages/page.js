@@ -14,6 +14,6 @@ import * as header from '../sections/header/header.js';
 import * as footer from '../sections/footer/footer.js';
 
 export function initPage() {
-  header.init();
+  header.init({ overMapOnScroll: true });
   footer.init();
 }

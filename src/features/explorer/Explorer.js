@@ -13,7 +13,8 @@ import { buildInterior, disposeInterior } from './interior.js';
 import { createInteriorMaterials, createContextMaterials } from './materials.js';
 import { metricPlaneUV } from './textures.js';
 import { buildGLBBuilding, loadedGLB } from './glb.js';
-import { createSky, skyEnvironment, HORIZON, sunDirection } from '../../gfx/sky.js';
+import { createSky, skyEnvironment, horizonColor, sunDirection } from '../../gfx/sky.js';
+import { palette } from '../../gfx/palette.js';
 import { BREAKPOINT } from '../../config.js';
 import { isMobile } from '../../utils/dom.js';
 import { escapeHtml } from '../../utils/escape.js';
@@ -67,8 +68,8 @@ export class Explorer {
     const renderer = new THREE.WebGLRenderer({ antialias: !this.mobile, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.mobile ? 1.5 : 1.75));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.8;
+    renderer.toneMapping = THREE.NeutralToneMapping; // keeps the light page colour exact (see CityStory)
+    renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap; // + shadow.radius for soft edges
     renderer.localClippingEnabled = true; // GLB models are split into levels by clipping planes
@@ -79,14 +80,17 @@ export class Explorer {
     labels.domElement.style.cssText = 'position:absolute;inset:0;pointer-events:none;';
     host.appendChild(labels.domElement);
 
-    // same procedural late-afternoon sky as the city: background + reflections, fully offline
+    // light studio look: the page background behind the model, the procedural sky for reflections only
     const scene = new THREE.Scene();
+    const p = palette();
+    scene.background = horizonColor();
     const sky = createSky(EX_SUN);
-    sky.material.uniforms.showSunDisc.value = 0; // the HDR disc would bloom across the frame at eye level
+    sky.material.uniforms.showSunDisc.value = 0;
+    sky.visible = false;
     scene.add(sky);
     scene.environment = skyEnvironment(renderer, sky);
     scene.environmentIntensity = 0.18;
-    scene.fog = new THREE.Fog(HORIZON, 260, 700);
+    scene.fog = new THREE.Fog(horizonColor(), 260, 700);
     this.sky = sky;
 
     const camera = new THREE.PerspectiveCamera(38, 1, 0.05, 1200);
@@ -95,9 +99,9 @@ export class Explorer {
     controls.dampingFactor = 0.07;
     controls.maxPolarAngle = Math.PI * 0.49;
 
-    const hemi = new THREE.HemisphereLight('#dfe5ea', '#8f8068', 0.8);
+    const hemi = new THREE.HemisphereLight(p.skyLight, p.groundLight, 0.8);
     scene.add(hemi);
-    const sun = new THREE.DirectionalLight('#ffe2b8', 5.5);
+    const sun = new THREE.DirectionalLight(p.sun, 3.2);
     sun.castShadow = true;
     const shadowRes = this.mobile ? 1024 : 2048;
     sun.shadow.mapSize.set(shadowRes, shadowRes);
@@ -423,9 +427,9 @@ export class Explorer {
       const k = key === 'slab' ? 1 : key === 'glass' ? (on ? 0.1 : 0.12) : on ? 0.04 : 0.18;
       gsap.to(m, { opacity: m.userData.baseOpacity * k, duration: 0.8, overwrite: true });
     });
-    const warm = new THREE.Color(on ? '#fff0da' : '#dfe5ea');
+    const warm = new THREE.Color(on ? palette().windowLit : palette().skyLight);
     gsap.to(this.hemi.color, { r: warm.r, g: warm.g, b: warm.b, duration: 0.8 });
-    gsap.to(this.hemi, { intensity: on ? 1.25 : 0.8, duration: 0.8 });
+    gsap.to(this.hemi, { intensity: on ? 1.15 : 0.8, duration: 0.8 });
   }
 
   toggleExplode() {

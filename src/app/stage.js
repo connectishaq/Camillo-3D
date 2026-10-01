@@ -10,16 +10,16 @@ import { prefersReducedMotion } from '../utils/dom.js';
  * Every stage is loaded on demand (its own chunk, with Three.js), so the page's own
  * script stays small. All stages share one interface:
  *   new Stage(container, { cameras, office, projects, reducedMotion, onReady, onFail, onPinClick, onProgress })
- *   .go(chapter, { duration }) · .pause() · .resume() · .destroy()
+ *   .go(chapter, { duration }) · .setIntro({ x, y, zoom }) · .pause() · .resume() · .destroy()
  */
 const loadCity = () => import('../features/map/CityStory.js').then((m) => m.CityStory);
 const loadMap = () => import('../features/map/MapStory.js').then((m) => m.MapStory);
 const loadPhotoreal = () => import('../features/map/photoreal/PhotorealStory.js').then((m) => m.PhotorealStory);
 
-/** Starts the map stage. Returns `{ go(chapter), pause(), resume() }`, usable straight away. */
+/** Starts the map stage. Returns `{ go(chapter), setIntro(intro), pause(), resume() }`, usable straight away. */
 export function startStage(container, { cameras, office, projects, loader, onPinClick }) {
   const reducedMotion = prefersReducedMotion();
-  const state = { impl: null, current: 'hero' };
+  const state = { impl: null, current: 'hero', intro: null };
   // with reduced motion the camera cuts between chapters instead of flying
   const flight = reducedMotion ? { duration: 0 } : undefined;
   const options = {
@@ -69,6 +69,7 @@ export function startStage(container, { cameras, office, projects, loader, onPin
         });
         if (!failed) {
           state.impl = impl;
+          if (state.intro) impl.setIntro?.(state.intro);
           impl.go(state.current, flight);
         }
       })
@@ -80,6 +81,11 @@ export function startStage(container, { cameras, office, projects, loader, onPin
     go(chapter) {
       state.current = chapter;
       state.impl?.go(chapter, flight);
+    },
+    /** Hero expand state, from sections/hero/hero.js. */
+    setIntro(intro) {
+      state.intro = intro;
+      state.impl?.setIntro?.(intro);
     },
     pause: () => state.impl?.pause?.(),
     resume: () => state.impl?.resume?.(),
