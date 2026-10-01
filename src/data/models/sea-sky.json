@@ -16,10 +16,25 @@
   "bands": {
     "portal": {
       "system": "render",
-      "colors": { "wall": "#36383c", "slab": "#ecebe7", "frame": "#1f2124", "glass": "#56636b", "balustrade": "#cbd5d8", "accent": "#c3a066" },
+      "colors": {
+        "wall": "#36383c",
+        "slab": "#ecebe7",
+        "frame": "#1f2124",
+        "glass": "#56636b",
+        "balustrade": "#cbd5d8",
+        "accent": "#c3a066"
+      },
       "windows": { "bay": 3.0, "wwr": 0.78, "mullions": 1, "frameDepth": 0.15, "sill": 0.05, "head": 0.3 },
       "frames": { "every": 2, "span": 5, "width": 1.1, "depth": 1.9, "color": "#ecebe7" },
-      "balcony": { "type": "projecting", "depth": 1.8, "balustrade": "glass", "sides": ["front", "back"], "bays": "all", "color": "#ecebe7", "brassEvery": 2 }
+      "balcony": {
+        "type": "projecting",
+        "depth": 1.8,
+        "balustrade": "glass",
+        "sides": ["front", "back"],
+        "bays": "all",
+        "color": "#ecebe7",
+        "brassEvery": 2
+      }
     },
     "crown": {
       "system": "render",

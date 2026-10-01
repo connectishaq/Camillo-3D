@@ -1,0 +1,34 @@
+<!-- 05 Services / overview -->
+<section class="chapter chapter--wide" id="services" data-chapter="overview" data-nav="services" data-label="What we build">
+  <div class="overview" data-reveal>
+    <div class="overview__head">
+      <p class="eyebrow">What we build</p>
+      <h2 class="overview__title">Projects under $50M,<br /><em>built without compromise.</em></h2>
+    </div>
+    <div class="services">
+      <!-- @each services as service -->
+      <article class="service">
+        <span class="service__num">{{ service.number }}</span>
+        <h3>{{ service.title }}</h3>
+        <p>{{ service.text }}</p>
+      </article>
+      <!-- @end -->
+    </div>
+    <div class="stats">
+      <!-- @each stats as stat -->
+      <div class="stat">
+        <div class="stat__value">{{ stat.prefix }}<span data-count="{{ stat.value }}">{{ stat.value }}</span>{{ stat.suffix }}</div>
+        <div class="stat__label">{{ stat.label }}</div>
+      </div>
+      <!-- @end -->
+    </div>
+    <div class="more">
+      <p class="more__label">Also in the portfolio</p>
+      <ul class="more__list">
+        <!-- @each moreProjects as name -->
+        <li>{{ name }}</li>
+        <!-- @end -->
+      </ul>
+    </div>
+  </div>
+</section>

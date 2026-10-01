@@ -38,9 +38,15 @@
     {
       "type": "wing",
       "note": "Two-level restaurant pavilion: black-framed glass boxes, rounded dark canopy, timber slat awnings, planted roof terrace.",
-      "side": "front", "width": 27, "depth": 12, "offset": 4, "levels": 2, "levelHeight": 4.1,
+      "side": "front",
+      "width": 27,
+      "depth": 12,
+      "offset": 4,
+      "levels": 2,
+      "levelHeight": 4.1,
       "colors": { "frame": "#1f2123", "glass": "#2f5c5f", "canopy": "#2a2c2e", "timber": "#b27a4b" },
-      "awnings": { "count": 7, "depth": 2.8 }, "roofGarden": true
+      "awnings": { "count": 7, "depth": 2.8 },
+      "roofGarden": true
     }
   ],
   "assumptions": [

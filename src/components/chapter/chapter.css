@@ -1,0 +1,82 @@
+/*
+ * Story chapters: each section is a tall "chapter" laid over the fixed map.
+ * The map flies when a chapter crosses the middle of the viewport (app/chapters.js).
+ */
+.story {
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+  pointer-events: none; /* let the map breathe; re-enabled on content */
+}
+.chapter {
+  min-height: 130vh;
+  padding: calc(var(--header-h) + 40px) var(--gutter) 80px;
+  display: flex;
+  align-items: center;
+}
+.chapter > * {
+  pointer-events: auto;
+}
+.chapter--hero {
+  min-height: 100vh;
+  position: relative;
+  align-items: flex-end;
+  padding-bottom: 14vh;
+}
+.chapter--right {
+  justify-content: flex-end;
+  padding-right: calc(var(--gutter) + 48px);
+}
+.chapter--left {
+  justify-content: flex-start;
+}
+.chapter--center {
+  position: relative;
+  justify-content: center;
+  text-align: center;
+}
+.chapter--wide {
+  justify-content: center;
+  min-height: 140vh;
+}
+.chapter--contact {
+  position: relative;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  padding-bottom: 28px;
+}
+
+/* Readability scrims for text that sits straight on the bright city (no card) */
+.chapter--hero::before,
+.chapter--center::before,
+.chapter--contact::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.chapter--hero::before {
+  background:
+    linear-gradient(90deg, rgba(13, 14, 16, 0.62) 0%, rgba(13, 14, 16, 0.35) 40%, transparent 70%),
+    linear-gradient(to top, rgba(13, 14, 16, 0.45), transparent 50%);
+}
+.chapter--center::before {
+  background: radial-gradient(60% 45% at 50% 50%, rgba(13, 14, 16, 0.55), transparent 75%);
+}
+.chapter--contact::before {
+  background: linear-gradient(to top, rgba(13, 14, 16, 0.78) 0%, rgba(13, 14, 16, 0.5) 45%, transparent 85%);
+}
+
+@media (max-width: 860px) {
+  .chapter,
+  .chapter--right,
+  .chapter--left {
+    justify-content: center;
+    align-items: flex-end;
+    padding-right: var(--gutter);
+    min-height: 120vh;
+  }
+}

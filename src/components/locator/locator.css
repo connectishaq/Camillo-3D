@@ -1,0 +1,31 @@
+.locator {
+  position: fixed;
+  z-index: 30;
+  left: var(--gutter);
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+.locator__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 0 0 rgba(201, 165, 107, 0.6);
+  animation: pulse 2s infinite;
+}
+
+@media (max-width: 860px) {
+  .locator {
+    display: none;
+  }
+}

@@ -20,7 +20,14 @@
   "bands": {
     "slabs": {
       "system": "brick",
-      "colors": { "wall": "#8f9194", "slab": "#e3e3df", "frame": "#24272a", "glass": "#3a4247", "balustrade": "#e3e3df", "accent": "#e3e3df" },
+      "colors": {
+        "wall": "#8f9194",
+        "slab": "#e3e3df",
+        "frame": "#24272a",
+        "glass": "#3a4247",
+        "balustrade": "#e3e3df",
+        "accent": "#e3e3df"
+      },
       "windows": { "bay": 3.3, "wwr": 0.72, "mullions": 1, "frameDepth": 0.15, "sill": 0.05, "head": 0.35 },
       "balcony": { "type": "full-width", "depth": 2.6, "balustrade": "solid", "sides": ["front"], "slabThickness": 0.55 }
     },
@@ -39,8 +46,24 @@
   },
   "roof": { "type": "blade", "parapet": 0.3, "overhang": 1.0, "plant": true, "garden": false },
   "features": [
-    { "type": "columns", "side": "front", "spacing": 12, "radius": 0.28, "levels": 4, "color": "#eeeeea", "note": "round white columns at the slab edge" },
-    { "type": "greenColumns", "side": "front", "spacing": 16, "radius": 1.2, "levels": 4, "color": "#4f6d3b", "note": "planted vertical green columns" }
+    {
+      "type": "columns",
+      "side": "front",
+      "spacing": 12,
+      "radius": 0.28,
+      "levels": 4,
+      "color": "#eeeeea",
+      "note": "round white columns at the slab edge"
+    },
+    {
+      "type": "greenColumns",
+      "side": "front",
+      "spacing": 16,
+      "radius": 1.2,
+      "levels": 4,
+      "color": "#4f6d3b",
+      "note": "planted vertical green columns"
+    }
   ],
   "assumptions": [
     "Footprint 64 × 22 m estimated from the hero render; the building is one long street-front block.",

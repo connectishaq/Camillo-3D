@@ -27,10 +27,24 @@
     },
     "frame": {
       "system": "precast",
-      "colors": { "wall": "#d8d6d1", "slab": "#e2e0db", "frame": "#26272a", "glass": "#8a9aa2", "balustrade": "#c9d6da", "accent": "#2e2f31" },
+      "colors": {
+        "wall": "#d8d6d1",
+        "slab": "#e2e0db",
+        "frame": "#26272a",
+        "glass": "#8a9aa2",
+        "balustrade": "#c9d6da",
+        "accent": "#2e2f31"
+      },
       "windows": { "bay": 3.9, "wwr": 0.72, "mullions": 1, "frameDepth": 0.2, "sill": 0.1, "head": 0.35 },
       "frames": { "every": 2, "span": 2, "width": 1.35, "depth": 0.75, "color": "#e4e2dd", "bevel": true },
-      "balcony": { "type": "inset", "depth": 1.8, "balustrade": "glass", "sides": ["front", "right"], "bays": "corners", "color": "#2e2f31" }
+      "balcony": {
+        "type": "inset",
+        "depth": 1.8,
+        "balustrade": "glass",
+        "sides": ["front", "right"],
+        "bays": "corners",
+        "color": "#2e2f31"
+      }
     },
     "penthouse": {
       "system": "metal",
@@ -38,9 +52,24 @@
       "windows": { "bay": 3.2, "wwr": 0.55, "mullions": 1, "frameDepth": 0.12, "sill": 0.2, "head": 0.5 }
     }
   },
-  "roof": { "type": "flat-parapet", "parapet": 0.5, "plant": true, "garden": true, "note": "columnar trees at the roof edge (first render)" },
+  "roof": {
+    "type": "flat-parapet",
+    "parapet": 0.5,
+    "plant": true,
+    "garden": true,
+    "note": "columnar trees at the roof edge (first render)"
+  },
   "features": [
-    { "type": "canopy", "side": "front", "width": 6, "depth": 1.8, "height": 3.1, "offset": -8, "color": "#8b5234", "note": "copper entry canopy" }
+    {
+      "type": "canopy",
+      "side": "front",
+      "width": 6,
+      "depth": 1.8,
+      "height": 3.1,
+      "offset": -8,
+      "color": "#8b5234",
+      "note": "copper entry canopy"
+    }
   ],
   "assumptions": [
     "Level count read from the photos: ground + 5 framed levels + setback penthouse (7). The old site.js model had 8.",

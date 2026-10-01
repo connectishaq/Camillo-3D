@@ -1,0 +1,43 @@
+.contact {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+.contact__title {
+  font-size: clamp(3rem, 8vw, 7rem);
+  text-shadow: 0 10px 60px rgba(0, 0, 0, 0.6);
+}
+.contact__grid {
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.contact__item {
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  display: grid;
+  gap: 6px;
+  transition: border-color 0.3s;
+}
+a.contact__item:hover {
+  border-color: var(--brass);
+}
+.contact__item span {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.contact__item strong {
+  font-weight: 500;
+  font-size: 1.02rem;
+}
+
+@media (max-width: 860px) {
+  .contact__grid {
+    grid-template-columns: 1fr;
+  }
+}

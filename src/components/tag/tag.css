@@ -1,0 +1,21 @@
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--text-dim);
+}
+.tag--status {
+  border-color: rgba(201, 165, 107, 0.5);
+  color: var(--brass);
+  background: var(--brass-soft);
+}

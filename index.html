@@ -1,177 +1,29 @@
 <!doctype html>
+<!--
+  Home page shell. Each section lives in src/sections/<name>/ and is inlined here at
+  build time by vite-plugins/html-pages.js (`@include` paths are relative to src/).
+-->
 <html lang="en-AU">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Camillo — Residential & Commercial Builders, Melbourne</title>
-    <meta
-      name="description"
-      content="Camillo is a Melbourne construction company backed by 70 years' experience, building bespoke residential, commercial and fit-out projects."
-    />
-    <meta name="theme-color" content="#0d0e10" />
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- @include layouts/head.html -->
   </head>
   <body>
-    <!-- Loader -->
-    <div class="loader" data-loader aria-hidden="true">
-      <div class="loader__mark">CAMILLO</div>
-      <div class="loader__bar"><span data-loader-bar></span></div>
-      <p class="loader__hint">Loading Melbourne in 3D</p>
-    </div>
+    <!-- @include components/loader/loader.html -->
+    <!-- @include sections/header/header.html -->
+    <!-- @include features/map/stage.html -->
+    <!-- @include components/rail/rail.html -->
+    <!-- @include components/locator/locator.html -->
 
-    <!-- Header -->
-    <header class="site-header" data-header>
-      <a class="brand" href="#top" aria-label="Camillo home">
-        <span class="brand__word">CAMILLO</span>
-        <span class="brand__sub">Builders</span>
-      </a>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#services">Services</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <a class="btn btn--ghost btn--sm site-header__cta" href="#contact">Enquire</a>
-    </header>
-
-    <!-- Fixed 3D map stage (sits behind the scrolling story) -->
-    <div class="stage" aria-hidden="true">
-      <div id="map" class="stage__map"></div>
-      <div class="stage__fallback"></div>
-      <div class="stage__vignette"></div>
-    </div>
-
-    <!-- Chapter progress rail -->
-    <nav class="rail" data-rail aria-label="Story progress"></nav>
-
-    <!-- Live location readout -->
-    <div class="locator" data-locator aria-live="polite">
-      <span class="locator__dot"></span>
-      <span data-locator-text>Melbourne, VIC</span>
-    </div>
-
-    <main class="story" id="top">
-      <!-- 01 Hero -->
-      <section class="chapter chapter--hero" data-chapter="hero" data-label="Melbourne">
-        <div class="hero">
-          <p class="eyebrow" data-reveal>Melbourne · Victoria</p>
-          <h1 class="hero__title" data-reveal>
-            <span>Residential</span>
-            <span><em>&amp;</em> Commercial</span>
-            <span>Builders</span>
-          </h1>
-          <p class="hero__lede" data-reveal data-slot="heritage"></p>
-          <div class="hero__actions" data-reveal>
-            <a class="btn btn--solid" href="#projects">Explore our projects</a>
-            <a class="btn btn--ghost" href="#about">Our story</a>
-          </div>
-        </div>
-        <div class="scroll-cue" aria-hidden="true"><span></span>Scroll to fly</div>
-      </section>
-
-      <!-- 02 About / Office -->
-      <section class="chapter chapter--right" id="about" data-chapter="office" data-label="Port Melbourne HQ">
-        <article class="card card--about" data-reveal>
-          <p class="eyebrow">About us · Port Melbourne</p>
-          <h2 class="card__title">A big builder’s strength.<br />A small team’s care.</h2>
-          <div class="card__body" data-slot="about"></div>
-          <blockquote class="card__quote" data-slot="promise"></blockquote>
-          <dl class="card__meta">
-            <div><dt>Head office</dt><dd data-slot="address"></dd></div>
-            <div><dt>Call</dt><dd><a data-slot="phone"></a></dd></div>
-          </dl>
-        </article>
-      </section>
-
-      <!-- 03 Projects intro -->
-      <section class="chapter chapter--center" id="projects" data-chapter="projectsIntro" data-label="Featured projects">
-        <div class="intro" data-reveal>
-          <p class="eyebrow">Featured projects</p>
-          <h2 class="intro__title">Across Melbourne,<br /><em>one address at a time.</em></h2>
-          <p class="intro__text">Keep scrolling to fly to each site. Open any building in 3D to peel back its floors and step inside.</p>
-        </div>
-      </section>
-
-      <!-- 04 Project chapters (rendered from src/data/site.js) -->
-      <div data-project-chapters></div>
-
-      <!-- 05 Services / overview -->
-      <section class="chapter chapter--wide" id="services" data-chapter="overview" data-label="What we build">
-        <div class="overview" data-reveal>
-          <div class="overview__head">
-            <p class="eyebrow">What we build</p>
-            <h2 class="overview__title">Projects under $50M,<br /><em>built without compromise.</em></h2>
-          </div>
-          <div class="services" data-slot="services"></div>
-          <div class="stats" data-slot="stats"></div>
-          <div class="more">
-            <p class="more__label">Also in the portfolio</p>
-            <ul class="more__list" data-slot="more"></ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- 06 Contact -->
-      <section class="chapter chapter--contact" id="contact" data-chapter="contact" data-label="Contact">
-        <div class="contact" data-reveal>
-          <p class="eyebrow">Start a conversation</p>
-          <h2 class="contact__title">Let’s build<br /><em>something lasting.</em></h2>
-          <div class="contact__grid">
-            <a class="contact__item" data-slot="email-link"><span>Email</span><strong data-slot="email"></strong></a>
-            <a class="contact__item" data-slot="phone-link"><span>Phone</span><strong data-slot="phone-text"></strong></a>
-            <div class="contact__item"><span>Visit</span><strong data-slot="address-2"></strong></div>
-          </div>
-        </div>
-        <footer class="footer">
-          <span>© <span data-year></span> Camillo Builders</span>
-          <span class="footer__links">
-            <a data-slot="linkedin" target="_blank" rel="noopener">LinkedIn</a>
-            <a data-slot="instagram" target="_blank" rel="noopener">Instagram</a>
-          </span>
-          <span class="footer__credit">3D Melbourne generated in code · simplified geography, not to survey accuracy</span>
-        </footer>
-      </section>
+    <main class="story" id="main" tabindex="-1">
+      <!-- @include sections/hero/hero.html -->
+      <!-- @include sections/about/about.html -->
+      <!-- @include sections/projects/projects.html -->
+      <!-- @include sections/services/services.html -->
+      <!-- @include sections/contact/contact.html -->
     </main>
 
-    <!-- Building Explorer (Three.js) -->
-    <div class="explorer" data-explorer hidden role="dialog" aria-modal="true" aria-labelledby="explorer-title">
-      <div class="explorer__canvas" data-explorer-canvas></div>
+    <!-- @include features/explorer/explorer.html -->
 
-      <aside class="explorer__panel">
-        <button class="explorer__close" data-explorer-close aria-label="Close 3D explorer">×</button>
-        <p class="eyebrow" data-ex-suburb></p>
-        <h2 class="explorer__title" id="explorer-title" data-ex-name></h2>
-        <p class="explorer__status" data-ex-status></p>
-
-        <div class="explorer__view" data-ex-view="building">
-          <p class="explorer__hint">Hover a level to highlight it. Click to open the floor.</p>
-          <ol class="floors" data-ex-floors></ol>
-        </div>
-
-        <div class="explorer__view" data-ex-view="floor" hidden>
-          <button class="link-back" data-ex-back>← All levels</button>
-          <h3 class="floor-title" data-ex-floor-title></h3>
-          <p class="floor-sub" data-ex-floor-sub></p>
-          <ul class="rooms" data-ex-rooms></ul>
-          <button class="btn btn--solid btn--block" data-ex-inside>Step inside</button>
-        </div>
-
-        <p class="explorer__note" data-ex-note></p>
-      </aside>
-
-      <div class="explorer__toolbar">
-        <button class="chip" data-ex-explode aria-pressed="false">Explode floors</button>
-        <button class="chip" data-ex-reset>Reset view</button>
-      </div>
-      <div class="explorer__tooltip" data-ex-tooltip hidden></div>
-    </div>
-
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -1,0 +1,76 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 50px;
+  padding: 0 26px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition:
+    transform 0.3s var(--ease),
+    background 0.3s,
+    color 0.3s,
+    border-color 0.3s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn--solid {
+  background: var(--brass);
+  color: var(--ink-900);
+}
+.btn--solid:hover {
+  background: #d9b67c;
+}
+.btn--ghost {
+  border: 1px solid var(--line-strong);
+  background: rgba(13, 14, 16, 0.35);
+  backdrop-filter: blur(8px);
+}
+.btn--ghost:hover {
+  border-color: var(--brass);
+}
+.btn--sm {
+  height: 40px;
+  padding: 0 18px;
+  font-size: 0.8rem;
+}
+.btn--block {
+  width: 100%;
+}
+
+/* Toggle / small action */
+.chip {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    color 0.25s;
+}
+.chip:hover {
+  border-color: var(--brass);
+}
+.chip[aria-pressed='true'] {
+  background: var(--brass);
+  color: var(--ink-900);
+  border-color: var(--brass);
+}
+
+/* Text link styled as a quiet "back" action */
+.link-back {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--brass);
+  margin-bottom: 16px;
+}

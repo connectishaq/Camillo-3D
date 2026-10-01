@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- Netlify serves this for any path that doesn't exist. -->
+<html lang="en-AU">
+  <head>
+    <!-- @include layouts/head.html -->
+  </head>
+  <body class="page">
+    <!-- @include sections/header/header.html -->
+    <main class="page__main not-found" id="main" tabindex="-1">
+      <p class="eyebrow">Error 404</p>
+      <h1 class="page__title">This address isn’t<br /><em>on our map.</em></h1>
+      <p class="page__lede">The page you’re looking for has moved or never existed. Try one of our projects instead.</p>
+      <ul class="not-found__links">
+        <!-- @each projects as project -->
+        <li>
+          <a href="{{ project.url }}">{{ project.name }} <span>{{ project.suburb }}</span></a>
+        </li>
+        <!-- @end -->
+      </ul>
+      <a class="btn btn--solid" href="/">Back to the home page</a>
+    </main>
+    <!-- @include sections/footer/footer.html -->
+    <script type="module" src="/src/pages/not-found.js"></script>
+  </body>
+</html>

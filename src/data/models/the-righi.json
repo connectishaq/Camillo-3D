@@ -19,7 +19,16 @@
     "upper": {
       "system": "board-concrete",
       "colors": { "wall": "#d8cdc3", "slab": "#e3dbd3", "frame": "#2c2c2c", "glass": "#35393b", "accent": "#cfc4ba" },
-      "windows": { "bay": 5.0, "wwr": 0.22, "mullions": 0, "frameDepth": 0.18, "sill": 1.25, "head": 0.55, "panelBelow": true, "width": 2.0 }
+      "windows": {
+        "bay": 5.0,
+        "wwr": 0.22,
+        "mullions": 0,
+        "frameDepth": 0.18,
+        "sill": 1.25,
+        "head": 0.55,
+        "panelBelow": true,
+        "width": 2.0
+      }
     }
   },
   "roof": { "type": "flat-parapet", "parapet": 0.35, "plant": false, "garden": false, "coping": "#ece7e1" },

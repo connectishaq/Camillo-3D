@@ -1,0 +1,26 @@
+.card__quote {
+  margin: 22px 0 0;
+  padding-left: 16px;
+  border-left: 2px solid var(--brass);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+.card__meta {
+  margin: 24px 0 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.card__meta dt {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+}
+.card__meta dd {
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+}

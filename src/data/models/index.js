@@ -11,9 +11,20 @@ export const SPECS = Object.fromEntries(Object.entries(specs).map(([path, json])
 
 const DEFAULT_WINDOWS = { bay: 3.2, wwr: 0.55, mullions: 1, frameDepth: 0.18, sill: 0.8, head: 0.4 };
 const DEFAULT_COLORS = { wall: '#d9d4ca', slab: '#cfcac1', frame: '#2a2b2d', glass: '#5d707c', accent: '#8e8b85', balustrade: '#a9c1cc' };
-const SYSTEM_STYLE = { brick: 'brick', 'board-concrete': 'house', timber: 'house', travertine: 'stone', stone: 'stone', precast: 'stone', 'glass-curtain': 'glass', render: 'glass', metal: 'glass', concrete: 'glass' };
+const SYSTEM_STYLE = {
+  brick: 'brick',
+  'board-concrete': 'house',
+  timber: 'house',
+  travertine: 'stone',
+  stone: 'stone',
+  precast: 'stone',
+  'glass-curtain': 'glass',
+  render: 'glass',
+  metal: 'glass',
+  concrete: 'glass',
+};
 
-const val = (v, d) => (v && typeof v === 'object' && 'value' in v ? v.value : v ?? d);
+const val = (v, d) => (v && typeof v === 'object' && 'value' in v ? v.value : (v ?? d));
 
 export function normalizeSpec(spec) {
   const fp = spec.footprint || {};
@@ -25,7 +36,8 @@ export function normalizeSpec(spec) {
       system: b.system || 'render',
       colors: { ...DEFAULT_COLORS, ...(b.colors || {}) },
       windows: { ...DEFAULT_WINDOWS, ...(b.windows || {}) },
-      balcony: b.balcony && b.balcony.type !== 'none' ? { depth: 1.6, balustrade: 'glass', sides: ['front'], bays: 'all', ...b.balcony } : null,
+      balcony:
+        b.balcony && b.balcony.type !== 'none' ? { depth: 1.6, balustrade: 'glass', sides: ['front'], bays: 'all', ...b.balcony } : null,
       frames: b.frames || null,
       fins: b.fins || null,
       sides: b.sides || null, // optional per-side window overrides
@@ -61,9 +73,17 @@ export function normalizeSpec(spec) {
   };
 }
 
-export function modelFor(slug, fallback) {
+/** A plain three-level massing for a project that has no spec yet. */
+const PLACEHOLDER_LEVELS = [{ label: 'Ground', program: 'lobby', units: 0 }, { label: 'Level 1' }, { label: 'Level 2' }];
+
+/**
+ * The model for a project: its JSON spec if there is one, else the project's own inline
+ * `model` (already in normalised form), else a placeholder massing marked indicative.
+ */
+export function modelFor(slug, inline) {
   const spec = SPECS[slug];
-  return spec ? normalizeSpec(spec) : fallback;
+  if (spec) return normalizeSpec(spec);
+  return inline || normalizeSpec({ slug, levels: PLACEHOLDER_LEVELS, assumptions: ['No building spec yet: placeholder massing'] });
 }
 
 /** Total height of a model (top of roof slab, excluding plant). */

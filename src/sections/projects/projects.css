@@ -1,0 +1,39 @@
+/* ---------- Intro ---------- */
+.intro {
+  max-width: 760px;
+  padding: 40px 0;
+}
+.intro__title {
+  font-size: var(--fs-h2);
+  text-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
+}
+.intro__text {
+  margin: 22px auto 0;
+  max-width: 460px;
+  color: var(--text-dim);
+}
+
+/* ---------- Project card ---------- */
+.project-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.project-card__index {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-faint);
+}
+.project-card__title {
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  margin: 6px 0 10px;
+}
+.project-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.project-card__actions .btn {
+  flex: 1 1 auto;
+}

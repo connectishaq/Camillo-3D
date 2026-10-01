@@ -1,0 +1,123 @@
+/* ---------- Fixed 3D map stage (behind the scrolling story) ---------- */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+.stage .stage__map,
+.stage .stage__fallback {
+  position: absolute; /* beats .maplibregl-map { position: relative } */
+  inset: 0;
+}
+.stage__fallback {
+  display: none;
+  background:
+    radial-gradient(1200px 600px at 70% 30%, rgba(201, 165, 107, 0.12), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 59px, rgba(255, 255, 255, 0.04) 59px 60px),
+    repeating-linear-gradient(90deg, transparent 0 59px, rgba(255, 255, 255, 0.04) 59px 60px), var(--ink-800);
+}
+body.no-map .stage__fallback {
+  display: block;
+}
+/* Soft edge shade only: the city is bright daylight and shouldn't be crushed to black. */
+.stage__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(130% 100% at 50% 50%, transparent 60%, rgba(13, 14, 16, 0.34) 100%),
+    linear-gradient(to bottom, rgba(13, 14, 16, 0.42), transparent 16%), linear-gradient(to top, rgba(13, 14, 16, 0.32), transparent 22%);
+}
+
+/* ---------- Labels and pins drawn over the city ---------- */
+.city-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.city-overlay > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+.city-overlay .pin {
+  pointer-events: auto;
+}
+.city-label {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+  transition: opacity 0.4s;
+}
+.city-label--photo {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 12px rgba(0, 0, 0, 0.6);
+}
+.city-label--water {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: #e9f1f4;
+  text-shadow: 0 1px 6px rgba(10, 30, 40, 0.8);
+}
+
+/* ---------- Map mode (MapLibre) ---------- */
+.maplibregl-ctrl-attrib {
+  display: none !important; /* credited in the footer */
+}
+
+/* ---------- Photoreal mode (Google 3D Tiles) ---------- */
+/* Photoreal city reads as daylight: only a light edge shade, stronger at the top for the header */
+body.is-photoreal .stage__vignette {
+  background:
+    radial-gradient(130% 100% at 50% 50%, transparent 62%, rgba(13, 14, 16, 0.32) 100%),
+    linear-gradient(to bottom, rgba(13, 14, 16, 0.38), transparent 18%), linear-gradient(to top, rgba(13, 14, 16, 0.3), transparent 22%);
+}
+body.is-photoreal .locator {
+  bottom: 44px;
+}
+body.is-photoreal .chapter--contact {
+  padding-bottom: 48px;
+}
+
+/* Google Maps attribution (required by the Map Tiles API policies) */
+.map-credits {
+  position: fixed;
+  z-index: 35; /* above the story, below header, explorer and loader */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 10px var(--gutter) 5px;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(13, 14, 16, 0.55), transparent);
+}
+.map-credits__logo {
+  flex: none;
+  height: 18px;
+  width: auto;
+}
+.map-credits__text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.64rem;
+  line-height: 18px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}

@@ -1,158 +1,63 @@
+/*
+ * Home page entry. The markup is static HTML assembled at build time from the section
+ * partials (see vite-plugins/html-partials.js); this file adds behaviour.
+ */
+
+// Global styles first, then shared components; sections bring their own CSS below.
 import './styles/tokens.css';
 import './styles/base.css';
-import './styles/layout.css';
-import './styles/components.css';
-import './styles/explorer.css';
+import './styles/utilities.css';
+import './components/button/button.css';
+import './components/card/card.css';
+import './components/tag/tag.css';
+import './components/chapter/chapter.css';
 
-import Lenis from 'lenis';
 import gsap from 'gsap';
 
-import { company, cameras, office, projects, moreProjects } from './data/site.js';
-import { renderContent } from './modules/content.js';
-import { CityStory } from './modules/city/CityStory.js';
-import { initChapters } from './modules/chapters.js';
-import { Explorer } from './modules/explorer/Explorer.js';
-import { initLoader, initHeader, toast } from './modules/ui.js';
-import { hasGLB, loadGLB } from './modules/explorer/glb.js';
+import * as header from './sections/header/header.js';
+import * as hero from './sections/hero/hero.js';
+import * as about from './sections/about/about.js';
+import * as projectsSection from './sections/projects/projects.js';
+import * as services from './sections/services/services.js';
+import * as contact from './sections/contact/contact.js';
+import * as footer from './sections/footer/footer.js';
 
-renderContent({ company, projects, moreProjects });
+import { cameras, office } from './data/cameras.js';
+import { projects } from './data/projects/index.js';
+import { createLoader } from './components/loader/loader.js';
+import { createSmoothScroll } from './app/smooth-scroll.js';
+import { startStage } from './app/stage.js';
+import { initChapters } from './app/chapters.js';
+import { initReveal } from './app/reveal.js';
+import { createExplorerLauncher } from './app/explorer.js';
 
 // Time-accurate tweens: keeps camera moves in sync even when a frame is slow.
 gsap.ticker.lagSmoothing(0);
 
-/* Smooth scroll */
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const lenis = new Lenis({ lerp: reduceMotion ? 1 : 0.085, smoothWheel: !reduceMotion });
-const raf = (t) => {
-  lenis.raf(t);
-  requestAnimationFrame(raf);
-};
-requestAnimationFrame(raf);
-const scrollTo = (target) => lenis.scrollTo(target, { offset: 0, duration: 1.6 });
+const loader = createLoader();
+const scroll = createSmoothScroll();
 
-document.querySelectorAll('a[href^="#"]').forEach((a) =>
-  a.addEventListener('click', (e) => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (!target) return;
-    e.preventDefault();
-    scrollTo(target);
-  }),
-);
-
-/* 3D building explorer */
-const explorer = new Explorer(document.querySelector('[data-explorer]'), {
+const explorer = createExplorerLauncher(document.querySelector('[data-explorer]'), {
   onOpen: () => {
-    lenis.stop();
-    stage.impl?.pause?.();
+    scroll.stop();
+    stage.pause();
   },
   onClose: () => {
-    lenis.start();
-    stage.impl?.resume?.();
+    scroll.start();
+    stage.resume();
   },
 });
-const openProject = (p) => explorer.open(p);
-if (import.meta.env.DEV) window.__explorer = explorer; // debugging handle (dev only)
 
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-explore]');
-  if (btn) openProject(projects.find((p) => p.slug === btn.dataset.explore));
-  const soon = e.target.closest('[data-soon]');
-  if (soon) {
-    e.preventDefault();
-    toast('Individual project pages are the next build phase.');
-  }
-});
-
-/* Map + scroll story. Default: CityStory, the generated daytime Melbourne (offline,
- * no keys). Optional modes (VITE_MAP_MODE) try their stage first and fall back:
- *   'photoreal' — Google Photorealistic 3D Tiles → MapLibre → CityStory
- *   'map'       — MapLibre + OpenFreeMap tiles → CityStory */
-const loader = initLoader();
-const stageEl = document.getElementById('map');
-const stage = {
-  impl: null,
-  current: 'hero',
-  go(chapter) {
-    this.current = chapter;
-    this.impl?.go(chapter);
-  },
-};
-const storyOptions = {
+const stage = startStage(document.getElementById('map'), {
   cameras,
   office,
   projects,
-  onPinClick: openProject,
-  onReady: () => loader.done(),
-  onProgress: (p) => loader.progress(p),
-};
-
-const startCity = () => {
-  stageEl.innerHTML = '';
-  document.body.classList.remove('no-map');
-  try {
-    stage.impl = new CityStory(stageEl, storyOptions);
-    stage.impl.go(stage.current);
-  } catch (err) {
-    console.warn('[city] unavailable:', err);
-    document.body.classList.add('no-map');
-    loader.done();
-  }
-};
-
-const chain = [];
-const mode = import.meta.env.VITE_MAP_MODE;
-if (mode === 'photoreal' && import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-  chain.push(['photoreal', () => import('./modules/photoreal/PhotorealStory.js').then((m) => m.PhotorealStory)]);
-}
-if (mode === 'map' || mode === 'photoreal') {
-  chain.push(['map', () => import('./modules/map-story.js').then((m) => m.MapStory)]);
-}
-
-// Path A models: preload any public/models/<slug>.glb so the explorer and city can use them
-projects.forEach((p) => hasGLB(p.slug) && loadGLB(p.slug, p.model));
-
-const startNext = () => {
-  const step = chain.shift();
-  if (!step) return startCity();
-  const [name, load] = step;
-  load()
-    .then((Story) => {
-      let impl = null;
-      let failed = false;
-      impl = new Story(stageEl, {
-        ...storyOptions,
-        onFail: (reason) => {
-          if (failed) return;
-          failed = true;
-          console.warn(`[${name}] unavailable (${reason}), falling back`);
-          // deferred: a story may fail from inside its own constructor
-          queueMicrotask(() => {
-            impl?.destroy?.();
-            if (stage.impl === impl) stage.impl = null;
-            stageEl.innerHTML = '';
-            startNext();
-          });
-        },
-      });
-      if (!failed) {
-        stage.impl = impl;
-        impl.go(stage.current);
-      }
-    })
-    .catch((err) => {
-      console.warn(`[${name}] failed to load:`, err);
-      startNext();
-    });
-};
-startNext();
-
-initChapters({
-  scrollTo,
-  onChange: (chapter) => stage.go(chapter),
+  loader,
+  onPinClick: (project) => explorer.open(project),
 });
-initHeader();
 
-/* Hero intro */
-loader.finished.then(() => {
-  gsap.fromTo('.hero [data-reveal]', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.3, ease: 'power3.out', stagger: 0.12 });
-});
+const context = { projects, explorer, ready: loader.finished };
+[header, hero, about, projectsSection, services, contact, footer].forEach((section) => section.init(context));
+
+initChapters({ scrollTo: scroll.scrollTo, onChange: (chapter) => stage.go(chapter) });
+initReveal();

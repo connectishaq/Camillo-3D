@@ -1,0 +1,48 @@
+<!doctype html>
+<!--
+  Project page template: rendered once per file in src/data/projects/ as
+  /projects/<slug>.html (see vite-plugins/html-pages.js). `project` is that project.
+-->
+<html lang="en-AU">
+  <head>
+    <!-- @include layouts/head.html -->
+  </head>
+  <body class="page page--project" data-project="{{ project.slug }}">
+    <!-- @include sections/header/header.html -->
+
+    <main class="page__main" id="main" tabindex="-1">
+      <article class="project-page">
+        <header class="project-page__hero">
+          <a class="link-back" href="/#project-{{ project.slug }}">← All projects</a>
+          <p class="eyebrow">{{ project.eyebrow }} · {{ project.number }} / {{ project.total }}</p>
+          <h1 class="project-page__title">{{ project.name }}</h1>
+          <!-- @include components/tag/tags.html -->
+          <p class="page__lede">{{ project.summary }}</p>
+        </header>
+
+        <dl class="facts project-page__facts">
+          <!-- @each project.factList as fact -->
+          <div>
+            <dt>{{ fact.label }}</dt>
+            <dd>{{ fact.value }}</dd>
+          </div>
+          <!-- @end -->
+          <div>
+            <dt>Materials</dt>
+            <dd>{{ project.materials }}</dd>
+          </div>
+        </dl>
+
+        <section class="project-page__model" aria-labelledby="model-heading">
+          <h2 class="project-page__heading" id="model-heading">Explore the building in 3D</h2>
+          <p class="project-page__hint">Drag to orbit, scroll or pinch to zoom. Pick a level to open the floor and step inside.</p>
+          <!-- @include features/explorer/explorer-inline.html -->
+          <noscript><p class="project-page__hint">The 3D model needs JavaScript.</p></noscript>
+        </section>
+      </article>
+    </main>
+
+    <!-- @include sections/footer/footer.html -->
+    <script type="module" src="/src/pages/project/project.js"></script>
+  </body>
+</html>

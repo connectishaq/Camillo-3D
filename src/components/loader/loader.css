@@ -1,0 +1,44 @@
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 22px;
+  /* warm dusk tone instead of solid black, so the reveal into the bright city is gentle */
+  background:
+    radial-gradient(120% 90% at 50% 110%, rgba(201, 165, 107, 0.22), transparent 60%), linear-gradient(180deg, #23262b 0%, #1a1c20 100%);
+  transition:
+    opacity 0.9s var(--ease),
+    visibility 0.9s;
+}
+.loader.is-done {
+  opacity: 0;
+  visibility: hidden;
+}
+.loader__mark {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  letter-spacing: 0.4em;
+  padding-left: 0.4em;
+}
+.loader__bar {
+  width: 180px;
+  height: 1px;
+  background: var(--line);
+  overflow: hidden;
+}
+.loader__bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--brass);
+  transition: width 0.4s var(--ease);
+}
+.loader__hint {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}

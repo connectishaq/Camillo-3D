@@ -72,13 +72,11 @@ ol {
   border-radius: 4px;
 }
 
-.eyebrow {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: 1.1rem;
+/* Shared animation: brass halo (locator dot, active map pin) */
+@keyframes pulse {
+  to {
+    box-shadow: 0 0 0 10px rgba(201, 165, 107, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

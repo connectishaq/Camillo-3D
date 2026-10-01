@@ -1,0 +1,23 @@
+<!-- 02 About / Office -->
+<section class="chapter chapter--right" id="about" data-chapter="office" data-nav="about" data-side="right" data-label="Port Melbourne HQ">
+  <article class="card card--about" data-reveal>
+    <p class="eyebrow">About us · Port Melbourne</p>
+    <h2 class="card__title">A big builder’s strength.<br />A small team’s care.</h2>
+    <div class="card__body">
+      <!-- @each company.about as paragraph -->
+      <p>{{ paragraph }}</p>
+      <!-- @end -->
+    </div>
+    <blockquote class="card__quote">“{{ company.promise }}”</blockquote>
+    <dl class="card__meta">
+      <div>
+        <dt>Head office</dt>
+        <dd>{{ company.contact.address }}</dd>
+      </div>
+      <div>
+        <dt>Call</dt>
+        <dd><a href="{{ company.contact.phoneHref }}">{{ company.contact.phone }}</a></dd>
+      </div>
+    </dl>
+  </article>
+</section>

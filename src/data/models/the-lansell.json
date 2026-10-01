@@ -27,7 +27,15 @@
   "roof": { "type": "flat-parapet", "parapet": 0.6, "plant": false, "garden": true },
   "features": [
     { "type": "vColumns", "side": "front", "count": 2, "color": "#c9bda7", "note": "angled V-columns under the box" },
-    { "type": "wall", "side": "front", "length": 22, "height": 1.8, "offset": -24, "color": "#cbbfa9", "note": "sandstone street wall with 'The Lansell' signage" }
+    {
+      "type": "wall",
+      "side": "front",
+      "length": 22,
+      "height": 1.8,
+      "offset": -24,
+      "color": "#cbbfa9",
+      "note": "sandstone street wall with 'The Lansell' signage"
+    }
   ],
   "assumptions": [
     "Three levels read from the render (undercroft + 2 glazed levels); site.js had 4 — the building steps back to the rear, which is not visible.",

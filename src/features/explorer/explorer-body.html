@@ -1,0 +1,32 @@
+<!-- Shared by the modal (explorer.html) and inline (explorer-inline.html) explorer -->
+<div class="explorer__canvas" data-explorer-canvas></div>
+
+<aside class="explorer__panel">
+  <!-- @if !explorer.inline -->
+  <button class="explorer__close" type="button" data-explorer-close aria-label="Close 3D explorer">×</button>
+  <!-- @end -->
+  <p class="eyebrow" data-ex-suburb></p>
+  <h2 class="explorer__title" id="explorer-title" data-ex-name></h2>
+  <p class="explorer__status" data-ex-status></p>
+
+  <div class="explorer__view" data-ex-view="building">
+    <p class="explorer__hint">Hover a level to highlight it. Click to open the floor.</p>
+    <ol class="floors" data-ex-floors aria-label="Levels"></ol>
+  </div>
+
+  <div class="explorer__view" data-ex-view="floor" hidden>
+    <button class="link-back" type="button" data-ex-back>← All levels</button>
+    <h3 class="floor-title" data-ex-floor-title></h3>
+    <p class="floor-sub" data-ex-floor-sub></p>
+    <ul class="rooms" data-ex-rooms></ul>
+    <button class="btn btn--solid btn--block" type="button" data-ex-inside>Step inside</button>
+  </div>
+
+  <p class="explorer__note" data-ex-note></p>
+</aside>
+
+<div class="explorer__toolbar">
+  <button class="chip" type="button" data-ex-explode aria-pressed="false">Explode floors</button>
+  <button class="chip" type="button" data-ex-reset>Reset view</button>
+</div>
+<div class="explorer__tooltip" data-ex-tooltip hidden></div>

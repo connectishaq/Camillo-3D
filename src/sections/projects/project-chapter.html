@@ -1,0 +1,32 @@
+<section
+  class="chapter chapter--{{ project.side }}"
+  id="project-{{ project.slug }}"
+  data-chapter="project:{{ project.slug }}"
+  data-nav="projects"
+  data-side="{{ project.side }}"
+  data-label="{{ project.name }}"
+>
+  <article class="card project-card" data-reveal>
+    <div class="project-card__head">
+      <p class="eyebrow">{{ project.eyebrow }}</p>
+      <span class="project-card__index">{{ project.number }} / {{ project.total }}</span>
+    </div>
+    <h2 class="project-card__title">{{ project.name }}</h2>
+    <!-- @include components/tag/tags.html -->
+    <p class="card__body-text">{{ project.summary }}</p>
+    <dl class="facts">
+      <!-- @each project.factList as fact -->
+      <div>
+        <dt>{{ fact.label }}</dt>
+        <dd>{{ fact.value }}</dd>
+      </div>
+      <!-- @end -->
+    </dl>
+    <div class="project-card__actions">
+      <button class="btn btn--solid" type="button" data-explore="{{ project.slug }}">Explore in 3D</button>
+      <!-- @if site.multiPage -->
+      <a class="btn btn--ghost" href="{{ project.url }}">Full project<span class="visually-hidden">: {{ project.name }}</span></a>
+      <!-- @end -->
+    </div>
+  </article>
+</section>

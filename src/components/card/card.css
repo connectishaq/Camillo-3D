@@ -1,0 +1,50 @@
+/* Glass card that floats over the city */
+.card {
+  width: var(--card-w);
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--glass);
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: var(--shadow);
+}
+.card__title {
+  font-size: var(--fs-h3);
+  margin-bottom: 18px;
+}
+.card__body p,
+.card__body-text {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+.card__body p + p {
+  margin-top: 12px;
+}
+
+/* Key/value facts list (project cards and project pages) */
+.facts {
+  margin: 22px 0 26px;
+  display: grid;
+  gap: 0;
+}
+.facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.86rem;
+}
+.facts dt {
+  color: var(--text-faint);
+}
+.facts dd {
+  margin: 0;
+  text-align: right;
+}
+
+@media (max-width: 860px) {
+  .card {
+    width: 100%;
+  }
+}
