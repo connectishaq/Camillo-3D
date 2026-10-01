@@ -26,7 +26,8 @@ export default defineConfig(({ mode }) => {
       html.replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${fs.readFileSync('public/favicon.svg').toString('base64')}"`),
   };
   return {
-    base: './',
+    // Netlify serves the site from the domain root; the single-file builds open from disk
+    base: single ? './' : '/',
     plugins: single ? [viteSingleFile(), inlineFavicon] : [],
     define: {
       'import.meta.env.VITE_MAP_MODE': JSON.stringify(mapMode),
