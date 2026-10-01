@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { palette, shade, rgb as toRGB } from './palette.js';
 
 /*
  * Procedural textures, generated on a canvas at runtime: no image downloads, so the
@@ -364,8 +363,6 @@ export function groundTexture(kind) {
     const c = canvas(S);
     const g = c.getContext('2d');
     const img = g.createImageData(S, S);
-    const p = palette();
-    const base = Object.fromEntries(['park', 'ground', 'sand', 'track', 'footpath', 'road'].map((k) => [k, toRGB(p[k])]));
     const put = (i, [r, gg, b]) => {
       img.data[i * 4] = r;
       img.data[i * 4 + 1] = gg;
@@ -375,38 +372,36 @@ export function groundTexture(kind) {
     for (let y = 0; y < S; y++) {
       for (let x = 0; x < S; x++) {
         const i = y * S + x;
-        // gentle mottling around the token colour (k ≈ 0.94–1.06), softer than a photo
-        const k = 0.94 + n[i] * 0.12 + (f[i] - 0.5) * 0.05;
-        const tint = (c) => c.map((v) => v * k);
+        const k = 0.85 + n[i] * 0.3 + (f[i] - 0.5) * 0.12;
         let rgb;
         switch (kind) {
           case 'lawn':
-            rgb = tint(base.park);
-            if (Math.floor(y / 32) % 2) rgb = rgb.map((v) => v * 1.04); // mowing stripes
+            rgb = [122 * k, 156 * k * (0.95 + n[i] * 0.1), 74 * k];
+            if (Math.floor(y / 32) % 2) rgb = rgb.map((v) => v * 1.06); // mowing stripes
             break;
           case 'land':
-            // light warm-grey land with a faint hint of gardens
-            rgb = tint(base.ground).map((v, c) => v + (c === 1 ? n[i] * 6 : -n[i] * 3));
+            // gardens + nature strips seen from the air: mottled green/ochre
+            rgb = [132 * k + n[i] * 30, 142 * k, 96 * k - n[i] * 10];
             break;
           case 'sand':
-            rgb = tint(base.sand);
+            rgb = [222 * k, 205 * k, 168 * k];
             break;
           case 'track':
-            rgb = tint(base.track);
+            rgb = [150 * k, 112 * k, 78 * k];
             break;
           case 'footpath':
-            rgb = tint(base.footpath);
-            if (x % 64 < 2 || y % 64 < 2) rgb = rgb.map((v) => v * 0.9);
+            rgb = [182 * k, 178 * k, 170 * k];
+            if (x % 64 < 2 || y % 64 < 2) rgb = rgb.map((v) => v * 0.82);
             break;
           case 'roof':
-            // corrugated / tiled roof relief, tinted by instance colour (neutral grey on purpose)
-            rgb = Array(3).fill(220 * (0.85 + 0.15 * Math.sin((x / S) * Math.PI * 2 * 24)) * (0.92 + f[i] * 0.16));
+            // corrugated / tiled roof relief, tinted by instance colour
+            rgb = Array(3).fill(200 * (0.8 + 0.2 * Math.sin((x / S) * Math.PI * 2 * 24)) * (0.9 + f[i] * 0.2));
             break;
           case 'gravel':
-            rgb = tint(base.footpath).map((v) => v * 0.92);
+            rgb = Array(3).fill(150 * k);
             break;
-          default: // asphalt, light as it reads from the air
-            rgb = tint(base.road);
+          default: // asphalt (sun-bleached, as it reads from the air)
+            rgb = [108 * k, 109 * k, 112 * k];
         }
         put(
           i,
@@ -432,17 +427,15 @@ export function roadTexture(major) {
     const g = c.getContext('2d');
     g.drawImage(base, 0, 0, W, H);
     // gutters
-    const pal = palette();
-    const rgba = (hex, a) => `rgba(${toRGB(hex).join(',')},${a})`;
-    g.fillStyle = rgba(shade(pal.roof, -0.35), 0.4); // gutters
+    g.fillStyle = 'rgba(60,60,64,0.35)';
     g.fillRect(0, 0, W, 5);
     g.fillRect(0, H - 5, W, 5);
-    g.fillStyle = rgba(pal.building, 0.85); // lane paint
+    g.fillStyle = 'rgba(235,235,225,0.85)';
     if (major) {
       g.fillRect(0, 10, W, 2);
       g.fillRect(0, H - 12, W, 2);
       for (let x = 0; x < W; x += 64) g.fillRect(x, H / 2 - 1.5, 36, 3); // centre dashes
-      g.fillStyle = rgba(pal.building, 0.5);
+      g.fillStyle = 'rgba(235,235,225,0.5)';
       for (let x = 32; x < W; x += 64) {
         g.fillRect(x, H / 4, 22, 2);
         g.fillRect(x, (3 * H) / 4, 22, 2);

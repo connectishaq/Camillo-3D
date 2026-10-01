@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { waterNormals } from '../../../gfx/proctex.js';
 import { createWorldUVMaterial } from '../../../gfx/facade.js';
-import { palette, shade } from '../../../gfx/palette.js';
 import { PIERS, toXZ, pointInPolygon } from '../geo.js';
 import { bay, rivers, lakes, coastLine } from './land.js';
 import { Instances, GEO } from './instances.js';
@@ -14,12 +13,12 @@ import { Instances, GEO } from './instances.js';
 export function createWaterMaterial() {
   const normals = waterNormals();
   const mat = new THREE.MeshStandardMaterial({
-    color: palette().water, // --map-water
-    roughness: 0.12,
+    color: '#1d4d61',
+    roughness: 0.08,
     metalness: 0.05,
     normalMap: normals,
     normalScale: new THREE.Vector2(0.55, 0.55),
-    envMapIntensity: 0.7,
+    envMapIntensity: 1.25,
     polygonOffset: true,
     polygonOffsetFactor: -2,
     polygonOffsetUnits: -2,
@@ -138,7 +137,7 @@ export function buildWater() {
   group.add(flat(ribbon(beach, 55, landSide * 22), sand, 0.06, 'beach'));
 
   // piers: deck + pylons (+ sheds on Station Pier)
-  const deck = new THREE.MeshStandardMaterial({ color: palette().footpath, roughness: 0.9 });
+  const deck = new THREE.MeshStandardMaterial({ color: '#b8ab95', roughness: 0.9 });
   const pylons = new Instances();
   const sheds = new Instances();
   PIERS.forEach((p) => {
@@ -156,15 +155,13 @@ export function buildWater() {
       const z = az + ((bz - az) * t) / len;
       const nx2 = Math.sin(rot);
       const nz2 = Math.cos(rot);
-      [-0.4, 0.4].forEach((o) =>
-        pylons.push(x + nx2 * o * p.width, -1, z + nz2 * o * p.width, 0.6, 3.2, 0.6, rot, shade(palette().roof, -0.25)),
-      );
+      [-0.4, 0.4].forEach((o) => pylons.push(x + nx2 * o * p.width, -1, z + nz2 * o * p.width, 0.6, 3.2, 0.6, rot, '#6f655a'));
     }
-    if (p.sheds) sheds.push(ax * 0.4 + bx * 0.6, 2.5, az * 0.4 + bz * 0.6, len * 0.55, 7, p.width * 0.45, rot, palette().building);
+    if (p.sheds) sheds.push(ax * 0.4 + bx * 0.6, 2.5, az * 0.4 + bz * 0.6, len * 0.55, 7, p.width * 0.45, rot, '#e8e2d6');
   });
   const py = pylons.build(GEO.box, deck, { shadows: false });
   if (py) group.add(py);
-  const sh = sheds.build(GEO.box, new THREE.MeshStandardMaterial({ roughness: 0.7 }));
+  const sh = sheds.build(GEO.box, new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.7 }));
   if (sh) group.add(sh);
 
   return { group, material: mat };

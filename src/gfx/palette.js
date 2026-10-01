@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
 /*
- * Colours for the WebGL scenes, read from the design tokens in styles/tokens.css
- * (`--brand`, `--bg`, `--map-*`), so the city, the explorer and the page share one source.
+ * Colours for the WebGL scenes that follow the brand, read from the design tokens in
+ * styles/tokens.css (`--brand`, `--bg`, `--map-*`): the explorer scene, map mode and site highlights.
  * Read lazily, once the stylesheet has applied (the 3D modules load after the page).
  */
 const TOKENS = {
@@ -10,18 +10,7 @@ const TOKENS = {
   bg: '--bg',
   sky: '--map-sky',
   ground: '--map-ground',
-  footpath: '--map-footpath',
-  road: '--map-road',
-  park: '--map-park',
-  sand: '--map-sand',
-  track: '--map-track',
-  water: '--map-water',
   building: '--map-building',
-  buildingWarm: '--map-building-warm',
-  roof: '--map-roof',
-  glass: '--map-glass',
-  tree: '--map-tree',
-  trunk: '--map-trunk',
   sun: '--map-sun',
   skyLight: '--map-sky-light',
   groundLight: '--map-ground-light',
@@ -63,22 +52,3 @@ export function variants(hex, offsets) {
 
 /** One token colour shifted in lightness (and saturation). */
 export const shade = (hex, l, s = 0) => variants(hex, [[l, s]])[0];
-
-/** Mix two token colours in sRGB (t = 0 → a, 1 → b). */
-export function mix(a, b, t) {
-  const [x, y] = [rgb(a), rgb(b)];
-  return `#${x
-    .map((v, i) =>
-      Math.round(v + (y[i] - v) * t)
-        .toString(16)
-        .padStart(2, '0'),
-    )
-    .join('')}`;
-}
-
-/** sRGB 0–255 components of a token colour (for canvas textures). */
-export function rgb(hex) {
-  const t = {};
-  new THREE.Color(hex).getRGB(t, THREE.SRGBColorSpace);
-  return [t.r, t.g, t.b].map((v) => Math.round(v * 255));
-}

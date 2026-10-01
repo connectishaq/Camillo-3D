@@ -14,7 +14,6 @@ import { chapterCamera, zoomToDistance, sideOffset } from '../camera.js';
 import { createPin } from '../../../components/pin/pin.js';
 import { isMobile, supportsWebGL } from '../../../utils/dom.js';
 import { lerp } from '../../../utils/math.js';
-import { horizonColor } from '../../../gfx/sky.js';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const ORIGIN = [144.9631, -37.8136]; // Melbourne CBD: origin of the local ENU frame
@@ -104,7 +103,7 @@ export class PhotorealStory {
     this.container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const haze = horizonColor(); // --map-sky: the page background
+    const haze = new THREE.Color('#c3cfd9'); // daylight haze over the photoreal tiles
     scene.background = haze;
     scene.fog = new THREE.Fog(haze, 6000, 40000);
 

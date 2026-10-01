@@ -13,7 +13,7 @@ import { buildInterior, disposeInterior } from './interior.js';
 import { createInteriorMaterials, createContextMaterials } from './materials.js';
 import { metricPlaneUV } from './textures.js';
 import { buildGLBBuilding, loadedGLB } from './glb.js';
-import { createSky, skyEnvironment, horizonColor, sunDirection } from '../../gfx/sky.js';
+import { createSky, skyEnvironment, sunDirection } from '../../gfx/sky.js';
 import { palette } from '../../gfx/palette.js';
 import { BREAKPOINT } from '../../config.js';
 import { isMobile } from '../../utils/dom.js';
@@ -83,14 +83,14 @@ export class Explorer {
     // light studio look: the page background behind the model, the procedural sky for reflections only
     const scene = new THREE.Scene();
     const p = palette();
-    scene.background = horizonColor();
+    scene.background = new THREE.Color(p.sky); // --map-sky = the page background
     const sky = createSky(EX_SUN);
     sky.material.uniforms.showSunDisc.value = 0;
     sky.visible = false;
     scene.add(sky);
     scene.environment = skyEnvironment(renderer, sky);
     scene.environmentIntensity = 0.18;
-    scene.fog = new THREE.Fog(horizonColor(), 260, 700);
+    scene.fog = new THREE.Fog(p.sky, 260, 700);
     this.sky = sky;
 
     const camera = new THREE.PerspectiveCamera(38, 1, 0.05, 1200);

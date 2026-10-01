@@ -64,21 +64,12 @@
   --header-h: 135px;
   --card-w: min(460px, calc(100vw - 2 * var(--gutter)));
 
-  /* 3D map scene (read by gfx/palette.js): a light daytime city that blends into --bg */
+  /* 3D scene colours read by gfx/palette.js: the Building Explorer's light studio scene, the
+     map-mode basemap and the burgundy site highlights. The generated city keeps its own
+     realistic material colours (brick, terracotta, render, gardens, water). */
   --map-sky: var(--bg); /* background + fog, so the canvas edges meet the page */
   --map-ground: #cfcac0; /* light warm grey land */
-  --map-footpath: #c6c2b9;
-  --map-road: #aeaba5;
-  --map-park: #a7b394; /* muted green */
-  --map-sand: #e3dccd;
-  --map-track: #bfa58c;
-  --map-water: #9cb0bb; /* soft blue-grey */
   --map-building: #eeece7; /* light concrete */
-  --map-building-warm: #d8c3b4; /* muted brick / render accents */
-  --map-roof: #c4c2bd;
-  --map-glass: #8d9ca6;
-  --map-tree: #7f9168;
-  --map-trunk: #8a7d6f;
   --map-sun: #fff7ec;
   --map-sky-light: #f2f0eb;
   --map-ground-light: #c4bcad;

@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { rng } from '../../../gfx/proctex.js';
-import { palette, shade, variants } from '../../../gfx/palette.js';
 import { Instances, GEO } from './instances.js';
 import { newSet, buildSet, outerBlock, innerBlock } from './buildings.js';
 import { landAt, LAND } from './land.js';
@@ -12,13 +11,7 @@ import { landAt, LAND } from './land.js';
  * (so the coarse city has no holes); the small extras only when the camera is near.
  */
 export const DETAIL_RADIUS = 520;
-const P = palette();
-// parked cars: mostly light and grey, the odd dark one (shades of the building/roof/glass tokens)
-const CAR_COLORS = [
-  ...variants(P.building, [0.04, -0.02, -0.12]),
-  ...variants(P.roof, [-0.15, -0.35, 0.05]),
-  ...variants(P.glass, [-0.2, 0]),
-];
+const CAR_COLORS = ['#e9e9e7', '#2b2d30', '#8d9196', '#b8bcc0', '#5a1f1f', '#23344f', '#dcdcd6', '#4b5a3c'];
 
 export class Neighbourhoods {
   constructor(layout, mats, trees, sites, { clear = [], extrasRadius = 3200 } = {}) {
@@ -28,9 +21,9 @@ export class Neighbourhoods {
     this.extrasRadius = extrasRadius;
     const inClear = (x, z) => clear.some(([cx, cz, r]) => (x - cx) ** 2 + (z - cz) ** 2 < r * r);
     const carMat = new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.55 });
-    const glassMat = new THREE.MeshStandardMaterial({ color: shade(P.glass, -0.38), roughness: 0.1, metalness: 0.8 });
-    const poleMat = new THREE.MeshStandardMaterial({ color: shade(P.roof, -0.38), roughness: 0.5, metalness: 0.6 });
-    const lampMat = new THREE.MeshStandardMaterial({ color: P.building, emissive: P.windowLit, emissiveIntensity: 0.3 });
+    const glassMat = new THREE.MeshStandardMaterial({ color: '#1f272d', roughness: 0.1, metalness: 0.8 });
+    const poleMat = new THREE.MeshStandardMaterial({ color: '#50555a', roughness: 0.5, metalness: 0.6 });
+    const lampMat = new THREE.MeshStandardMaterial({ color: '#f2efe6', emissive: '#fff2cf', emissiveIntensity: 0.4 });
 
     sites.forEach(([sx, sz], si) => {
       const R = DETAIL_RADIUS;

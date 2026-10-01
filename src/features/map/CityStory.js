@@ -9,7 +9,6 @@ import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { createSky, createLights, skyEnvironment, sunDirection, horizonColor } from '../../gfx/sky.js';
-import { palette } from '../../gfx/palette.js';
 import { createWorldUVMaterial } from '../../gfx/facade.js';
 import { groundTexture } from '../../gfx/proctex.js';
 import { buildMask, parks, racecourses } from './city/land.js';
@@ -76,10 +75,8 @@ export class CityStory {
     const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.mobile ? 1.25 : 1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    // Neutral tone mapping keeps light colours (the page background used for sky and fog)
-    // almost unchanged, so the canvas edge matches the page; ACES would darken them.
-    renderer.toneMapping = THREE.NeutralToneMapping;
-    renderer.toneMappingExposure = 1;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.82;
     renderer.shadowMap.enabled = !this.mobile;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.debug.checkShaderErrors = import.meta.env.DEV; // faster compiles; no driver-warning noise in production
@@ -91,10 +88,8 @@ export class CityStory {
     scene.background = horizon;
     scene.fog = new THREE.Fog(horizon, 4000, 26000);
 
-    // the Sky shader only feeds reflections; the visible sky is the flat page colour
     const sky = createSky();
-    sky.material.uniforms.showSunDisc.value = 0;
-    sky.visible = false;
+    sky.material.uniforms.showSunDisc.value = 0; // keep the glow, avoid a bloom flare during the hero orbit
     scene.add(sky);
     scene.environment = skyEnvironment(renderer, sky);
     scene.environmentIntensity = 0.16;
@@ -223,7 +218,7 @@ export class CityStory {
     });
     // racecourses: infield lawn + a dirt/turf track ring with a white rail
     const track = new THREE.MeshStandardMaterial({ map: groundTexture('track'), roughness: 1, ...off(-2) });
-    const rail = new THREE.MeshStandardMaterial({ color: palette().building, roughness: 0.6, ...off(-3) });
+    const rail = new THREE.MeshStandardMaterial({ color: '#f3f1ea', roughness: 0.6, ...off(-3) });
     racecourses.forEach((e) => {
       const infield = new THREE.Mesh(ellipseGeo(e), lawn);
       infield.rotation.x = -Math.PI / 2;

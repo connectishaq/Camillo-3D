@@ -1,17 +1,16 @@
 import * as THREE from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
-import { palette } from './palette.js';
 
 /**
- * Daytime Melbourne light: a Three.js `Sky` shader (used for reflections), a matching sun,
- * hemisphere fill, and a horizon/fog colour equal to the page background (`--map-sky`), so
- * the canvas edges blend into the page. Colours come from the design tokens.
+ * Warm late-afternoon Melbourne sky (Three.js `Sky` shader) with a matching sun,
+ * hemisphere fill, horizon-tinted fog colour and a PMREM environment for reflections.
  * Axes: x = east, y = up, z = south. The sun sits in the north-west (southern hemisphere).
  */
-export const SUN = { elevation: 34, azimuth: 305 }; // degrees; azimuth clockwise from north
+export const SUN = { elevation: 24, azimuth: 305 }; // degrees; azimuth clockwise from north
+export const HORIZON = new THREE.Color('#e3d3bf');
 
-/** Horizon / fog / background colour (`--map-sky`). */
-export const horizonColor = () => new THREE.Color(palette().sky);
+/** Horizon / fog colour (a fresh copy). */
+export const horizonColor = () => HORIZON.clone();
 
 export function sunDirection({ elevation, azimuth } = SUN) {
   const el = THREE.MathUtils.degToRad(elevation);
@@ -38,10 +37,9 @@ export function createSky(options = SUN) {
 export function createLights(options = SUN) {
   // The sky PMREM carries raw HDR radiance, so scenes use a low environmentIntensity
   // (~0.16) and let the sun dominate; otherwise shadows are washed out.
-  const p = palette();
-  const sun = new THREE.DirectionalLight(p.sun, 2.9);
+  const sun = new THREE.DirectionalLight('#ffe2b8', 6.0);
   sun.position.copy(sunDirection(options)).multiplyScalar(1000);
-  const hemi = new THREE.HemisphereLight(p.skyLight, p.groundLight, 0.75);
+  const hemi = new THREE.HemisphereLight('#dfe5ea', '#8f8068', 0.75);
   return { sun, hemi };
 }
 

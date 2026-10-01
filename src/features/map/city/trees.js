@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { rng } from '../../../gfx/proctex.js';
-import { palette, shade, mix } from '../../../gfx/palette.js';
 import { Instances } from './instances.js';
 import { EXTENT, landAt, PARK, LAND, arterials } from './land.js';
 
@@ -10,9 +9,7 @@ import { EXTENT, landAt, PARK, LAND, arterials } from './land.js';
  * plane tree (short trunk, round fresh-green canopy). Parks are planted densely and
  * St Kilda Rd gets its boulevard rows; street trees are added per superblock when the
  * camera comes close (same LOD rule as the houses).
- * Colours: shades of the --map-tree and --map-trunk tokens.
  */
-const P = palette();
 const coloured = (geo, hex) => {
   const g = geo.index ? geo.toNonIndexed() : geo;
   const c = new THREE.Color(hex);
@@ -33,7 +30,7 @@ const coloured = (geo, hex) => {
 function eucalypt() {
   const trunk = new THREE.CylinderGeometry(0.16, 0.32, 7, 5, 1);
   trunk.translate(0, 3.5, 0);
-  const parts = [coloured(trunk, shade(P.trunk, 0.06))];
+  const parts = [coloured(trunk, '#9a8a78')];
   [
     [0, 8.2, 0, 2.6],
     [1.5, 7.2, 0.6, 1.9],
@@ -43,7 +40,7 @@ function eucalypt() {
     const c = new THREE.IcosahedronGeometry(r, 0);
     c.scale(1, 0.75, 1);
     c.translate(x, y, z);
-    parts.push(coloured(c, shade(P.tree, 0.02, -0.08)));
+    parts.push(coloured(c, '#6c7a4c'));
   });
   return mergeGeometries(parts);
 }
@@ -54,7 +51,7 @@ function planeTree() {
   const crown = new THREE.IcosahedronGeometry(3.4, 1);
   crown.scale(1, 0.85, 1);
   crown.translate(0, 6.2, 0);
-  return mergeGeometries([coloured(trunk, shade(P.trunk, -0.06)), coloured(crown, shade(P.tree, 0, 0.06))]);
+  return mergeGeometries([coloured(trunk, '#6b5a47'), coloured(crown, '#5d8a3c')]);
 }
 
 export function createTreeAssets() {
@@ -65,10 +62,8 @@ export function createTreeAssets() {
   };
 }
 
-// per-tree tints (multiplied with the vertex colours): white, nudged towards the tree tone
-const tints = (ts) => ts.map((t) => mix('#ffffff', P.tree, t));
-const TINT_EUC = tints([0, 0.12, 0.06, 0.18]);
-const TINT_PLANE = tints([0, 0.14, 0.05, 0.2]);
+const TINT_EUC = ['#ffffff', '#e6efd9', '#f3eedb', '#d9e3c8'];
+const TINT_PLANE = ['#ffffff', '#e2f0d0', '#f4f7df', '#cfe3bd'];
 
 function pushTree(sets, r, x, z, kindBias = 0.5, scale = 1) {
   const euc = r() < kindBias;

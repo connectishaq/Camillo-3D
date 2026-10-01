@@ -82,7 +82,7 @@ Every page is **static HTML written at build time**, which is good for search en
 
 ## Brand
 
-The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au), with values read from its stylesheet (`wp-content/themes/camillo/assets/app.min.css`) and computed styles in October 2026. All of them live in [`src/styles/tokens.css`](src/styles/tokens.css); nothing else in the CSS or JS hard-codes a colour.
+The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au), with values read from its stylesheet (`wp-content/themes/camillo/assets/app.min.css`) and computed styles in October 2026. All of them live in [`src/styles/tokens.css`](src/styles/tokens.css); nothing else in the CSS hard-codes a colour.
 
 | Token           | Value     | Source on camillo.com.au                                                        |
 | --------------- | --------- | ------------------------------------------------------------------------------- |
@@ -98,7 +98,7 @@ The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au
 
 **Logo.** `public/brand/camillo-logo.svg` (and `-burgundy.svg`) is their wordmark from `assets/app.svg#logo-camillo`; the header and loader inline it via `src/components/logo/logo.html` so it takes `currentColor`.
 
-**3D colours.** The `--map-*` tokens (ground, park, water, buildings, roofs, glass, lights, highlight) are read at runtime by [`src/gfx/palette.js`](src/gfx/palette.js); per-building variety is generated as small shade shifts of those tokens. The sky and fog are `--bg`, and both renderers use Neutral tone mapping so that colour reaches the screen unchanged and the canvas edge meets the page. Façade and interior colours inside each project model stay with the model specs, because they describe the real buildings.
+**3D colours.** The generated city keeps its realistic material colours (brick, terracotta and Colorbond roofs, render, timber, gardens, deep blue water, a warm late-afternoon sky), defined in the city modules. The brand shows in the site highlights: project rings, pins and floor outlines are burgundy. The Building Explorer's light studio scene, map mode and those highlights read the `--map-*` tokens through [`src/gfx/palette.js`](src/gfx/palette.js). Façade and interior colours inside each project model stay with the model specs, because they describe the real buildings.
 
 ## The hero: split layout → full-screen map
 
