@@ -65,7 +65,9 @@ export function init({ ready, stage }) {
 
   // One timeline per layout. On mobile the panel starts right under the text, so the text
   // has to be gone almost at once; on desktop it sits beside the panel and can linger.
-  gsap.matchMedia().add({ narrow: `(max-width: ${BREAKPOINT}px)` }, ({ conditions }) => {
+  // (matchMedia only runs the callback when a condition matches, so list both layouts)
+  const layouts = { narrow: `(max-width: ${BREAKPOINT}px)`, wide: `(min-width: ${BREAKPOINT + 1}px)` };
+  gsap.matchMedia().add(layouts, ({ conditions }) => {
     const tl = gsap.timeline({ defaults: { ease: 'none' } });
     tl.to(state, { p: 1, duration: 1, onUpdate: () => apply(state.p) }, 0);
     tl.to(
@@ -87,6 +89,9 @@ export function init({ ready, stage }) {
       scrub: true,
       animation: tl,
       invalidateOnRefresh: true,
+      // past the hero the map is always full screen, whatever the scrub last rendered
+      onLeave: () => apply((state.p = 1)),
+      onRefresh: (self) => self.progress === 1 && apply((state.p = 1)),
     });
   });
 
