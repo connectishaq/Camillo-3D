@@ -1,4 +1,4 @@
-import { BREAKPOINT, CARD_WIDTH } from '../../config.js';
+import { BREAKPOINT, CARD_WIDTH, PROJECT_FRAMING } from '../../config.js';
 
 /*
  * Camera helpers shared by the map stages (CityStory, MapStory, PhotorealStory).
@@ -27,6 +27,30 @@ export const chapterSide = (chapter) => document.querySelector(`[data-chapter="$
 export const cardClearance = (viewportWidth) => Math.min(CARD_WIDTH, viewportWidth * 0.4) + 60;
 
 export const isNarrow = (viewportWidth) => viewportWidth <= BREAKPOINT;
+
+/**
+ * Close-up framing for one project building: how far the camera sits (m), where it aims
+ * (height, m) and from which direction, so the building fills a set share of the screen.
+ * `size` = { width, depth, height } in metres, `facing` = the site's street-front angle (rad).
+ */
+export function buildingFraming(size, facing, { width: vw, height: vh, fov }) {
+  const F = PROJECT_FRAMING;
+  const narrow = isNarrow(vw);
+  const span = 2 * Math.tan(((fov / 2) * Math.PI) / 180); // view height per metre of distance
+  const diagonal = Math.hypot(size.width, size.depth);
+  // apparent height: the building's height plus the footprint seen at the pitch angle
+  const tall = size.height * Math.sin((F.pitch * Math.PI) / 180) + diagonal * Math.cos((F.pitch * Math.PI) / 180);
+  const byHeight = tall / ((narrow ? F.fillMobile : F.fill) * span);
+  const byWidth = diagonal / ((narrow ? F.fillWidthMobile : F.fillWidth) * span * (vw / vh));
+  return {
+    dist: Math.max(F.minDistance, byHeight, byWidth),
+    lookY: size.height * F.lookAt,
+    pitch: F.pitch,
+    // the camera sits in front of the street façade (local +Z), turned by `angle`
+    bearing: (-facing * 180) / Math.PI + F.angle,
+    offsetY: narrow ? vh * F.mobileLift : 0,
+  };
+}
 
 /** Screen shift (px) that centres the subject in the space beside the card. 0 on mobile. */
 export function sideOffset(chapter, viewportWidth) {

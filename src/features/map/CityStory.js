@@ -20,10 +20,11 @@ import { buildWater, ellipseGeo } from './city/water.js';
 import { Neighbourhoods, DETAIL_RADIUS } from './city/detail.js';
 import { ProjectModels, siteClearings } from './city/projects.js';
 import { SUBURBS, toXZ } from './geo.js';
-import { chapterCamera, zoomToDistance, sideOffset } from './camera.js';
+import { chapterCamera, zoomToDistance, sideOffset, buildingFraming } from './camera.js';
 import { createPin } from '../../components/pin/pin.js';
 import { isMobile, nextFrame } from '../../utils/dom.js';
 import { lerp } from '../../utils/math.js';
+import { PROJECT_FRAMING } from '../../config.js';
 
 const FOV = 40;
 
@@ -47,7 +48,8 @@ export class CityStory {
     this.paused = false;
     this.pins = new Map();
     this.labels = [];
-    this.cam = { x: 0, z: 0, dist: 6000, pitch: 55, bearing: -20, offsetX: 0 };
+    // y: height the camera aims at (m); offsetY: vertical screen shift (px, mobile close-ups)
+    this.cam = { x: 0, y: 0, z: 0, dist: 6000, pitch: 55, bearing: -20, offsetX: 0, offsetY: 0 };
     this.mobile = isMobile();
 
     this.initScene();
@@ -180,7 +182,12 @@ export class CityStory {
       this.models = new ProjectModels(this.projects, this.office, [...layout.roads.minor, ...layout.roads.major]);
       this.scene.add(this.models.group);
       this.buildOverlays();
-      if (this.current) this.highlight(this.current);
+      if (this.current) {
+        // re-frame: a project chapter can only be framed on its building once the models exist
+        const current = this.current;
+        this.current = null;
+        this.go(current, { duration: 0.01 });
+      }
     });
 
     let done = 0;
@@ -266,13 +273,71 @@ export class CityStory {
 
   /* ---------------- camera ---------------- */
 
-  /** Convert a map-style camera (center/zoom/pitch/bearing) into orbit params. */
+  /**
+   * Orbit params for a chapter. Project chapters are framed from the building itself (its
+   * size and street front, see camera.js buildingFraming), so it fills the screen; the other
+   * chapters convert their map-style camera (center/zoom/pitch/bearing).
+   */
   cameraFor(chapter) {
     const c = chapterCamera(chapter, this);
     if (!c) return null;
     const [x, z] = toXZ(c.center);
-    const dist = zoomToDistance(c.center, c.zoom, this.container.clientHeight || window.innerHeight, FOV);
-    return { x, z, dist, pitch: c.pitch, bearing: c.bearing };
+    const viewport = {
+      width: this.container.clientWidth || window.innerWidth,
+      height: this.container.clientHeight || window.innerHeight,
+      fov: FOV,
+    };
+    const slug = chapter.startsWith('project:') && chapter.split(':')[1];
+    const site = slug && this.models?.sites.get(slug);
+    if (site) {
+      const { model } = this.projects.find((p) => p.slug === slug);
+      const f = buildingFraming({ width: model.width, depth: model.depth, height: site.height }, site.site.rotation.y, viewport);
+      const bearing = this.clearestBearing(slug, site, model, f);
+      return { x: site.x, z: site.z, y: f.lookY, dist: f.dist, pitch: f.pitch, bearing, offsetY: f.offsetY };
+    }
+    const dist = zoomToDistance(c.center, c.zoom, viewport.height, FOV);
+    return { x, z, y: 0, dist, pitch: c.pitch, bearing: c.bearing, offsetY: 0 };
+  }
+
+  /**
+   * Of a few viewing angles around the street front, the one where the fewest city buildings
+   * stand between the camera and the project (raycast once per project, then cached).
+   */
+  clearestBearing(slug, site, model, framing) {
+    this.bearings ??= new Map();
+    if (this.bearings.has(slug)) return this.bearings.get(slug);
+    const front = framing.bearing - PROJECT_FRAMING.angle;
+    const a = PROJECT_FRAMING.angle;
+    const candidates = [a, -a, a + 26, -a - 26, a + 52, -a - 52].map((d) => front + d);
+    const blockers = [this.buildings?.group, this.hoods?.group].filter(Boolean);
+    const ray = (this.raycaster ??= new THREE.Raycaster());
+    const p = (framing.pitch * Math.PI) / 180;
+    const clearance = Math.max(model.width, model.depth) * 0.55; // ignore hits at the building itself
+    const aims = [0.15, 0.5, 0.9].map((k) => new THREE.Vector3(site.x, site.height * k, site.z));
+    const cam = new THREE.Vector3();
+    const dir = new THREE.Vector3();
+    let best = candidates[0];
+    let bestBlocked = Infinity;
+    for (const bearing of candidates) {
+      const b = (bearing * Math.PI) / 180;
+      const d = framing.dist;
+      cam.set(site.x - Math.sin(b) * d * Math.sin(p), framing.lookY + d * Math.cos(p) + 2, site.z + Math.cos(b) * d * Math.sin(p));
+      let blocked = 0;
+      for (const aim of aims) {
+        dir.subVectors(aim, cam);
+        const len = dir.length();
+        ray.set(cam, dir.normalize());
+        ray.far = Math.max(1, len - clearance);
+        if (ray.intersectObjects(blockers, true).length) blocked++;
+      }
+      if (blocked < bestBlocked) {
+        best = bearing;
+        bestBlocked = blocked;
+        if (!blocked) break;
+      }
+    }
+    this.bearings.set(slug, best);
+    return best;
   }
 
   offsetFor(chapter) {
@@ -302,6 +367,8 @@ export class CityStory {
         const t = state.t;
         this.cam.x = lerp(from.x, target.x, t);
         this.cam.z = lerp(from.z, target.z, t);
+        this.cam.y = lerp(from.y, target.y, t);
+        this.cam.offsetY = lerp(from.offsetY, target.offsetY, t);
         this.cam.dist = Math.exp(lerp(Math.log(from.dist), Math.log(target.dist), t)) + Math.sin(Math.PI * t) * arc;
         this.cam.pitch = lerp(from.pitch, target.pitch, t);
         this.cam.bearing = from.bearing + db * t;
@@ -334,13 +401,14 @@ export class CityStory {
     const p = (pitch * Math.PI) / 180;
     const b = (bearing * Math.PI) / 180;
     const cam = this.camera;
-    cam.position.set(x - Math.sin(b) * dist * Math.sin(p), dist * Math.cos(p) + 2, z + Math.cos(b) * dist * Math.sin(p));
-    cam.lookAt(x, 0, z);
+    const y = this.cam.y;
+    cam.position.set(x - Math.sin(b) * dist * Math.sin(p), y + dist * Math.cos(p) + 2, z + Math.cos(b) * dist * Math.sin(p));
+    cam.lookAt(x, y, z);
     const alt = Math.max(20, cam.position.y);
     cam.near = Math.max(1.5, alt * 0.012);
     cam.far = Math.max(40000, alt * 40);
     const { w, h } = this.size || {};
-    if (w) cam.setViewOffset(w, h, this.cam.offsetX - intro.x, -intro.y, w, h);
+    if (w) cam.setViewOffset(w, h, this.cam.offsetX - intro.x, this.cam.offsetY - intro.y, w, h);
     else cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
   }

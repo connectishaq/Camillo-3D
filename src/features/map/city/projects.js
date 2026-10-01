@@ -106,7 +106,7 @@ export class ProjectModels {
   highlight(slug) {
     this.sites.forEach((s, key) => {
       const on = key === slug;
-      if (s.marker.active !== on) setMarkerActive(s.marker, on, gsap, { ring: 0.12, beam: 0 }, { ring: 0.9, beam: 0.42 });
+      if (s.marker.active !== on) setMarkerActive(s.marker, on, gsap, { ring: 0.12, beam: 0 }, { ring: 0.5, beam: 0.3 });
     });
   }
 

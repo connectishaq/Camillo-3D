@@ -20,6 +20,22 @@ export const HERO_PANEL = {
   zoomOut: 1.18, // camera pulled back a little while the panel is small
 };
 
+/**
+ * Project chapters: the camera frames each building from its own size (not a fixed map zoom),
+ * looking at its street front from a three-quarter angle.
+ */
+export const PROJECT_FRAMING = {
+  fill: 0.46, // building height as a share of the viewport height (desktop)
+  fillWidth: 0.34, // …and its width as a share of the viewport width (beside the card)
+  fillMobile: 0.17, // mobile: the card covers all but the band under the header…
+  fillWidthMobile: 0.8,
+  mobileLift: 0.29, // …so the building is sized for it and raised into it (share of viewport height)
+  pitch: 61, // degrees from straight down: shows the façades, high enough to see over neighbours
+  angle: 34, // degrees off the street-front axis, so two façades show
+  lookAt: 0.42, // aim at this share of the building's height
+  minDistance: 70, // m
+};
+
 // Colours live in styles/tokens.css; JS reads them through gfx/palette.js.
 
 /** Default floor-to-floor height (m) when a building spec doesn't set one. */
