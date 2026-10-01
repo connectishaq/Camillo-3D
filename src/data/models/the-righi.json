@@ -1,0 +1,40 @@
+{
+  "slug": "the-righi",
+  "sources": ["project-assets/the-righi/05-Bedroom-Windows.jpg"],
+  "indicative": true,
+  "notes": "Only a close façade detail: warm pale board-formed concrete, flat roof with thin coping, square punched windows with dark frames above ribbed concrete panels, full-height glazing at ground, a glazed stair slot at the step in plan.",
+  "floorHeight": { "value": 3.4, "assumed": true },
+  "footprint": { "width": 26, "depth": 16, "assumed": true },
+  "levels": [
+    { "label": "Basement", "program": "rumpus", "units": 1, "band": "ground" },
+    { "label": "Ground", "program": "living", "units": 1, "band": "ground" },
+    { "label": "Upper", "program": "bedrooms", "units": 1, "band": "upper", "setback": 1.2 }
+  ],
+  "bands": {
+    "ground": {
+      "system": "board-concrete",
+      "colors": { "wall": "#d8cdc3", "slab": "#e3dbd3", "frame": "#3a3b3c", "glass": "#3b3f41", "accent": "#d8cdc3" },
+      "windows": { "bay": 3.6, "wwr": 0.8, "mullions": 1, "frameDepth": 0.12, "sill": 0.05, "head": 0.55 }
+    },
+    "upper": {
+      "system": "board-concrete",
+      "colors": { "wall": "#d8cdc3", "slab": "#e3dbd3", "frame": "#2c2c2c", "glass": "#35393b", "accent": "#cfc4ba" },
+      "windows": { "bay": 5.0, "wwr": 0.22, "mullions": 0, "frameDepth": 0.18, "sill": 1.25, "head": 0.55, "panelBelow": true, "width": 2.0 }
+    }
+  },
+  "roof": { "type": "flat-parapet", "parapet": 0.35, "plant": false, "garden": false, "coping": "#ece7e1" },
+  "features": [
+    { "type": "pool", "note": "published: glass-free infinity edge pool over the basement rumpus" },
+    { "type": "slot", "side": "right", "offset": -3, "width": 1.6, "color": "#2e3032", "note": "glazed vertical slot (stair)" }
+  ],
+  "assumptions": [
+    "Only one close-up façade image: overall massing, footprint (26 × 16 m) and window count per side are assumed.",
+    "Three levels from site.js (basement, ground, upper); upper floor set back 1.2 m.",
+    "All façades assumed board-formed concrete matching the detail."
+  ],
+  "improveWith": [
+    "A full street elevation or 3/4 aerial of the house (most important).",
+    "A site plan showing the pool position.",
+    "A ground-floor plan."
+  ]
+}

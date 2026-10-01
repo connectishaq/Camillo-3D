@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dist-single/
+dist-preview/
+.DS_Store
+
+# local secrets (Google Maps API key)
+.env
+.env.local
+.env.*.local

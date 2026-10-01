@@ -1,0 +1,56 @@
+{
+  "slug": "mvrc-thomas-street",
+  "sources": [
+    "project-assets/mvrc-thomas-street/191023_C_V01_HERO-Large.jpeg",
+    "project-assets/mvrc-thomas-street/191014_B_V03_SOUTHERN_FACADE-Large-800x1000.jpeg",
+    "project-assets/mvrc-thomas-street/181219_EXTERIOR_PARK-Copy-Large-1200x800.jpeg"
+  ],
+  "indicative": true,
+  "notes": "Hero: long low block with deep white precast balcony slabs, slender round white columns, dark recessed glazing, planted green columns and a glassy setback top level. The park image shows townhouses in the precinct (not this building).",
+  "floorHeight": { "value": 3.15, "assumed": true },
+  "footprint": { "width": 64, "depth": 22, "assumed": true },
+  "levels": [
+    { "label": "Ground", "program": "lobby", "units": 4, "band": "slabs" },
+    { "label": "Level 1", "program": "apartments", "units": 8, "band": "slabs" },
+    { "label": "Level 2", "program": "apartments", "units": 8, "band": "slabs" },
+    { "label": "Level 3", "program": "apartments", "units": 8, "band": "slabs" },
+    { "label": "Level 4", "program": "apartments", "units": 6, "band": "upper", "setback": 2 },
+    { "label": "Level 5", "program": "apartments", "units": 4, "band": "top", "setback": 4 }
+  ],
+  "bands": {
+    "slabs": {
+      "system": "brick",
+      "colors": { "wall": "#8f9194", "slab": "#e3e3df", "frame": "#24272a", "glass": "#3a4247", "balustrade": "#e3e3df", "accent": "#e3e3df" },
+      "windows": { "bay": 3.3, "wwr": 0.72, "mullions": 1, "frameDepth": 0.15, "sill": 0.05, "head": 0.35 },
+      "balcony": { "type": "full-width", "depth": 2.6, "balustrade": "solid", "sides": ["front"], "slabThickness": 0.55 }
+    },
+    "upper": {
+      "system": "render",
+      "colors": { "wall": "#d9dadb", "slab": "#e3e3df", "frame": "#24272a", "glass": "#3a4247", "balustrade": "#2b2e31" },
+      "windows": { "bay": 3.3, "wwr": 0.8, "mullions": 1, "frameDepth": 0.15, "sill": 0.05, "head": 0.3 },
+      "balcony": { "type": "full-width", "depth": 2.4, "balustrade": "metal", "sides": ["front"], "slabThickness": 0.45 }
+    },
+    "top": {
+      "system": "glass-curtain",
+      "colors": { "wall": "#c9cdd1", "slab": "#e3e3df", "frame": "#3a3f44", "glass": "#8fa4b3", "balustrade": "#c9d6da" },
+      "windows": { "bay": 2.4, "wwr": 0.95, "mullions": 1, "frameDepth": 0.08, "sill": 0.05, "head": 0.2 },
+      "balcony": { "type": "full-width", "depth": 2.0, "balustrade": "glass", "sides": ["front"] }
+    }
+  },
+  "roof": { "type": "blade", "parapet": 0.3, "overhang": 1.0, "plant": true, "garden": false },
+  "features": [
+    { "type": "columns", "side": "front", "spacing": 12, "radius": 0.28, "levels": 4, "color": "#eeeeea", "note": "round white columns at the slab edge" },
+    { "type": "greenColumns", "side": "front", "spacing": 16, "radius": 1.2, "levels": 4, "color": "#4f6d3b", "note": "planted vertical green columns" }
+  ],
+  "assumptions": [
+    "Footprint 64 × 22 m estimated from the hero render; the building is one long street-front block.",
+    "Six levels (ground + 3 slab levels + 2 setback levels) read from the hero; site.js had 7.",
+    "Unit counts per level assumed (38 total) — not published.",
+    "Grey brick used for the recessed walls, as on the southern façade render."
+  ],
+  "improveWith": [
+    "Confirmation of which MVRC building Camillo is delivering on Thomas St (the renders show several).",
+    "A site plan with the building footprint.",
+    "A side/end elevation."
+  ]
+}

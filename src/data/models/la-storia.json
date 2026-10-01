@@ -1,0 +1,56 @@
+{
+  "slug": "la-storia",
+  "sources": [
+    "project-assets/la-storia/DUGA11024_La-Storia_E02_Hero-Cardigan-St_Crop-1600x1726.jpg",
+    "project-assets/la-storia/IMG_10058_2_040.jpg",
+    "project-assets/la-storia/IMG_10350_038-1200x800.jpg"
+  ],
+  "indicative": true,
+  "notes": "Corner of Pelham and Cardigan St. Ground + 5 levels inside a white precast frame grid (each frame spans two storeys, bevelled reveals), dark metal-clad penthouse set back on top.",
+  "floorHeight": { "value": 3.25, "assumed": true },
+  "footprint": { "width": 38, "depth": 26, "assumed": true },
+  "levels": [
+    { "label": "Ground", "program": "lobby", "units": 0, "band": "base" },
+    { "label": "Level 1", "program": "apartments", "units": 4, "band": "frame" },
+    { "label": "Level 2", "program": "apartments", "units": 4, "band": "frame" },
+    { "label": "Level 3", "program": "apartments", "units": 4, "band": "frame" },
+    { "label": "Level 4", "program": "apartments", "units": 4, "band": "frame" },
+    { "label": "Level 5", "program": "apartments", "units": 4, "band": "frame" },
+    { "label": "Level 6", "program": "penthouse", "units": 1, "band": "penthouse", "setback": 2.6 }
+  ],
+  "bands": {
+    "base": {
+      "system": "tile",
+      "colors": { "wall": "#343537", "slab": "#e2e0db", "frame": "#1f2022", "glass": "#8c9ca3", "accent": "#e2e0db" },
+      "windows": { "bay": 3.9, "wwr": 0.8, "mullions": 1, "frameDepth": 0.15, "sill": 0.15, "head": 0.55 },
+      "frames": { "every": 1, "span": 1, "width": 0.9, "depth": 0.35, "color": "#e2e0db" }
+    },
+    "frame": {
+      "system": "precast",
+      "colors": { "wall": "#d8d6d1", "slab": "#e2e0db", "frame": "#26272a", "glass": "#8a9aa2", "balustrade": "#c9d6da", "accent": "#2e2f31" },
+      "windows": { "bay": 3.9, "wwr": 0.72, "mullions": 1, "frameDepth": 0.2, "sill": 0.1, "head": 0.35 },
+      "frames": { "every": 2, "span": 2, "width": 1.35, "depth": 0.75, "color": "#e4e2dd", "bevel": true },
+      "balcony": { "type": "inset", "depth": 1.8, "balustrade": "glass", "sides": ["front", "right"], "bays": "corners", "color": "#2e2f31" }
+    },
+    "penthouse": {
+      "system": "metal",
+      "colors": { "wall": "#3a3c3f", "slab": "#e2e0db", "frame": "#1f2022", "glass": "#7d8d95", "balustrade": "#c9d6da" },
+      "windows": { "bay": 3.2, "wwr": 0.55, "mullions": 1, "frameDepth": 0.12, "sill": 0.2, "head": 0.5 }
+    }
+  },
+  "roof": { "type": "flat-parapet", "parapet": 0.5, "plant": true, "garden": true, "note": "columnar trees at the roof edge (first render)" },
+  "features": [
+    { "type": "canopy", "side": "front", "width": 6, "depth": 1.8, "height": 3.1, "offset": -8, "color": "#8b5234", "note": "copper entry canopy" }
+  ],
+  "assumptions": [
+    "Level count read from the photos: ground + 5 framed levels + setback penthouse (7). The old site.js model had 8.",
+    "Footprint 38 × 26 m estimated; 21 residences split 4 per framed level + 1 penthouse (assumed split).",
+    "Inset corner balconies modelled on the two street fronts; rear façades assumed plain framed glazing.",
+    "Bevelled frame reveals approximated with a stepped double member."
+  ],
+  "improveWith": [
+    "A floor plan per typical level (unit layout and exact balcony positions).",
+    "A flat, straight-on elevation of the Pelham St front to count frame bays precisely.",
+    "Any view of the rear/laneway façades."
+  ]
+}

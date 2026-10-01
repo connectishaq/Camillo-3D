@@ -1,0 +1,42 @@
+{
+  "slug": "the-lansell",
+  "sources": ["project-assets/the-lansell/S010-1-Render-Hero-Street.jpeg"],
+  "indicative": true,
+  "notes": "Street render: two glazed levels inside a travertine-clad box with thick dark bronze window frames, floating on angled V-columns over a dark undercroft (car entry), roof garden on top.",
+  "floorHeight": { "value": 3.4, "assumed": true },
+  "footprint": { "width": 30, "depth": 24, "assumed": true },
+  "levels": [
+    { "label": "Ground", "program": "lobby", "units": 0, "band": "undercroft", "height": 3.6 },
+    { "label": "Level 1", "program": "apartments", "units": 2, "band": "box" },
+    { "label": "Level 2", "program": "apartments", "units": 2, "band": "box" }
+  ],
+  "bands": {
+    "undercroft": {
+      "system": "timber",
+      "colors": { "wall": "#2b2724", "slab": "#c9bda7", "frame": "#1c1a18", "glass": "#3a3a36", "accent": "#c9bda7" },
+      "windows": { "bay": 4.5, "wwr": 0.3, "mullions": 0, "frameDepth": 0.1, "sill": 0.1, "head": 0.6 },
+      "recess": 3.5
+    },
+    "box": {
+      "system": "travertine",
+      "colors": { "wall": "#c9bda7", "slab": "#c9bda7", "frame": "#2b2520", "glass": "#4e5752", "accent": "#b7ab95" },
+      "windows": { "bay": 5.0, "wwr": 0.86, "mullions": 1, "frameDepth": 0.4, "sill": 0.25, "head": 0.3, "frameWidth": 0.16 },
+      "sides": { "left": { "bay": 3.2, "wwr": 0.3 }, "right": { "bay": 3.2, "wwr": 0.35 } }
+    }
+  },
+  "roof": { "type": "flat-parapet", "parapet": 0.6, "plant": false, "garden": true },
+  "features": [
+    { "type": "vColumns", "side": "front", "count": 2, "color": "#c9bda7", "note": "angled V-columns under the box" },
+    { "type": "wall", "side": "front", "length": 22, "height": 1.8, "offset": -24, "color": "#cbbfa9", "note": "sandstone street wall with 'The Lansell' signage" }
+  ],
+  "assumptions": [
+    "Three levels read from the render (undercroft + 2 glazed levels); site.js had 4 — the building steps back to the rear, which is not visible.",
+    "Footprint 30 × 24 m assumed; 4 residences split 2 per level (site.js had 2/2/1).",
+    "Side and rear façades assumed to use narrower slot windows in the same travertine."
+  ],
+  "improveWith": [
+    "An aerial or site plan (the building extends back from the street and the depth is unknown).",
+    "A side elevation.",
+    "Floor plans to confirm the unit count per level."
+  ]
+}

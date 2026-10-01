@@ -1,0 +1,32 @@
+:root {
+  color-scheme: dark;
+  /* Palette — warm charcoal + brass */
+  --ink-900: #0d0e10;
+  --ink-800: #141518;
+  --ink-700: #1c1e22;
+  --ink-600: #2a2d33;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --text: #f3efe8;
+  --text-dim: rgba(243, 239, 232, 0.68);
+  --text-faint: rgba(243, 239, 232, 0.42);
+  --brass: #c9a56b;
+  --brass-soft: rgba(201, 165, 107, 0.16);
+  --glass: rgba(18, 19, 22, 0.84); /* stronger over the bright daytime city */
+
+  /* Type */
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fs-hero: clamp(3.2rem, 9vw, 8.6rem);
+  --fs-h2: clamp(2rem, 4.2vw, 3.6rem);
+  --fs-h3: clamp(1.4rem, 2.2vw, 1.9rem);
+
+  /* Spacing & shape */
+  --gutter: clamp(16px, 4vw, 56px);
+  --radius: 18px;
+  --radius-sm: 10px;
+  --shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --header-h: 76px;
+  --card-w: min(460px, calc(100vw - 2 * var(--gutter)));
+}

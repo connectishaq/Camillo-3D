@@ -1,0 +1,57 @@
+{
+  "slug": "the-london",
+  "sources": ["project-assets/the-london/TheLondon-1600x899.jpeg"],
+  "indicative": true,
+  "notes": "Aerial from the south-east. Residential block of 7 levels (published) above a 2-level dark-glazed restaurant pavilion on the Beach St corner.",
+  "floorHeight": { "value": 3.2, "assumed": true },
+  "footprint": { "width": 24, "depth": 20, "assumed": true },
+  "levels": [
+    { "label": "Ground", "program": "lobby", "units": 3, "band": "base" },
+    { "label": "Level 1", "program": "apartments", "units": 3, "band": "base" },
+    { "label": "Level 2", "program": "apartments", "units": 3, "band": "banded" },
+    { "label": "Level 3", "program": "whole-floor", "units": 1, "band": "banded" },
+    { "label": "Level 4", "program": "whole-floor", "units": 1, "band": "banded" },
+    { "label": "Level 5", "program": "whole-floor", "units": 1, "band": "banded" },
+    { "label": "Level 6", "program": "whole-floor", "units": 1, "band": "crown", "setback": 1.8 }
+  ],
+  "bands": {
+    "base": {
+      "system": "precast",
+      "colors": { "wall": "#c9c6bf", "slab": "#d6d3cc", "frame": "#2b2d2f", "glass": "#35595c", "accent": "#b9b6ae" },
+      "windows": { "bay": 3.6, "wwr": 0.62, "mullions": 1, "frameDepth": 0.45, "sill": 0.5, "head": 0.45 },
+      "balcony": { "type": "projecting", "depth": 1.4, "balustrade": "solid", "sides": ["right"], "bays": "alternate", "assumed": true }
+    },
+    "banded": {
+      "system": "concrete",
+      "colors": { "wall": "#b7b3aa", "slab": "#d3d0c8", "frame": "#26282a", "glass": "#2f5457", "balustrade": "#7fb2ae" },
+      "windows": { "bay": 3.0, "wwr": 0.85, "mullions": 2, "frameDepth": 0.2, "sill": 0.05, "head": 0.25 },
+      "balcony": { "type": "wraparound", "depth": 1.9, "balustrade": "glass", "sides": ["front", "right"] }
+    },
+    "crown": {
+      "system": "metal",
+      "colors": { "wall": "#2f3133", "slab": "#d3d0c8", "frame": "#1d1e20", "glass": "#2c3c40", "balustrade": "#7fb2ae" },
+      "windows": { "bay": 2.8, "wwr": 0.7, "mullions": 1, "frameDepth": 0.15, "sill": 0.1, "head": 0.4 }
+    }
+  },
+  "roof": { "type": "flat-parapet", "parapet": 1.1, "plant": true, "garden": true, "note": "planters and small trees visible on the roof" },
+  "features": [
+    {
+      "type": "wing",
+      "note": "Two-level restaurant pavilion: black-framed glass boxes, rounded dark canopy, timber slat awnings, planted roof terrace.",
+      "side": "front", "width": 27, "depth": 12, "offset": 4, "levels": 2, "levelHeight": 4.1,
+      "colors": { "frame": "#1f2123", "glass": "#2f5c5f", "canopy": "#2a2c2e", "timber": "#b27a4b" },
+      "awnings": { "count": 7, "depth": 2.8 }, "roofGarden": true
+    }
+  ],
+  "assumptions": [
+    "Footprint 24 × 20 m and floor-to-floor 3.2 m estimated from the aerial; no plans supplied.",
+    "Rear (north/west) façades are not visible — modelled as the same concrete banding.",
+    "Balconies on the lower two levels assumed on the side street only.",
+    "Unit split per level taken from site.js (3/3/3 then four whole-floor residences = 13)."
+  ],
+  "improveWith": [
+    "A straight-on street elevation of the Beach St and Princes St fronts (to count bays and balcony widths).",
+    "A floor plan or site plan with dimensions.",
+    "A view of the rear/top level showing the penthouse setback and rooftop plant."
+  ]
+}

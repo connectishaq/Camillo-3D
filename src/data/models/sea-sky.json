@@ -1,0 +1,44 @@
+{
+  "slug": "sea-sky",
+  "sources": ["project-assets/sea-sky/EXT01_Exterior-1600x1702.jpg", "project-assets/sea-sky/EXT02_Garden-800x993.jpg"],
+  "indicative": true,
+  "notes": "Courtyard renders: white rendered portal frames around paired balcony stacks, charcoal recessed walls, brass balustrade panels on some levels, top level set back under a white roof blade with brass vertical fins.",
+  "floorHeight": { "value": 3.15, "assumed": true },
+  "footprint": { "width": 48, "depth": 26, "assumed": true },
+  "levels": [
+    { "label": "Ground", "program": "lobby", "units": 8, "band": "portal" },
+    { "label": "Level 1", "program": "apartments", "units": 12, "band": "portal" },
+    { "label": "Level 2", "program": "apartments", "units": 12, "band": "portal" },
+    { "label": "Level 3", "program": "apartments", "units": 12, "band": "portal" },
+    { "label": "Level 4", "program": "apartments", "units": 11, "band": "portal" },
+    { "label": "Level 5", "program": "penthouse", "units": 9, "band": "crown", "setback": 2.2 }
+  ],
+  "bands": {
+    "portal": {
+      "system": "render",
+      "colors": { "wall": "#36383c", "slab": "#ecebe7", "frame": "#1f2124", "glass": "#56636b", "balustrade": "#cbd5d8", "accent": "#c3a066" },
+      "windows": { "bay": 3.0, "wwr": 0.78, "mullions": 1, "frameDepth": 0.15, "sill": 0.05, "head": 0.3 },
+      "frames": { "every": 2, "span": 5, "width": 1.1, "depth": 1.9, "color": "#ecebe7" },
+      "balcony": { "type": "projecting", "depth": 1.8, "balustrade": "glass", "sides": ["front", "back"], "bays": "all", "color": "#ecebe7", "brassEvery": 2 }
+    },
+    "crown": {
+      "system": "render",
+      "colors": { "wall": "#ecebe7", "slab": "#ecebe7", "frame": "#1f2124", "glass": "#5a676e", "balustrade": "#cbd5d8" },
+      "windows": { "bay": 3.0, "wwr": 0.85, "mullions": 2, "frameDepth": 0.12, "sill": 0.05, "head": 0.3 },
+      "fins": { "spacing": 0.55, "depth": 0.35, "width": 0.08, "color": "#c8a86b", "sides": ["front", "back"], "bays": "alternate" },
+      "balcony": { "type": "full-width", "depth": 2.0, "balustrade": "glass", "sides": ["front", "back"] }
+    }
+  },
+  "roof": { "type": "blade", "parapet": 0.35, "overhang": 1.2, "plant": true, "garden": false },
+  "features": [{ "type": "landscape", "note": "central garden courtyard (not modelled on the building itself)" }],
+  "assumptions": [
+    "The complex wraps a courtyard; modelled as one 48 × 26 m bar showing the courtyard façade on both long sides.",
+    "Level count (6) and residences (63 apartments + penthouse = 64) match the published facts in site.js.",
+    "End façades assumed charcoal with slot windows."
+  ],
+  "improveWith": [
+    "The Bay Rd street elevation (the renders are all courtyard views).",
+    "A site plan / aerial showing the building's U-shape so the wings can be modelled.",
+    "A typical floor plan."
+  ]
+}
