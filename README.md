@@ -1,40 +1,172 @@
-# Camillo — 3D Landing Page
+# Camillo — 3D Website
 
-An immersive, scroll-driven landing page for Camillo Builders. The page opens on a bright, generated 3D Melbourne: sky, sun and shadows, the bay and rivers, streets, trees and thousands of buildings. It flies to the Port Melbourne head office for the About section, then to each featured project. Every project is modelled from its reference images and can be opened in a Three.js explorer, where you can peel back its floors and step inside.
+An immersive, scroll-driven website for Camillo Builders. The home page opens on a bright, generated 3D Melbourne: sky, sun and shadows, the bay and rivers, streets, trees and thousands of buildings. It flies to the Port Melbourne head office for the About section, then to each featured project. Every project is modelled from its reference images and can be opened in a Three.js explorer, where you can peel back its floors and step inside. Each project also has its own page with the explorer built in.
 
 **No map APIs, keys or paid services.** Everything is generated in code or comes from files in this repo, so the site also works offline and in the single-file preview build.
 
+Built with **Vite + vanilla JavaScript** (no framework), Three.js, GSAP and Lenis.
+
 ## Quick start
+
+Needs Node.js 20.19 or newer (`.nvmrc` pins 20).
 
 ```bash
 npm install
 npm run dev          # http://localhost:5173
 ```
 
-| Command | Output |
-|---|---|
-| `npm run dev` | Local dev server with hot reload |
-| `npm run build` | Production build in `dist/` (upload it to any static host: Netlify, Vercel, cPanel) |
-| `npm run build:single` | One self-contained `dist-single/index.html` you can double-click to preview |
-| `npm run build:preview` | One self-contained `dist-preview/index.html` (the generated city, no network). Used for the shareable preview link |
+| Command                 | What it does                                                                                              |
+| ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| `npm run dev`           | Local dev server with hot reload (edits to partials and data reload the page)                             |
+| `npm run build`         | The website in `dist/`: home page, one page per project, 404, sitemap. **This is what you deploy**        |
+| `npm run preview`       | Serves `dist/` at http://localhost:4173 to check the build before deploying                               |
+| `npm run build:single`  | One self-contained `dist-single/index.html` (home page only) you can double-click to preview              |
+| `npm run build:preview` | One self-contained `dist-preview/index.html` with the generated city. Used for the shareable preview link |
+| `npm run lint`          | ESLint                                                                                                    |
+| `npm run format`        | Prettier (rewrites files). `npm run format:check` only checks                                             |
+
+## Deploy (Netlify)
+
+The browser can't run the source folder: `src/main.js` imports packages like `three` and CSS files that only Vite understands. Netlify must publish the **built** `dist/` folder. If you upload the project folder itself you get the plain, unstyled HTML.
+
+### A. From Git (recommended)
+
+1. Push this repository to GitHub.
+2. In Netlify: **Add new site → Import an existing project → GitHub**, and pick the repository.
+3. Netlify reads [`netlify.toml`](netlify.toml), so the settings are filled in for you:
+
+   | Setting           | Value                                   |
+   | ----------------- | --------------------------------------- |
+   | Base directory    | _(empty)_                               |
+   | Build command     | `npm run build`                         |
+   | Publish directory | `dist`                                  |
+   | Node version      | `20` (`NODE_VERSION` in `netlify.toml`) |
+
+4. Deploy. From then on, every push to the main branch builds and deploys automatically, and pull requests get preview URLs.
+
+### B. Manual (drag and drop)
+
+1. Run `npm run build`.
+2. Open Netlify's deploy page (**Sites → Add new site → Deploy manually**) and drag the **`dist` folder** onto it. Not the project folder.
+
+For manual deploys, set your real domain first (see below), because Netlify's `URL` variable only exists in Netlify's own builds.
+
+### What `netlify.toml` sets up
+
+- Long caching for the hashed files in `/assets/*` (`Cache-Control: public, max-age=31536000, immutable`), and always-revalidate for HTML, so a new deploy shows straight away.
+- Security headers on every response: `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` and a `Permissions-Policy` that turns off camera, microphone, geolocation and similar.
+- `dist/404.html` is served for any missing page (Netlify does this automatically).
+
+### Site URL
+
+Canonical links, the sitemap and social sharing cards need the site's full address. The build uses, in order: Netlify's `URL` (set during Netlify builds), `SITE_URL` from `.env.local` (e.g. `SITE_URL=https://www.camillo.com.au`), and finally `https://camillo.com.au`.
+
+## How the pages are built
+
+Every page is **static HTML written at build time**, which is good for search engines and first paint. JavaScript only adds behaviour.
+
+- `index.html` (home), `404.html` and `src/pages/project/project.html` (the project template) are short shells made of `@include` markers.
+- [`vite-plugins/html-pages.js`](vite-plugins/html-pages.js) replaces the markers with the section partials and fills them from `src/data/`. The template syntax is in [`vite-plugins/template.js`](vite-plugins/template.js):
+
+  ```text
+  <!-- @include sections/hero/hero.html -->                   insert a partial (path from src/)
+  <!-- @each projects as project --> … <!-- @end -->          repeat for each item
+  <!-- @if page.isHome --> … <!-- @else --> … <!-- @end -->   condition (`!` negates)
+  {{ project.name }}                                          a value, HTML-escaped
+  ```
+
+  A missing value fails the build with the file name, so typos can't ship as blanks.
+
+- The project template is rendered once per project into `dist/projects/<slug>.html`, served at `/projects/<slug>`. `sitemap.xml` and `robots.txt` are generated alongside.
+- The Three.js code is split out: the map is loaded with the page, but in its own chunk, and the Building Explorer only downloads on the first "Explore in 3D" click (or when you hover or focus that button). Three.js itself is one shared, long-cached `three-*.js` chunk.
+
+## Structure
+
+```
+index.html  404.html           Page shells (sections are @included at build time)
+netlify.toml  .nvmrc           Deploy settings
+vite.config.js                 Build modes, multi-page inputs, chunking
+vite-plugins/                  html-pages (pages, sitemap), template (include/each/if), site-data (reads src/data)
+public/                        Copied as-is: favicon, site.webmanifest, images/ (icons, og-image), draco/, brand/, models/
+project-assets/<slug>/         Reference images per project (not deployed)
+src/
+  main.js                      Home page entry: imports styles, mounts sections, starts the app
+  config.js                    Shared constants: breakpoint, colours used in JS, card width, floor height
+  app/                         Wiring: smooth-scroll (Lenis), stage (map mode + fallback), chapters (scroll story),
+                               reveal (fade-ins), explorer (lazy explorer launcher)
+  sections/                    One folder per page section: <name>.html + <name>.css + <name>.js (exports init())
+    header/ hero/ about/ projects/ services/ contact/ footer/
+  components/                  Reusable UI: button, card, tag, chapter, pin, toast, loader, rail, locator
+  features/
+    map/                       CityStory (generated city), MapStory (MapLibre), photoreal/, geo, camera helpers,
+                               city/ (land, layout, roads, buildings, trees, water, detail, projects, markers, instances)
+    explorer/                  Explorer, building (parametric generator), glb (Path A), interior, materials, textures
+  gfx/                         Shared offline graphics: proctex (canvas textures), sky, facade shader, merge
+  data/
+    company.js                 Copy, services, stats, contact details, other portfolio names
+    cameras.js                 Map camera per chapter, head office location
+    projects/<slug>.js         One file per featured project (+ index.js, which collects them)
+    models/<slug>.json         Building specs written from the reference images (+ index.js normaliser)
+  layouts/head.html            Shared <head>: title, description, canonical, Open Graph, icons, fonts
+  pages/                       Standalone pages: page.js/css (shared), project/ (template + entry), not-found.js
+  styles/                      tokens.css (design tokens) · base.css (reset, type) · utilities.css
+  utils/                       dom, escape, math, focus-trap
+```
+
+Rules of thumb: each file has one job, there are no globals, and section JS only touches its own section. CSS is plain CSS using the tokens in `styles/tokens.css`. The `860px` breakpoint lives in `config.js` for JS and in each file's `@media (max-width: 860px)`.
+
+## Adding a section
+
+1. Create `src/sections/<name>/` with `<name>.html`, `<name>.css` and `<name>.js`:
+
+   ```js
+   // src/sections/<name>/<name>.js
+   import './<name>.css';
+
+   export function init({ projects, explorer, ready }) {
+     // behaviour for this section only (or leave empty)
+   }
+   ```
+
+2. Write the markup in `<name>.html`. To make it a chapter of the map story, use `<section class="chapter chapter--center" id="<name>" data-chapter="<camera key>" data-label="Rail label">`. Add `data-nav="<name>"` to underline a header link, and `data-side="left|right"` if a card sits on one side (the map shifts the subject clear of it).
+3. Add a camera for the chapter key in `src/data/cameras.js`.
+4. Include it in `index.html` where it should appear: `<!-- @include sections/<name>/<name>.html -->`.
+5. Import it in `src/main.js` and add it to the list of sections that get `init()` called.
+6. Text that comes from data goes in `src/data/` and into the template as `{{ … }}`, not in JavaScript.
+
+## Adding a project
+
+1. Add **`src/data/projects/<slug>.js`**. The file name must match its `slug`. Copy an existing project: `order` (position in the story), `slug`, `name`, `suburb`, optional `address`, `type`, `status`, `coords: [lng, lat]`, `facts`, `summary`, `materials`, `camera` (zoom/pitch/bearing), and optionally `publishedFacts: { levels, units }` to check the model in dev.
+
+   That one file is enough: the build adds the story chapter, the map pin and city model, the project page `/projects/<slug>`, the sitemap entry and the 404 page link. Until it has a spec, the building is a plain three-level placeholder.
+
+2. For the real building, drop reference images into **`project-assets/<slug>/`** (a straight-on street elevation, a 3/4 or aerial view, floor plans) and write **`src/data/models/<slug>.json`** from them (schema below; copy one of the six existing specs). Mark anything the images don't show with `"assumed": true`, or list it under `assumptions`.
+3. Optional: generate a model with an image-to-3D tool and save it as **`public/models/<slug>.glb`**. Restart `npm run dev` afterwards, because the list of models is read at startup.
 
 ## Map modes
 
 `VITE_MAP_MODE` (in `.env.local`) picks the map. Each optional mode falls back automatically if it can't start.
 
-| Mode | What it shows | Needs |
-|---|---|---|
-| `city` (default) | `CityStory`: the generated daytime Melbourne | nothing |
-| `map` | `MapStory`: MapLibre + OpenFreeMap tiles → falls back to `city` | internet |
-| `photoreal` | `PhotorealStory`: Google Photorealistic 3D Tiles → `map` → `city` | a Google Maps Platform key (`VITE_GOOGLE_MAPS_API_KEY`), billing, attribution |
+| Mode             | What it shows                                                     | Needs                                                                         |
+| ---------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `city` (default) | `CityStory`: the generated daytime Melbourne                      | nothing                                                                       |
+| `map`            | `MapStory`: MapLibre + OpenFreeMap tiles → falls back to `city`   | internet                                                                      |
+| `photoreal`      | `PhotorealStory`: Google Photorealistic 3D Tiles → `map` → `city` | a Google Maps Platform key (`VITE_GOOGLE_MAPS_API_KEY`), billing, attribution |
 
-All stages share one interface: `constructor(container, { cameras, office, projects, onReady, onFail, onPinClick, onProgress })`, `go(chapter)`, `pause()`, `resume()`, `destroy()`. The Google key is only embedded in a `photoreal` build.
+All stages share one interface: `constructor(container, { cameras, office, projects, reducedMotion, onReady, onFail, onPinClick, onProgress })`, `go(chapter, { duration })`, `pause()`, `resume()`, `destroy()`. `src/app/stage.js` picks one and handles the fallback. The Google key is only embedded in a `photoreal` build.
 
-## The generated city (`src/modules/city/`)
+## Accessibility
+
+- One `h1` per page and a logical heading order. A "Skip to content" link appears on keyboard focus, and focus is always visible (brass outline).
+- The 3D map is decorative (`aria-hidden`); every action on it (map pins) is also a button in the story cards.
+- The explorer is a modal dialog: focus moves into it, Tab stays inside it, and Esc steps back (inside → floor → closed). Focus then returns to the button that opened it.
+- With `prefers-reduced-motion`, smooth scrolling, fade-ins, count-ups and the hero orbit are off, and the map cuts between chapters instead of flying.
+
+## The generated city (`src/features/map/city/`)
 
 Built in steps behind the loader. On a laptop this takes about 1–2 s; `console.debug` prints the timings in dev.
 
-- **Land use** (`land.js`): a 40 m raster of the bay, the Yarra and Maribyrnong, lakes, parks, racecourses and a coastal strip, built from the simplified geography in `geo.js`. Every placement query uses it.
+- **Land use** (`land.js`): a 40 m raster of the bay, the Yarra and Maribyrnong, lakes, parks, racecourses and a coastal strip, built from the simplified geography in `features/map/geo.js`. Every placement query uses it.
 - **Streets** (`layout.js`, `roads.js`): the Hoddle Grid in the CBD (30 m streets, 9 m little streets, rotated 18°). Elsewhere, a one-mile grid of arterials bounds 1.6 km superblocks, each with its own slightly rotated local grid. St Kilda Rd, Beach Rd, Bay Rd, Toorak Rd and Punt Rd follow their real rough paths. Asphalt strips have lane markings on major roads and sit over footpath strips. Roads stop at water and parks, and buildings sit in the blocks between them, so nothing lands on a road.
 - **Buildings** (`buildings.js`, all `InstancedMesh`): the CBD and Southbank/Docklands get glass and concrete towers with podiums, setbacks, rooftop plant and occasional crowns or spires. Inner suburbs get terrace rows and 2–6 storey apartments in brick, render and timber tones. Outer suburbs get detached houses with hip or gable roofs in terracotta and Colorbond colours. Façades use one world-space shader (`gfx/facade.js`) with procedural window-grid textures (`gfx/proctex.js`): window mask, a random lit/unlit pattern, glass reflections and roughness variation.
 - **Greenery** (`trees.js`): instanced eucalypts and plane trees with size and colour variation. Parks are densely planted, St Kilda Rd has its boulevard rows, and street trees appear near the camera. Parks have a mown-lawn texture, and racecourses get a track ring with rails.
@@ -46,95 +178,66 @@ Built in steps behind the loader. On a laptop this takes about 1–2 s; `console
 
 ## Project models
 
-### Adding a project
-
-1. Add the project to `projects` in `src/data/site.js`: `slug`, `coords: [lng, lat]`, `camera` (zoom/pitch/bearing), copy, and `facts`.
-2. Drop reference images into **`project-assets/<slug>/`**. The most useful are a straight-on street elevation, a 3/4 or aerial view, and floor plans.
-3. Write **`src/data/models/<slug>.json`** from the images (see the schema below and the six existing specs). Mark anything the images don't show with `"assumed": true`, or list it under `assumptions`.
-4. Optional: generate a model with an image-to-3D tool and save it as **`public/models/<slug>.glb`**.
-5. Run `npm run build`. Restart `npm run dev` after adding a GLB, because the list of models is read at startup.
-
-The project's map pin, city model, chapter and 3D explorer are all generated from this.
-
 ### Path B: parametric model (default)
 
-`src/data/models/<slug>.json` is normalised by `src/data/models/index.js` and built by `src/modules/explorer/building.js`:
+`src/data/models/<slug>.json` is normalised by `src/data/models/index.js` and built by `src/features/explorer/building.js`:
 
-| Field | Meaning |
-|---|---|
-| `footprint` `{ width, depth }`, `floorHeight` | metres (floor-to-floor) |
-| `levels[]` | `label`, `program` (interior layout: `lobby`, `apartments`, `penthouse`, `whole-floor`, `rumpus`, `living`, `bedrooms`), `units`, `setback` m, `band`, optional `height` |
-| `bands{}` | per level band: `system` (`brick`, `precast`, `concrete`, `board-concrete`, `render`, `timber`, `travertine`, `tile`, `metal`, `glass-curtain`), `colors` (`wall`, `slab`, `frame`, `glass`, `accent`, `balustrade`) sampled from the images, `windows` (`bay`, `wwr`, `mullions`, `frameDepth`, `sill`, `head`, `proud`, `panelBelow`), `balcony` (`type`: `full-width`, `wraparound`, `inset`, `projecting`; `depth`, `balustrade`: `glass`/`solid`/`metal`, `sides`, `bays`), `frames` (two-storey precast grids: `every`, `span`, `width`, `depth`, `bevel`), `fins`, `recess` |
-| `roof` | `type` (`flat-parapet`, `blade`), `parapet`, `overhang`, `plant`, `garden` |
-| `features[]` | `wing` (e.g. The London's restaurant pavilion), `vColumns`, `canopy`, `wall`, `slot`, `columns`, `greenColumns`, `pool` |
+| Field                                         | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `footprint` `{ width, depth }`, `floorHeight` | metres (floor-to-floor)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `levels[]`                                    | `label`, `program` (interior layout: `lobby`, `apartments`, `penthouse`, `whole-floor`, `rumpus`, `living`, `bedrooms`), `units`, `setback` m, `band`, optional `height`                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `bands{}`                                     | per level band: `system` (`brick`, `precast`, `concrete`, `board-concrete`, `render`, `timber`, `travertine`, `tile`, `metal`, `glass-curtain`), `colors` (`wall`, `slab`, `frame`, `glass`, `accent`, `balustrade`) sampled from the images, `windows` (`bay`, `wwr`, `mullions`, `frameDepth`, `sill`, `head`, `proud`, `panelBelow`), `balcony` (`type`: `full-width`, `wraparound`, `inset`, `projecting`; `depth`, `balustrade`: `glass`/`solid`/`metal`, `sides`, `bays`), `frames` (two-storey precast grids: `every`, `span`, `width`, `depth`, `bevel`), `fins`, `recess` |
+| `roof`                                        | `type` (`flat-parapet`, `blade`), `parapet`, `overhang`, `plant`, `garden`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `features[]`                                  | `wing` (e.g. The London's restaurant pavilion), `vColumns`, `canopy`, `wall`, `slot`, `columns`, `greenColumns`, `pool`                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
-The generator builds real window openings with recessed, framed glass and mullions, slab edges, balcony slabs and balustrades, precast frames, fins, terraces at setbacks, parapets, plant and roof gardens. Materials are PBR with procedural canvas textures (brick, precast, board-formed concrete, render, timber, travertine, tile, metal), so they react to the sky light and need no downloads. Each level is its own group, merged by material. Published facts are checked in dev: The London has 7 levels and 13 apartments, and Sea & Sky has 6 levels and 64 residences.
+The generator builds real window openings with recessed, framed glass and mullions, slab edges, balcony slabs and balustrades, precast frames, fins, terraces at setbacks, parapets, plant and roof gardens. Materials are PBR with procedural canvas textures (brick, precast, board-formed concrete, render, timber, travertine, tile, metal), so they react to the sky light and need no downloads. Each level is its own group, merged by material. Published facts (`publishedFacts` in the project file) are checked in dev: The London has 7 levels and 13 apartments, and Sea & Sky has 6 levels and 64 residences.
 
 ### Path A: GLB model
 
-If `public/models/<slug>.glb` exists (the list is baked in at build time by `vite.config.js`, so missing files are never requested), `explorer/glb.js`:
+If `public/models/<slug>.glb` exists (the list is baked in at build time by `vite.config.js`, so missing files are never requested), `features/explorer/glb.js`:
+
 - loads it with `GLTFLoader` + `DRACOLoader` (decoder in `public/draco/`)
 - centres it, turns the long side to match the spec's width (or uses `"glb": { "rotate": 90 }` in the JSON), and scales it to the spec's footprint and total height
 - for the Explorer, clones it once per level. Each clone is limited to its level's height band by two world-space clipping planes that follow the level as it explodes or lifts, so no manual splitting is needed. Hover and click raycast against invisible box volumes per level, and the procedural interiors appear inside the opened floor.
 
-Both paths use **the same model** on the city map (merged into a few draw calls), with a brass ring, pulse and soft light column on the active project. The Explorer's *indicative* note stays on every model that is an interpretation.
-
-## Structure
-
-```
-index.html                  Page shell and semantic sections
-project-assets/<slug>/      Reference images per project (not bundled)
-src/
-  main.js                   Entry: content, smooth scroll, map stage, chapters, explorer
-  data/site.js              ALL content: copy, contact, cameras, projects
-  data/models/<slug>.json   Building specs written from the reference images (+ index.js loader)
-  modules/
-    gfx/                    Shared, offline graphics: proctex (canvas textures), sky, facade shader, merge
-    city/                   Generated Melbourne: CityStory, geo, land, layout, roads, buildings, trees,
-                            water, detail, projects, markers, instances
-    explorer/               Explorer, building (parametric generator), glb (Path A), interior, materials, textures
-    map-story.js            Optional MapLibre mode
-    photoreal/              Optional Google Photorealistic 3D Tiles mode
-    chapters.js · content.js · ui.js
-  styles/                   tokens · base · layout · components · explorer
-public/
-  draco/                    Draco glTF decoder (GLB models)
-  models/                   Optional <slug>.glb models (Path A)
-  brand/                    Google Maps logo (photoreal mode only)
-```
+Both paths use **the same model** on the city map (merged into a few draw calls), with a brass ring, pulse and soft light column on the active project. The Explorer's _indicative_ note stays on every model that is an interpretation.
 
 ## Tech
 
 - **Three.js** (r186) for the city and the explorer, using `Sky`, PMREM, GTAO, UnrealBloom, SMAA/FXAA and CSS2D labels.
-- **GSAP** for camera and floor animation. **Lenis** for smooth scrolling. **Vite** for bundling.
-- Optional: **MapLibre GL v5** + OpenFreeMap, and **3d-tiles-renderer** + Google Photorealistic 3D Tiles.
+- **GSAP** for camera and floor animation. **Lenis** for smooth scrolling. **Vite 8** for bundling and the static multi-page build.
+- **ESLint** (flat config, `eslint.config.js`) and **Prettier** (`.prettierrc.json`); `.editorconfig` for editor defaults.
+- Optional: **MapLibre GL** + OpenFreeMap, and **3d-tiles-renderer** + Google Photorealistic 3D Tiles.
 
 ## Credits and licences
 
-| Asset | Source | Licence |
-|---|---|---|
-| All city and building textures | generated at runtime (`gfx/proctex.js`) | — |
-| `draco/*` | Draco glTF decoder, copied from `three/examples/jsm/libs/draco/gltf` | Apache-2.0 |
-| `brand/google-maps-logo.svg` | [Google Maps attribution assets](https://developers.google.com/maps/documentation/tile/policies), photoreal mode only | Google brand asset, for attribution only |
-| `project-assets/*` | Project renders and photos supplied by Camillo | © their owners; reference only, not bundled |
+| Asset                          | Source                                                                                                                | Licence                                     |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| All city and building textures | generated at runtime (`gfx/proctex.js`)                                                                               | —                                           |
+| `images/og-image.jpg`          | screenshot of the generated city (this project)                                                                       | —                                           |
+| `draco/*`                      | Draco glTF decoder, copied from `three/examples/jsm/libs/draco/gltf`                                                  | Apache-2.0                                  |
+| `brand/google-maps-logo.svg`   | [Google Maps attribution assets](https://developers.google.com/maps/documentation/tile/policies), photoreal mode only | Google brand asset, for attribution only    |
+| `project-assets/*`             | Project renders and photos supplied by Camillo                                                                        | © their owners; reference only, not bundled |
 
 ## Before launch — to confirm with Camillo
 
 1. **Exact site coordinates.** The pins are approximate. Geocoded suggestions (Sept 2026, to confirm):
 
-   | Site | Now | Suggested `[lng, lat]` | Basis |
-   |---|---|---|---|
-   | The London (92 Beach St) | `[144.9369, -37.8434]` | `[144.9350, -37.8412]` | OSM building match |
-   | La Storia (88 Pelham St) | `[144.9656, -37.8027]` | `[144.9648, -37.8025]` | OSM house match |
-   | The Lansell (16 Lansell Rd) | `[145.0107, -37.8434]` | `[145.0164, -37.8395]` | OSM house match; confirm 16 Lansell Rd is Camillo's project |
-   | Sea & Sky (212 Bay Rd) | `[145.0071, -37.9509]` | `[145.0240, -37.9550]` | Photon house-number match |
-   | The Righi (Eaglemont) | `[145.0655, -37.7636]` | `[145.0572, -37.7631]` | Street only |
-   | MVRC – Thomas St | `[144.9335, -37.7632]` | ~`[144.9294, -37.7640]` | Street only |
-   | HQ (262 Salmon St) | `[144.9246, -37.8309]` | keep | Street only |
+   | Site                        | Now                    | Suggested `[lng, lat]`  | Basis                                                       |
+   | --------------------------- | ---------------------- | ----------------------- | ----------------------------------------------------------- |
+   | The London (92 Beach St)    | `[144.9369, -37.8434]` | `[144.9350, -37.8412]`  | OSM building match                                          |
+   | La Storia (88 Pelham St)    | `[144.9656, -37.8027]` | `[144.9648, -37.8025]`  | OSM house match                                             |
+   | The Lansell (16 Lansell Rd) | `[145.0107, -37.8434]` | `[145.0164, -37.8395]`  | OSM house match; confirm 16 Lansell Rd is Camillo's project |
+   | Sea & Sky (212 Bay Rd)      | `[145.0071, -37.9509]` | `[145.0240, -37.9550]`  | Photon house-number match                                   |
+   | The Righi (Eaglemont)       | `[145.0655, -37.7636]` | `[145.0572, -37.7631]`  | Street only                                                 |
+   | MVRC – Thomas St            | `[144.9335, -37.7632]` | ~`[144.9294, -37.7640]` | Street only                                                 |
+   | HQ (262 Salmon St)          | `[144.9246, -37.8309]` | keep                    | Street only                                                 |
+
 2. **Building data** that isn't published: level counts and unit splits for La Storia, The Lansell, The Righi and MVRC, and real footprints for all projects. Each spec's `assumptions` and `improveWith` lists say what's missing.
 3. **Real floor plans**, so the procedural interiors can follow the actual layouts.
+4. **The production domain**, for canonical links and the sitemap (see [Site URL](#site-url)).
 
 ## Next steps
 
-- Individual project pages (`/projects/<slug>.html`), reusing `Explorer`.
-- An enquiry form in the Contact section.
+- Richer project pages: galleries from `project-assets/`, floor plans, next/previous project links.
+- An enquiry form in the Contact section (Netlify Forms would need no backend).
