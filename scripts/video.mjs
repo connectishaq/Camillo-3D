@@ -1,6 +1,6 @@
 /*
  * Web versions of the hero video (project-assets/high.mp4):
- *   public/videos/hero-1920.mp4   desktop, H.264, 30 fps, no audio, fast start
+ *   public/videos/hero-1920.mp4   desktop, H.264, 30 fps, no audio, fast start, at SPEED×
  *   public/videos/hero-1280.mp4   phones and small screens
  *   public/videos/hero-poster.webp  first frame: shown instantly, and instead of the video
  *                                   for reduced motion / data saver
@@ -16,12 +16,14 @@ const src = path.join(root, 'project-assets/high.mp4');
 const out = path.join(root, 'public/videos');
 const ffmpeg = process.env.FFMPEG || 'ffmpeg';
 fs.mkdirSync(out, { recursive: true });
+/** Playback speed-up: the 20 s original becomes a ~10 s film (the hero's first slide lasts one play). */
+const SPEED = 2;
 
 const run = (args) => execFileSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', '-y', '-i', src, ...args], { stdio: 'inherit' });
 const h264 = (width, crf) => [
   '-an',
   '-vf',
-  `scale=${width}:-2,fps=30`,
+  `setpts=PTS/${SPEED},scale=${width}:-2,fps=30`,
   '-c:v',
   'libx264',
   '-preset',
