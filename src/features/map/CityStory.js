@@ -497,8 +497,16 @@ export class CityStory {
     this.models?.animate(time);
     if (this.ao) this.ao.enabled = this.cam.dist < 3500;
 
+    // fully hidden (e.g. behind the Featured Projects clouds): keep the camera and LOD up to
+    // date so it's ready when revealed, but skip the expensive draw
+    if (this.occluded) return;
     this.composer.render();
     this.placeOverlays();
+  }
+
+  /** Skip drawing while something opaque covers the whole map (the clouds). */
+  setOccluded(on) {
+    this.occluded = on;
   }
 
   placeOverlays() {

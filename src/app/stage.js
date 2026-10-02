@@ -91,6 +91,8 @@ export function startStage(container, { cameras, office, projects, loader, onPin
       state.intro = intro;
       state.impl?.setIntro?.(intro);
     },
+    /** Skip drawing the map while it's completely covered (the Featured Projects clouds). */
+    setOccluded: (on) => state.impl?.setOccluded?.(on),
     pause: () => state.impl?.pause?.(),
     resume: () => state.impl?.resume?.(),
   };

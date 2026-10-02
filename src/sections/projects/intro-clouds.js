@@ -8,9 +8,9 @@ import { $, prefersReducedMotion, supportsWebGL } from '../../utils/dom.js';
  *  - once covered, the camera already flies to the first project (hidden in the clouds);
  *  - as the heading leaves, the clouds part sideways and the first project appears.
  * Everything is scrubbed by scroll, so it reverses when scrolling back up.
- * The cloud renderer is loaded after the page is ready (features/clouds/CloudLayer.js).
+ * The cloud renderer is set up behind the loader (features/clouds/CloudLayer.js).
  */
-export function initIntroClouds({ ready, stage, firstChapter }) {
+export function initIntroClouds({ stage, firstChapter }) {
   const intro = $('[data-chapter="projectsIntro"]');
   const host = $('[data-clouds]');
   if (!intro || !host) return;
@@ -31,11 +31,16 @@ export function initIntroClouds({ ready, stage, firstChapter }) {
         console.warn('[clouds] unavailable:', err);
         document.body.classList.add('no-clouds');
       }));
-  const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
-  ready.then(() => idle(load));
+  // set up while the loader still covers the page (WebGL context, texture upload, shader
+  // compile), so none of that one-off work lands while the visitor is scrolling
+  load();
 
+  let occluded = false;
   const update = () => {
     layer?.set(state);
+    // while the clouds fill the screen, the map underneath doesn't need drawing
+    const hidden = !!layer && state.cover > 0.995 && state.part < 0.01;
+    if (hidden !== occluded) stage.setOccluded((occluded = hidden));
     // fully in the clouds: have the camera at the first project, so it's framed when they part
     // (re-asserted, because scrolling back up re-activates the intro chapter)
     if (state.cover > 0.97 && state.part < 0.6 && stage.current === 'projectsIntro') stage.go(firstChapter);
