@@ -17,6 +17,11 @@ export function init({ overMapOnScroll = false } = {}) {
   update();
 }
 
+/** White logo and links, for when the header sits over the hero photography. */
+export function setOnPhoto(on) {
+  header?.classList.toggle('is-on-photo', on);
+}
+
 /** Light translucent bar, for when the header sits over the map or content. */
 export function setOverMap(on) {
   header?.classList.toggle('is-over-map', on);

@@ -15,5 +15,7 @@ export default {
   summary:
     'Quiet luxury on one of Toorak’s most prestigious streets — a boutique residential building arranged around private lobbies and landscaped interior gardens.',
   materials: 'Refined masonry, glazing and landscaped courts.',
+  // hero / card photo from project-assets/the-lansell/ (optimised by `npm run images`)
+  image: { file: 'S010-1-Render-Hero-Street.jpeg', position: '45% 55%' },
   camera: { zoom: 17.4, pitch: 60, bearing: -15 },
 };

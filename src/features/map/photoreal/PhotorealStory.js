@@ -297,15 +297,9 @@ export class PhotorealStory {
     });
   }
 
-  /** Hero expand: centre the view on the visible panel (same as CityStory.setIntro). */
-  setIntro({ x = 0, y = 0, zoom = 1 } = {}) {
-    this.intro = { x, y, zoom };
-  }
-
   applyCamera() {
     const { x, y, z, pitch, bearing } = this.cam;
-    const intro = this.intro || { x: 0, y: 0, zoom: 1 };
-    const dist = this.cam.dist * intro.zoom;
+    const dist = this.cam.dist;
     const p = pitch * D2R;
     const b = bearing * D2R;
     const cam = this.camera;
@@ -318,7 +312,7 @@ export class PhotorealStory {
     cam.near = Math.max(2, alt * 0.02);
     cam.far = Math.max(60000, alt * 90);
     const { w, h } = this.size || {};
-    if (w) cam.setViewOffset(w, h, this.cam.offsetX - intro.x, -intro.y, w, h);
+    if (w) cam.setViewOffset(w, h, this.cam.offsetX, 0, w, h);
     else cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
 

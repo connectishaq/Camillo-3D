@@ -6,27 +6,46 @@
   data-side="{{ project.side }}"
   data-label="{{ project.name }}"
 >
-  <article class="card project-card" data-reveal>
-    <div class="project-card__head">
-      <p class="eyebrow">{{ project.eyebrow }}</p>
+  <article class="project-card" data-reveal>
+    <div class="project-card__media">
+      <img
+        src="{{ project.photo.thumb }}"
+        srcset="{{ project.photo.srcset }}"
+        sizes="(max-width: 860px) 100vw, 460px"
+        alt="{{ project.photo.alt }}"
+        style="object-position: {{ project.photo.position }}"
+        loading="lazy"
+        decoding="async"
+      />
+      <span class="project-card__status">{{ project.status }}</span>
       <span class="project-card__index">{{ project.number }} / {{ project.total }}</span>
     </div>
-    <h2 class="project-card__title">{{ project.name }}</h2>
-    <!-- @include components/tag/tags.html -->
-    <p class="card__body-text">{{ project.summary }}</p>
-    <dl class="facts">
-      <!-- @each project.factList as fact -->
-      <div>
-        <dt>{{ fact.label }}</dt>
-        <dd>{{ fact.value }}</dd>
+    <div class="project-card__body">
+      <p class="eyebrow">{{ project.eyebrow }} · {{ project.type }}</p>
+      <h2 class="project-card__title">{{ project.name }}</h2>
+      <p class="project-card__summary">{{ project.summary }}</p>
+      <dl class="project-card__facts">
+        <!-- @each project.factList as fact -->
+        <div>
+          <dt>{{ fact.label }}</dt>
+          <dd>{{ fact.value }}</dd>
+        </div>
+        <!-- @end -->
+      </dl>
+      <div class="project-card__actions">
+        <button class="btn btn--solid" type="button" data-explore="{{ project.slug }}">
+          <svg class="btn__icon btn__icon--lead" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Zm0 0v18M4 7.5l8 4.5 8-4.5" />
+          </svg>
+          Explore in 3D
+        </button>
+        <!-- @if site.multiPage -->
+        <a class="btn btn--ghost" href="{{ project.url }}">
+          Full project<span class="visually-hidden">: {{ project.name }}</span>
+          <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+        </a>
+        <!-- @end -->
       </div>
-      <!-- @end -->
-    </dl>
-    <div class="project-card__actions">
-      <button class="btn btn--solid" type="button" data-explore="{{ project.slug }}">Explore in 3D</button>
-      <!-- @if site.multiPage -->
-      <a class="btn btn--ghost" href="{{ project.url }}">Full project<span class="visually-hidden">: {{ project.name }}</span></a>
-      <!-- @end -->
     </div>
   </article>
 </section>

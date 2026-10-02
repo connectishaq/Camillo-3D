@@ -16,5 +16,7 @@ export default {
   summary:
     'A monument to Carlton’s Italian heritage. The plan was pared back from 46 apartments to 21 generous family homes — marble, concrete and handcrafted detail, flooded with light and air.',
   materials: 'Marble, concrete, handcrafted joinery, solar and energy-efficient systems.',
+  // hero / card photo from project-assets/la-storia/ (optimised by `npm run images`)
+  image: { file: 'IMG_10058_2_040.jpg', position: '50% 45%' },
   camera: { zoom: 17.3, pitch: 62, bearing: 25 },
 };

@@ -10,16 +10,17 @@ import { prefersReducedMotion } from '../utils/dom.js';
  * Every stage is loaded on demand (its own chunk, with Three.js), so the page's own
  * script stays small. All stages share one interface:
  *   new Stage(container, { cameras, office, projects, reducedMotion, onReady, onFail, onPinClick, onProgress })
- *   .go(chapter, { duration }) · .setIntro({ x, y, zoom }) · .pause() · .resume() · .destroy()
+ *   .go(chapter, { duration }) · .setOccluded(on) · .pause() · .resume() · .destroy()
  */
 const loadCity = () => import('../features/map/CityStory.js').then((m) => m.CityStory);
 const loadMap = () => import('../features/map/MapStory.js').then((m) => m.MapStory);
 const loadPhotoreal = () => import('../features/map/photoreal/PhotorealStory.js').then((m) => m.PhotorealStory);
 
-/** Starts the map stage. Returns `{ go(chapter), setIntro(intro), pause(), resume() }`, usable straight away. */
+/** Starts the map stage. Returns `{ go(chapter), setOccluded(reason, on), pause(), resume() }`, usable straight away. */
 export function startStage(container, { cameras, office, projects, loader, onPinClick }) {
   const reducedMotion = prefersReducedMotion();
-  const state = { impl: null, current: 'hero', intro: null };
+  const state = { impl: null, current: 'hero' };
+  const occluders = new Set(); // reasons the map is fully covered (the hero, the clouds)
   // with reduced motion the camera cuts between chapters instead of flying
   const flight = reducedMotion ? { duration: 0 } : undefined;
   const options = {
@@ -69,7 +70,7 @@ export function startStage(container, { cameras, office, projects, loader, onPin
         });
         if (!failed) {
           state.impl = impl;
-          if (state.intro) impl.setIntro?.(state.intro);
+          impl.setOccluded?.(occluders.size > 0);
           impl.go(state.current, flight);
         }
       })
@@ -86,13 +87,12 @@ export function startStage(container, { cameras, office, projects, loader, onPin
       state.current = chapter;
       state.impl?.go(chapter, flight);
     },
-    /** Hero expand state, from sections/hero/hero.js. */
-    setIntro(intro) {
-      state.intro = intro;
-      state.impl?.setIntro?.(intro);
+    /** Skip drawing the map while something covers all of it (`reason`: 'hero', 'clouds'…). */
+    setOccluded(reason, on) {
+      if (on) occluders.add(reason);
+      else occluders.delete(reason);
+      state.impl?.setOccluded?.(occluders.size > 0);
     },
-    /** Skip drawing the map while it's completely covered (the Featured Projects clouds). */
-    setOccluded: (on) => state.impl?.setOccluded?.(on),
     pause: () => state.impl?.pause?.(),
     resume: () => state.impl?.resume?.(),
   };

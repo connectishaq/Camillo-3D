@@ -16,7 +16,7 @@ export default [
   },
   {
     // build tooling (runs in Node)
-    files: ['vite.config.js', 'vite-plugins/**/*.js', 'eslint.config.js'],
+    files: ['vite.config.js', 'vite-plugins/**/*.js', 'scripts/**/*.mjs', 'eslint.config.js'],
     languageOptions: { ecmaVersion: 'latest', sourceType: 'module', globals: globals.node },
   },
   {

@@ -100,15 +100,19 @@ The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au
 
 **3D colours.** The generated city keeps its realistic material colours (brick, terracotta and Colorbond roofs, render, timber, gardens, deep blue water, a warm late-afternoon sky), defined in the city modules. The brand shows in the site highlights: project rings, pins and floor outlines are burgundy. The Building Explorer's light studio scene, map mode and those highlights read the `--map-*` tokens through [`src/gfx/palette.js`](src/gfx/palette.js). Façade and interior colours inside each project model stay with the model specs, because they describe the real buildings.
 
-## The hero: split layout → full-screen map
+## The hero: project showcase
 
-[`src/sections/hero/hero.js`](src/sections/hero/hero.js), with GSAP ScrollTrigger (Lenis feeds it through `lenis.on('scroll', ScrollTrigger.update)`, and GSAP's ticker drives Lenis):
+[`src/sections/hero/`](src/sections/hero/) is a full-screen, auto-playing showcase in front of the map:
 
-- At rest the hero copies camillo.com.au: heading and buttons on the left, a panel from 36.4% across and 158px down to the right and bottom edges, top-left corner 24.7% of its width (`HERO_PANEL` in `config.js`).
-- The map canvas is **always full screen** and never resized. `.stage` gets a `clip-path: inset(top right bottom left round R 0 0 0)` measured from the empty `[data-hero-panel]` placeholder, recalculated on resize and ScrollTrigger refresh.
-- The hero is pinned for 100vh of scroll and one scrubbed timeline takes the clip to `inset(0)`, eases the corner to 0, slides the text out and switches the header to its translucent "over map" style. It is fully reversible.
-- While the panel is small, `stage.setIntro({ x, y, zoom })` offsets the camera's view (`setViewOffset`) so the CBD is centred in the panel, and eases to the normal framing at full screen. From there the chapter system takes over unchanged.
-- Mobile: text on top, the panel below at full width with rounded top corners, same expand. With `prefers-reduced-motion` there is no pin or scrub, just a short cross-fade to the full map.
+- **Slide 1** is the company line, "Residential & Commercial Builders", over a project photo picked at random on each visit (`introImages` in `src/data/company.js`; a tiny inline script chooses it before the browser downloads anything).
+- **Then one slide per featured project**, built from `src/data/projects/*.js`: name, summary, a frosted facts card, **View full project** (the project page) and **See on map** (scrolls to that project's chapter; the 3D map flies there as before).
+- Slides wipe in horizontally with a parallax drift, and the text reveals line by line. Everything moves with transforms only, so it never forces layout or repaints.
+- The autoplay timer _is_ the active progress bar's CSS animation: when it ends, the next slide comes in (7 s each, `SLIDE_TIME` in `hero.js`). It holds while the pointer is over the text, card or controls, while keyboard focus is inside, when the tab is hidden and when the hero is scrolled away. The pause button stops it for good, arrow keys and swipes move between slides, and with `prefers-reduced-motion` it doesn't autoplay and slides cross-fade.
+- While the hero covers the whole screen, the 3D map behind it doesn't draw (`stage.setOccluded('hero', …)`). Scrolling down reveals the map story, and the header turns from white-on-photo to the light glass bar.
+
+### Photos
+
+Originals stay in `project-assets/<slug>/`. `npm run images` (with [sharp](https://sharp.pixelplumbing.com/)) writes optimised WebP copies at 640/1280/1920 px, or the photo's own width when smaller, to `public/images/projects/`, and records the widths in `src/data/images.json` for the templates' `srcset`. Run it after changing a project's `image` or the intro photos, and commit the results (Netlify doesn't run it).
 
 ## Structure
 
@@ -166,7 +170,7 @@ Rules of thumb: each file has one job, there are no globals, and section JS only
 
 ## Adding a project
 
-1. Add **`src/data/projects/<slug>.js`**. The file name must match its `slug`. Copy an existing project: `order` (position in the story), `slug`, `name`, `suburb`, optional `address`, `type`, `status`, `coords: [lng, lat]`, `facts`, `summary`, `materials`, `camera` (zoom/pitch/bearing), and optionally `publishedFacts: { levels, units }` to check the model in dev.
+1. Add **`src/data/projects/<slug>.js`** (including `image: { file, position }`, a photo from `project-assets/<slug>/`, then run `npm run images`). The file name must match its `slug`. Copy an existing project: `order` (position in the story), `slug`, `name`, `suburb`, optional `address`, `type`, `status`, `coords: [lng, lat]`, `facts`, `summary`, `materials`, `camera` (zoom/pitch/bearing), and optionally `publishedFacts: { levels, units }` to check the model in dev.
 
    That one file is enough: the build adds the story chapter, the map pin and city model, the project page `/projects/<slug>`, the sitemap entry and the 404 page link. Until it has a spec, the building is a plain three-level placeholder.
 
@@ -242,13 +246,13 @@ Both paths use **the same model** on the city map (merged into a few draw calls)
 
 ## Credits and licences
 
-| Asset                          | Source                                                                                                                | Licence                                     |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| All city and building textures | generated at runtime (`gfx/proctex.js`)                                                                               | —                                           |
-| `images/og-image.jpg`          | screenshot of the generated city (this project)                                                                       | —                                           |
-| `draco/*`                      | Draco glTF decoder, copied from `three/examples/jsm/libs/draco/gltf`                                                  | Apache-2.0                                  |
-| `brand/google-maps-logo.svg`   | [Google Maps attribution assets](https://developers.google.com/maps/documentation/tile/policies), photoreal mode only | Google brand asset, for attribution only    |
-| `project-assets/*`             | Project renders and photos supplied by Camillo                                                                        | © their owners; reference only, not bundled |
+| Asset                                   | Source                                                                                                                | Licence                                        |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| All city and building textures          | generated at runtime (`gfx/proctex.js`)                                                                               | —                                              |
+| `images/og-image.jpg`                   | screenshot of the generated city (this project)                                                                       | —                                              |
+| `draco/*`                               | Draco glTF decoder, copied from `three/examples/jsm/libs/draco/gltf`                                                  | Apache-2.0                                     |
+| `brand/google-maps-logo.svg`            | [Google Maps attribution assets](https://developers.google.com/maps/documentation/tile/policies), photoreal mode only | Google brand asset, for attribution only       |
+| `project-assets/*`, `images/projects/*` | Project renders and photos supplied by Camillo (optimised copies are bundled for the hero and cards)                  | © their owners; used with Camillo's permission |
 
 ## Before launch — to confirm with Camillo
 

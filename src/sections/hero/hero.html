@@ -1,18 +1,145 @@
 <!--
-  01 Hero, after camillo.com.au's split hero: heading and buttons on the left, a big panel
-  with one rounded corner on the right. The panel is the live map: `data-hero-panel` is an
-  empty placeholder that hero.js measures to clip the fixed map stage to its shape, then
-  scrolling expands the map to full screen.
+  01 Hero: a full-screen, auto-playing showcase. The first slide is the company line over a
+  project photo (picked at random by hero.js from intro.photos); then one slide per featured
+  project with "View full project" and "See on map". Controls follow the WAI carousel
+  pattern: pause/play, previous/next, one tab per slide. The map story starts beneath it.
 -->
-<section class="chapter chapter--hero" id="top" data-chapter="hero" data-label="Melbourne">
-  <div class="hero__content">
-    <h1 class="hero__title"><span>Residential &amp; </span><span>Commercial </span><span>Builders</span></h1>
-    <p class="hero__lede">{{ company.heritage }}.</p>
-    <div class="hero__actions">
-      <a class="btn btn--solid" href="#contact">Get in Touch</a>
-      <a class="btn btn--ghost" href="#projects">Explore projects</a>
-    </div>
-    <p class="hero__cue" aria-hidden="true"><span></span>Scroll to explore Melbourne</p>
+<section
+  class="chapter chapter--hero showcase"
+  id="top"
+  data-chapter="hero"
+  data-label="Melbourne"
+  data-showcase
+  aria-roledescription="carousel"
+  aria-label="Camillo and our featured projects"
+>
+  <div class="showcase__slides" data-slides aria-live="off">
+    <!-- Intro: the company line -->
+    <article class="slide slide--intro is-active" data-slide="0" role="group" aria-roledescription="slide" aria-label="1 of {{ intro.total }}">
+      <div class="slide__media">
+        <img class="slide__img" id="intro-photo" sizes="100vw" alt="" fetchpriority="high" data-intro-photos="{{ intro.photos }}" />
+        <!-- a random project photo each visit, chosen before the browser starts downloading one -->
+        <script>
+          (function () {
+            var img = document.getElementById('intro-photo');
+            var list = JSON.parse(img.getAttribute('data-intro-photos'));
+            var p = list[Math.floor(Math.random() * list.length)];
+            img.style.objectPosition = p.position;
+            img.alt = p.alt;
+            img.srcset = p.srcset;
+            img.src = p.src;
+          })();
+        </script>
+        <noscript><img class="slide__img" src="{{ intro.photo.src }}" alt="{{ intro.photo.alt }}" /></noscript>
+      </div>
+      <div class="slide__content">
+        <p class="slide__eyebrow"><span class="reveal">Melbourne · Victoria</span></p>
+        <h1 class="slide__title slide__title--intro">
+          <span class="line"><span class="reveal">Residential &amp;</span></span>
+          <span class="line"><span class="reveal">Commercial</span></span>
+          <span class="line"><span class="reveal">Builders</span></span>
+        </h1>
+        <p class="slide__lede"><span class="reveal">{{ company.heritage }}.</span></p>
+        <div class="slide__actions">
+          <a class="btn btn--light" href="#contact">Get in Touch</a>
+          <button class="btn btn--glass" type="button" data-showcase-next>
+            Our projects
+            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+          </button>
+        </div>
+      </div>
+      <aside class="slide__card glass" aria-label="Camillo at a glance">
+        <!-- @each stats as stat -->
+        <div class="glance">
+          <span class="glance__value">{{ stat.prefix }}{{ stat.value }}{{ stat.suffix }}</span>
+          <span class="glance__label">{{ stat.label }}</span>
+        </div>
+        <!-- @end -->
+      </aside>
+    </article>
+
+    <!-- @each projects as project -->
+    <article class="slide" data-slide data-slug="{{ project.slug }}" role="group" aria-roledescription="slide" aria-label="{{ project.name }}">
+      <div class="slide__media">
+        <img
+          class="slide__img"
+          data-srcset="{{ project.photo.srcset }}"
+          data-src="{{ project.photo.src }}"
+          sizes="100vw"
+          alt="{{ project.photo.alt }}"
+          style="object-position: {{ project.photo.position }}"
+          decoding="async"
+        />
+      </div>
+      <div class="slide__content">
+        <p class="slide__eyebrow">
+          <span class="reveal">Featured project {{ project.number }} — {{ project.suburb }}</span>
+        </p>
+        <h2 class="slide__title">
+          <span class="line"><span class="reveal">{{ project.name }}</span></span>
+        </h2>
+        <p class="slide__lede"><span class="reveal">{{ project.summary }}</span></p>
+        <div class="slide__actions">
+          <a class="btn btn--light" href="{{ project.url }}">
+            View full project<span class="visually-hidden">: {{ project.name }}</span>
+            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+          </a>
+          <a class="btn btn--glass" href="#project-{{ project.slug }}" data-see-on-map>
+            <svg class="btn__icon btn__icon--lead" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" />
+              <circle cx="12" cy="9.5" r="2.5" />
+            </svg>
+            See on map<span class="visually-hidden">: {{ project.name }}</span>
+          </a>
+        </div>
+      </div>
+      <aside class="slide__card glass" aria-label="{{ project.name }} at a glance">
+        <div class="slide__card-head">
+          <span class="pill">{{ project.status }}</span>
+          <span class="slide__card-type">{{ project.type }}</span>
+        </div>
+        <dl class="glance-list">
+          <!-- @each project.keyFacts as fact -->
+          <div>
+            <dt>{{ fact.label }}</dt>
+            <dd>{{ fact.value }}</dd>
+          </div>
+          <!-- @end -->
+        </dl>
+      </aside>
+    </article>
+    <!-- @end -->
   </div>
-  <div class="hero__panel" data-hero-panel aria-hidden="true"></div>
+
+  <!-- Controls -->
+  <div class="showcase__controls">
+    <div class="showcase__tabs" role="tablist" aria-label="Choose a slide">
+      <button class="tab is-active" type="button" role="tab" aria-selected="true" data-goto="0">
+        <span class="tab__label">Camillo</span><span class="tab__bar"><span class="tab__fill"></span></span>
+      </button>
+      <!-- @each projects as project -->
+      <button class="tab" type="button" role="tab" aria-selected="false" data-goto>
+        <span class="tab__label">{{ project.name }}</span><span class="tab__bar"><span class="tab__fill"></span></span>
+      </button>
+      <!-- @end -->
+    </div>
+    <div class="showcase__nav">
+      <p class="showcase__count" aria-hidden="true"><span data-count-current>01</span> / {{ intro.total }}</p>
+      <button class="round glass" type="button" data-showcase-pause aria-label="Pause the slideshow">
+        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12" /></svg>
+        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z" /></svg>
+      </button>
+      <button class="round glass" type="button" data-showcase-prev aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6" /></svg>
+      </button>
+      <button class="round glass" type="button" data-showcase-next aria-label="Next slide">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <a class="showcase__scroll" href="#about" aria-label="Scroll to explore Melbourne in 3D">
+    <span class="showcase__scroll-line" aria-hidden="true"></span>
+    <span>Explore in 3D</span>
+  </a>
 </section>

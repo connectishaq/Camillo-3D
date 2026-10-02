@@ -16,6 +16,8 @@ export default {
   summary:
     'A boutique collection capturing the place where the sea meets the sky. A layered façade plays with light and shadow, framing oversized balconies and bay views.',
   materials: 'Italian kitchens, European appliances, stone surfaces.',
+  // hero / card photo from project-assets/sea-sky/ (optimised by `npm run images`)
+  image: { file: 'EXT01_Exterior-1600x1702.jpg', position: '50% 42%' },
   camera: { zoom: 17.1, pitch: 62, bearing: 60 },
   // published numbers the 3D model must reproduce (checked in dev)
   publishedFacts: { levels: 6, units: 64 },

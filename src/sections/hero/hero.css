@@ -1,56 +1,355 @@
 /*
- * Split hero, measured from camillo.com.au at 1440px: heading at 7.5vw, panel from 36.4vw
- * and 158px down to the right and bottom edges, top-left corner ≈ 24.7% of its width.
+ * Hero showcase: full-screen project photography, oversized light display type, frosted
+ * glass. Slides are stacked; hero.js moves them with transforms only (no layout, no repaint).
  */
-.chapter--hero {
+.showcase {
   position: relative;
   display: block;
   height: 100vh;
   height: 100svh;
-  min-height: 560px;
+  min-height: 600px;
   padding: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--text); /* shows for an instant before the first photo decodes */
+  color: var(--on-photo);
 }
-.hero__content {
+.showcase__slides {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- Slides ---------- */
+.slide {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+.slide.is-active,
+.slide.is-entering,
+.slide.is-leaving {
+  visibility: visible;
+}
+.slide.is-entering {
+  z-index: 2;
+}
+.slide__media {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.slide__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 60% 50%;
+}
+/* slow push-in while a slide is on show (same animation while entering, so it doesn't restart) */
+.slide.is-entering .slide__img,
+.slide.is-active .slide__img {
+  animation: kenburns 14s linear both;
+}
+@keyframes kenburns {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+/* readability: dark from the bottom left, where the text sits; the top keeps the header legible */
+.slide__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, var(--photo-scrim) 0%, transparent 58%),
+    linear-gradient(100deg, color-mix(in srgb, var(--photo-scrim) 80%, transparent) 0%, transparent 62%),
+    linear-gradient(to bottom, rgba(12, 8, 10, 0.45) 0%, transparent 22%);
+}
+
+.slide__content {
   position: absolute;
   left: var(--gutter);
-  top: max(calc(var(--header-h) + 40px), 43vh);
-  width: calc(36.4vw - var(--gutter) - 32px);
-  will-change: transform, opacity;
+  bottom: calc(clamp(96px, 15vh, 150px) + 24px);
+  width: min(58vw, 860px);
 }
-.hero__title {
-  font-size: var(--fs-hero);
-  line-height: var(--lh-tight);
+.slide__eyebrow {
+  font-size: var(--fs-small);
   font-weight: var(--fw-regular);
-  letter-spacing: -0.015em;
+  letter-spacing: 0.08em;
+  color: var(--on-photo-muted);
+  margin-bottom: 18px;
+  overflow: hidden; /* reveal mask */
 }
-.hero__title span {
+.slide__eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 36px;
+  height: 1px;
+  margin-right: 14px;
+  vertical-align: middle;
+  background: currentColor;
+}
+.slide__title {
+  font-size: clamp(3rem, 1.4rem + 6.2vw, 8.25rem);
+  font-weight: var(--fw-light);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.slide__title--intro {
+  font-size: clamp(3rem, 1.2rem + 5.8vw, 7.5rem);
+}
+.slide__title .line {
   display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em; /* room for descenders inside the reveal mask */
 }
-.hero__lede {
-  margin-top: 20px;
-  max-width: 34ch;
+.reveal {
+  display: inline-block;
+  will-change: transform;
+}
+.slide__lede {
+  margin-top: 22px;
+  max-width: 46ch;
   font-size: var(--fs-lede);
   line-height: var(--lh-body);
-  color: var(--text-muted);
+  color: var(--on-photo-muted);
+  overflow: hidden;
 }
-.hero__actions {
-  margin-top: 32px;
+.slide__actions {
+  margin-top: 34px;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-.hero__cue {
-  margin-top: 40px;
+
+/* Frosted card, bottom right */
+.glass {
+  background: var(--glass-dark);
+  border: 1px solid var(--glass-edge);
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+}
+.slide__card {
+  position: absolute;
+  right: var(--gutter);
+  bottom: calc(clamp(96px, 15vh, 150px) + 24px);
+  width: 300px;
+  padding: 22px 24px;
+  border-radius: var(--radius);
+}
+.slide__card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.slide__card-type {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-photo-muted);
+}
+.pill {
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--on-photo);
+  color: var(--brand);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+}
+.glance-list div {
+  padding: 10px 0;
+  border-top: 1px solid var(--on-photo-line);
+}
+.glance-list dt {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-photo-muted);
+}
+.glance-list dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+}
+.glance {
+  display: grid;
+  gap: 2px;
+  padding: 10px 0;
+  border-top: 1px solid var(--on-photo-line);
+}
+.glance:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.glance__value {
+  font-size: 2rem;
+  font-weight: var(--fw-light);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.glance__label {
+  font-size: var(--fs-small);
+  color: var(--on-photo-muted);
+}
+
+.showcase :focus-visible {
+  outline-color: var(--on-photo);
+}
+
+/* ---------- Controls ---------- */
+.showcase__controls {
+  position: absolute;
+  z-index: 5;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 34px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+.showcase__tabs {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  max-width: 900px;
+}
+.tab {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  padding-top: 8px;
+  text-align: left;
+  color: var(--on-photo-muted);
+  transition: color 0.3s;
+}
+.tab:hover,
+.tab.is-active {
+  color: var(--on-photo);
+}
+.tab__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+}
+.tab__bar {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--on-photo-line);
+  overflow: hidden;
+}
+.tab__fill {
+  display: block;
+  height: 100%;
+  background: var(--on-photo);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.tab.is-done .tab__fill {
+  transform: scaleX(1);
+}
+/* the active bar fills over the slide's time on screen; its end advances the slideshow */
+.tab.is-active .tab__fill {
+  animation: tabfill var(--slide-time, 7s) linear forwards;
+}
+.showcase.is-paused .tab.is-active .tab__fill,
+.showcase.is-held .tab.is-active .tab__fill {
+  animation-play-state: paused;
+}
+.showcase.is-static .tab.is-active .tab__fill {
+  animation: none;
+  transform: scaleX(1);
+}
+@keyframes tabfill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.showcase__nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.showcase__count {
+  margin-right: 10px;
+  font-size: var(--fs-small);
+  letter-spacing: 0.06em;
+  color: var(--on-photo-muted);
+  font-variant-numeric: tabular-nums;
+}
+.showcase__count span {
+  color: var(--on-photo);
+}
+.round {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--on-photo);
+  transition:
+    background-color 0.25s,
+    border-color 0.25s;
+}
+.round:hover {
+  background: var(--glass-dark-strong);
+  border-color: var(--on-photo);
+}
+.round svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.round .icon-play {
+  display: none;
+  fill: currentColor;
+}
+.showcase.is-paused .round .icon-play {
+  display: block;
+}
+.showcase.is-paused .round .icon-pause {
+  display: none;
+}
+
+/* "Explore in 3D": the map story starts below */
+.showcase__scroll {
+  position: absolute;
+  z-index: 5;
+  right: calc(var(--gutter) / 2 - 6px);
+  top: 30%;
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: var(--fs-small);
-  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-photo-muted);
+  writing-mode: vertical-rl;
+  transform: translateY(-50%);
 }
-.hero__cue span {
+.showcase__scroll:hover {
+  color: var(--on-photo);
+}
+.showcase__scroll-line {
   width: 1px;
-  height: 36px;
-  background: linear-gradient(var(--brand), transparent);
+  height: 56px;
+  background: linear-gradient(var(--on-photo), transparent);
   animation: cue 2.2s var(--ease) infinite;
   transform-origin: top;
 }
@@ -67,59 +366,65 @@
   }
 }
 
-/* Where the map shows at rest (transparent: the fixed map stage is clipped to this box) */
-.hero__panel {
-  position: absolute;
-  left: 36.4vw;
-  top: calc(var(--header-h) + 23px);
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-}
-
-@media (max-width: 1100px) and (min-width: 861px) {
-  .hero__content {
-    width: calc(40vw - var(--gutter));
-  }
-  .hero__panel {
-    left: 42vw;
-  }
-}
-
-/* Mobile: heading and buttons on top, the map panel below at full width */
-@media (max-width: 860px) {
-  .chapter--hero {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch; /* not the chapters' flex-end: the panel spans the full width */
-    justify-content: flex-start;
-    min-height: 640px;
-  }
-  .hero__content {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: auto;
-    padding: calc(var(--header-h) + 16px) var(--gutter) 0;
-  }
-  .hero__title span {
-    display: inline;
-  }
-  .hero__lede {
-    margin-top: 14px;
-    font-size: var(--fs-body);
-  }
-  .hero__actions {
-    margin-top: 22px;
-  }
-  .hero__cue {
+@media (max-width: 1100px) {
+  .slide__card {
     display: none;
   }
-  .hero__panel {
-    position: relative;
-    inset: auto;
-    flex: 1;
-    min-height: 280px;
-    margin-top: 32px;
+  .slide__content {
+    width: min(78vw, 760px);
+  }
+}
+
+@media (max-width: 860px) {
+  .slide__content {
+    left: var(--gutter);
+    right: var(--gutter);
+    width: auto;
+    bottom: 128px;
+  }
+  .slide__eyebrow {
+    margin-bottom: 12px;
+  }
+  .slide__title,
+  .slide__title--intro {
+    font-size: clamp(2.6rem, 11vw, 3.6rem);
+  }
+  .slide__lede {
+    margin-top: 14px;
+    font-size: var(--fs-body);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .slide__actions {
+    margin-top: 22px;
+  }
+  .slide__actions .btn {
+    flex: 1 1 auto;
+  }
+  .showcase__controls {
+    bottom: 26px;
+    gap: 14px;
+  }
+  .showcase__tabs {
+    gap: 6px;
+  }
+  .tab__label {
+    display: none;
+  }
+  .showcase__count,
+  .showcase__scroll {
+    display: none;
+  }
+  .round {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide.is-entering .slide__img,
+  .slide.is-active .slide__img {
+    animation: none;
   }
 }

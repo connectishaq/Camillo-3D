@@ -213,15 +213,6 @@ export class MapStory {
     this.map.once('moveend', () => (this.flying = false));
   }
 
-  /**
-   * Hero expand: while the map is only a panel, pad the view so the subject sits in the
-   * panel's centre (padding = 2 × the panel centre's offset from the screen centre).
-   */
-  setIntro({ x = 0, y = 0 } = {}) {
-    if (!this.loaded) return;
-    this.map.setPadding({ left: Math.max(0, 2 * x), right: Math.max(0, -2 * x), top: Math.max(0, 2 * y), bottom: Math.max(0, -2 * y) });
-  }
-
   /** Keep the subject clear of the text card. */
   paddingFor(chapter) {
     const w = window.innerWidth;

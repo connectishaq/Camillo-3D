@@ -15,5 +15,7 @@ export default {
   summary:
     'Camillo’s landmark luxury home — a multi-generational family residence with a basement rumpus lit by the pool above, a gymnastics room, wellness suite and formal lounge.',
   materials: 'Board-formed concrete and warm timber throughout.',
+  // hero / card photo from project-assets/the-righi/ (optimised by `npm run images`)
+  image: { file: '05-Bedroom-Windows.jpg', position: '50% 50%' },
   camera: { zoom: 17.8, pitch: 60, bearing: 20 },
 };

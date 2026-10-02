@@ -386,18 +386,9 @@ export class CityStory {
     this.models?.highlight(slug);
   }
 
-  /**
-   * Hero expand: while the map is only a panel, centre the view on the panel (`x`, `y` = panel
-   * centre minus screen centre, px) and pull back a little (`zoom`). All 0/1 once full screen.
-   */
-  setIntro({ x = 0, y = 0, zoom = 1 } = {}) {
-    this.intro = { x, y, zoom };
-  }
-
   applyCamera() {
     const { x, z, pitch, bearing } = this.cam;
-    const intro = this.intro || { x: 0, y: 0, zoom: 1 };
-    const dist = this.cam.dist * intro.zoom;
+    const dist = this.cam.dist;
     const p = (pitch * Math.PI) / 180;
     const b = (bearing * Math.PI) / 180;
     const cam = this.camera;
@@ -408,7 +399,7 @@ export class CityStory {
     cam.near = Math.max(1.5, alt * 0.012);
     cam.far = Math.max(40000, alt * 40);
     const { w, h } = this.size || {};
-    if (w) cam.setViewOffset(w, h, this.cam.offsetX - intro.x, this.cam.offsetY - intro.y, w, h);
+    if (w) cam.setViewOffset(w, h, this.cam.offsetX, this.cam.offsetY, w, h);
     else cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
   }
@@ -499,8 +490,11 @@ export class CityStory {
 
     // fully hidden (e.g. behind the Featured Projects clouds): keep the camera and LOD up to
     // date so it's ready when revealed, but skip the expensive draw
-    if (this.occluded) return;
+    // (but always draw the first few frames, so every post-processing shader is compiled
+    // behind the loader rather than on the first frame the visitor scrolls into)
+    if (this.occluded && this.drawn > 3) return;
     this.composer.render();
+    this.drawn = (this.drawn || 0) + 1;
     this.placeOverlays();
   }
 

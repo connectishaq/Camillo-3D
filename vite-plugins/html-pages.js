@@ -36,7 +36,7 @@ export function htmlPages({ site }) {
   const render = async (html, file) => {
     const page = pageFor(file);
     if (!page) return html;
-    const scope = pageScope(await loadSiteData(srcDir), page, site);
+    const scope = pageScope(await loadSiteData(srcDir), page, site, srcDir);
     return renderTemplate(html, scope, { file, srcDir, onInclude: (f) => partials.add(f) });
   };
 

@@ -17,6 +17,12 @@
     border-color 0.4s var(--ease),
     backdrop-filter 0.4s var(--ease);
 }
+/* Over the hero photography: white logo and links, no bar */
+.site-header.is-on-photo,
+.site-header.is-on-photo .brand,
+.site-header.is-on-photo .site-nav a {
+  color: var(--on-photo);
+}
 /* Over the full-screen map (and on standalone pages once scrolled): light glass bar */
 .site-header.is-over-map {
   height: 84px;

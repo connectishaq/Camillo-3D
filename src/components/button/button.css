@@ -61,6 +61,39 @@
   width: 100%;
 }
 
+/* On photography: white solid, and frosted glass */
+.btn--light {
+  background: var(--on-photo);
+  color: var(--text);
+}
+.btn--light:hover {
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+.btn--glass {
+  color: var(--on-photo);
+  background: var(--glass-dark);
+  border-color: var(--glass-edge);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.btn--glass:hover {
+  background: var(--glass-dark-strong);
+  border-color: var(--on-photo);
+}
+.btn__icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s var(--ease);
+}
+.btn:hover .btn__icon:not(.btn__icon--lead) {
+  transform: translateX(3px);
+}
 /* Toggle / small action */
 .chip {
   min-height: 36px;

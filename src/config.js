@@ -12,14 +12,6 @@ export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 /** Max width of a story card (px), as in `--card-w`. Map cameras shift the subject clear of it. */
 export const CARD_WIDTH = 460;
 
-/** Hero map panel (measured from camillo.com.au) and its expand-on-scroll. */
-export const HERO_PANEL = {
-  radius: 0.247, // top-left corner, as a share of the panel width (226.5px of 917px at 1440px)
-  radiusMobile: 40, // px, both top corners on mobile
-  scrollLength: 1, // pinned scroll distance, in viewport heights
-  zoomOut: 1.18, // camera pulled back a little while the panel is small
-};
-
 /**
  * Project chapters: the camera frames each building from its own size (not a fixed map zoom),
  * looking at its street front from a three-quarter angle.

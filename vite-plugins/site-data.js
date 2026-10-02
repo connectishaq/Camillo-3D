@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { imageName } from './images.js';
 
 /*
  * Reads the site content (src/data) in Node, for writing the static HTML at build time.
@@ -19,7 +20,7 @@ export function projectSlugs(srcDir) {
 const importFresh = (file) => import(`${pathToFileURL(file).href}?v=${fs.statSync(file).mtimeMs}`);
 
 export async function loadSiteData(srcDir) {
-  const { company, moreProjects } = await importFresh(path.join(srcDir, 'data/company.js'));
+  const { company, moreProjects, introImages } = await importFresh(path.join(srcDir, 'data/company.js'));
   const projects = await Promise.all(
     projectSlugs(srcDir).map(async (slug) => {
       const project = (await importFresh(path.join(srcDir, `data/projects/${slug}.js`))).default;
@@ -28,15 +29,36 @@ export async function loadSiteData(srcDir) {
     }),
   );
   projects.sort((a, b) => a.order - b.order);
-  return { company, moreProjects, projects };
+  return { company, moreProjects, introImages, projects };
+}
+
+/**
+ * An optimised photo for the templates: { src, thumb, srcset, position, alt }, from the
+ * widths scripts/images.mjs recorded in src/data/images.json.
+ */
+function photo(srcDir, { project, file, position = '50% 50%', alt }, prefix) {
+  const name = imageName(project, file);
+  const manifest = JSON.parse(fs.readFileSync(path.join(srcDir, 'data/images.json'), 'utf8'));
+  const widths = manifest[name];
+  if (!widths) throw new Error(`[site-data] no optimised images for ${project}/${file}: run "npm run images"`);
+  const url = (w) => `${prefix}images/projects/${name}-${w}.webp`;
+  return {
+    src: url(widths.find((w) => w >= 1200) ?? widths.at(-1)),
+    thumb: url(widths[0]),
+    srcset: widths.map((w) => `${url(w)} ${w}w`).join(', '),
+    position,
+    alt,
+  };
 }
 
 const pad = (n) => String(n).padStart(2, '0');
 
 /** Presentation fields the templates need, worked out once here rather than in the HTML. */
-function decorateProject(p, i, all) {
+function decorateProject(p, i, all, srcDir, prefix) {
   return {
     ...p,
+    photo: photo(srcDir, { project: p.slug, ...p.image, alt: `${p.name}, ${p.suburb}` }, prefix),
+    keyFacts: p.facts.slice(0, 2).map(([label, value]) => ({ label, value })),
     side: i % 2 === 0 ? 'left' : 'right', // chapters alternate sides for rhythm
     number: pad(i + 1),
     total: pad(all.length),
@@ -47,9 +69,12 @@ function decorateProject(p, i, all) {
 }
 
 /** Template scope for one page. `page` is { kind: 'home' | 'project' | 'not-found', slug? }. */
-export function pageScope(data, page, site) {
+export function pageScope(data, page, site, srcDir) {
   const { company, moreProjects } = data;
-  const projects = data.projects.map(decorateProject);
+  // photo URLs: relative on the home page (also works opened from disk), from the root elsewhere
+  const prefix = page.kind === 'home' ? '' : '/';
+  const projects = data.projects.map((p, i, all) => decorateProject(p, i, all, srcDir, prefix));
+  const intro = data.introImages.map((img) => photo(srcDir, img, prefix));
   const project = page.kind === 'project' ? projects.find((p) => p.slug === page.slug) : null;
   if (page.kind === 'project' && !project) throw new Error(`[site-data] unknown project "${page.slug}"`);
 
@@ -70,6 +95,7 @@ export function pageScope(data, page, site) {
     moreProjects,
     projects,
     project,
+    intro: { photo: intro[0], photos: JSON.stringify(intro), total: String(projects.length + 1).padStart(2, '0') },
     year: new Date().getFullYear(),
     services: company.services.map((s, i) => ({ ...s, number: pad(i + 1) })),
     stats: company.stats.map((s) => ({ prefix: '', suffix: '', ...s })),

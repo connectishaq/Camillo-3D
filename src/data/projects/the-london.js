@@ -15,6 +15,8 @@ export default {
   summary:
     'Built on the historic site of the original London Hotel (est. 1861), The London reimagines beachside living with uninterrupted Port Phillip Bay views from every residence.',
   materials: 'Brickwork, raw concrete, charcoal metalwork and timber soffits.',
+  // hero / card photo from project-assets/the-london/ (optimised by `npm run images`)
+  image: { file: 'TheLondon-1600x899.jpeg', position: '50% 55%' },
   camera: { zoom: 17.4, pitch: 64, bearing: -40 },
   // published numbers the 3D model must reproduce (checked in dev)
   publishedFacts: { levels: 7, units: 13 },

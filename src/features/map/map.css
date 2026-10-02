@@ -1,14 +1,9 @@
 /* ---------- Fixed 3D map stage (behind the scrolling story) ---------- */
-/*
- * Always full screen (the canvas is never resized). On the home page hero.js clips it to
- * the hero panel with `clip-path` and expands it to the viewport on scroll.
- */
 .stage {
   position: fixed;
   inset: 0;
   z-index: 0;
   background: var(--surface-2); /* shows in the panel until the city has rendered */
-  will-change: clip-path;
 }
 .stage .stage__map,
 .stage .stage__fallback {

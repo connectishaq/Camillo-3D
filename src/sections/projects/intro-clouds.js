@@ -40,7 +40,7 @@ export function initIntroClouds({ stage, firstChapter }) {
     layer?.set(state);
     // while the clouds fill the screen, the map underneath doesn't need drawing
     const hidden = !!layer && state.cover > 0.995 && state.part < 0.01;
-    if (hidden !== occluded) stage.setOccluded((occluded = hidden));
+    if (hidden !== occluded) stage.setOccluded('clouds', (occluded = hidden));
     // fully in the clouds: have the camera at the first project, so it's framed when they part
     // (re-asserted, because scrolling back up re-activates the intro chapter)
     if (state.cover > 0.97 && state.part < 0.6 && stage.current === 'projectsIntro') stage.go(firstChapter);

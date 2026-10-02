@@ -1,4 +1,4 @@
-/* ---------- Intro (text straight on the map, over a light scrim) ---------- */
+/* ---------- Intro (in the clouds) ---------- */
 .intro {
   max-width: 760px;
   padding: 40px 0;
@@ -13,21 +13,113 @@
   color: var(--text);
 }
 
-/* ---------- Project card ---------- */
-.project-card__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
+/* ---------- Project card: photo header, then the details ---------- */
+.project-card {
+  width: var(--card-w);
+  border-radius: calc(var(--radius) + 4px);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid color-mix(in srgb, var(--surface) 60%, transparent);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.project-card__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.project-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+.project-card:hover .project-card__media img {
+  transform: scale(1.04);
+}
+.project-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(12, 8, 10, 0.4), transparent 38%);
+  pointer-events: none;
+}
+.project-card__status,
+.project-card__index {
+  position: absolute;
+  z-index: 1;
+  top: 14px;
+  font-size: var(--fs-xs);
+  color: var(--on-photo);
+}
+.project-card__status {
+  left: 14px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-dark);
+  border: 1px solid var(--glass-edge);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-weight: var(--fw-medium);
 }
 .project-card__index {
-  font-size: var(--fs-small);
-  font-weight: var(--fw-regular);
-  color: var(--text-muted);
+  right: 16px;
+  top: 19px;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+.project-card__body {
+  padding: 24px 28px 28px;
+}
+.project-card__body .eyebrow {
+  margin-bottom: 8px;
 }
 .project-card__title {
-  font-size: clamp(2rem, 3.4vw, 2.75rem);
-  margin: 4px 0 14px;
+  font-size: clamp(1.9rem, 2.8vw, 2.5rem);
+  font-weight: var(--fw-light);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+.project-card__summary {
+  margin-top: 12px;
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.project-card__facts {
+  margin: 18px 0 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.project-card__facts div {
+  padding: 10px 12px;
+  background: var(--surface);
+}
+.project-card__facts div:nth-child(odd):last-child {
+  grid-column: 1 / -1;
+}
+.project-card__facts dt {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.project-card__facts dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-regular);
+  line-height: 1.35;
 }
 .project-card__actions {
   display: flex;
@@ -36,4 +128,26 @@
 }
 .project-card__actions .btn {
   flex: 1 1 auto;
+}
+
+@media (max-width: 860px) {
+  .project-card {
+    width: 100%;
+  }
+  .project-card__media {
+    aspect-ratio: 2.6 / 1;
+  }
+  /* phones: the two key facts only, so the whole card fits under the map */
+  .project-card__facts div:nth-child(n + 3) {
+    display: none;
+  }
+  .project-card__body {
+    padding: 18px 20px 20px;
+  }
+  .project-card__summary {
+    -webkit-line-clamp: 2;
+  }
+  .project-card__facts {
+    margin: 14px 0 16px;
+  }
 }
