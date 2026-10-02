@@ -20,7 +20,7 @@ export function projectSlugs(srcDir) {
 const importFresh = (file) => import(`${pathToFileURL(file).href}?v=${fs.statSync(file).mtimeMs}`);
 
 export async function loadSiteData(srcDir) {
-  const { company, moreProjects, introImages } = await importFresh(path.join(srcDir, 'data/company.js'));
+  const { company, moreProjects } = await importFresh(path.join(srcDir, 'data/company.js'));
   const projects = await Promise.all(
     projectSlugs(srcDir).map(async (slug) => {
       const project = (await importFresh(path.join(srcDir, `data/projects/${slug}.js`))).default;
@@ -29,7 +29,7 @@ export async function loadSiteData(srcDir) {
     }),
   );
   projects.sort((a, b) => a.order - b.order);
-  return { company, moreProjects, introImages, projects };
+  return { company, moreProjects, projects };
 }
 
 /**
@@ -74,7 +74,6 @@ export function pageScope(data, page, site, srcDir) {
   // photo URLs: relative on the home page (also works opened from disk), from the root elsewhere
   const prefix = page.kind === 'home' ? '' : '/';
   const projects = data.projects.map((p, i, all) => decorateProject(p, i, all, srcDir, prefix));
-  const intro = data.introImages.map((img) => photo(srcDir, img, prefix));
   const project = page.kind === 'project' ? projects.find((p) => p.slug === page.slug) : null;
   if (page.kind === 'project' && !project) throw new Error(`[site-data] unknown project "${page.slug}"`);
 
@@ -95,7 +94,7 @@ export function pageScope(data, page, site, srcDir) {
     moreProjects,
     projects,
     project,
-    intro: { photo: intro[0], photos: JSON.stringify(intro), total: String(projects.length + 1).padStart(2, '0') },
+    intro: { total: String(projects.length + 1).padStart(2, '0') },
     year: new Date().getFullYear(),
     services: company.services.map((s, i) => ({ ...s, number: pad(i + 1) })),
     stats: company.stats.map((s) => ({ prefix: '', suffix: '', ...s })),

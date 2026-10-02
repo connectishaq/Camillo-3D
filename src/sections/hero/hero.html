@@ -1,6 +1,6 @@
 <!--
   01 Hero: a full-screen, auto-playing showcase. The first slide is the company line over a
-  project photo (picked at random by hero.js from intro.photos); then one slide per featured
+  background film (public/videos, see scripts/video.mjs); then one slide per featured
   project with "View full project" and "See on map". Controls follow the WAI carousel
   pattern: pause/play, previous/next, one tab per slide. The map story starts beneath it.
 -->
@@ -17,20 +17,11 @@
     <!-- Intro: the company line -->
     <article class="slide slide--intro is-active" data-slide="0" role="group" aria-roledescription="slide" aria-label="1 of {{ intro.total }}">
       <div class="slide__media">
-        <img class="slide__img" id="intro-photo" sizes="100vw" alt="" fetchpriority="high" data-intro-photos="{{ intro.photos }}" />
-        <!-- a random project photo each visit, chosen before the browser starts downloading one -->
-        <script>
-          (function () {
-            var img = document.getElementById('intro-photo');
-            var list = JSON.parse(img.getAttribute('data-intro-photos'));
-            var p = list[Math.floor(Math.random() * list.length)];
-            img.style.objectPosition = p.position;
-            img.alt = p.alt;
-            img.srcset = p.srcset;
-            img.src = p.src;
-          })();
-        </script>
-        <noscript><img class="slide__img" src="{{ intro.photo.src }}" alt="{{ intro.photo.alt }}" /></noscript>
+        <!-- background film: played by hero.js while this slide is showing (poster for reduced motion / data saver) -->
+        <video class="slide__img slide__video" data-hero-video muted loop playsinline preload="none" poster="videos/hero-poster.webp" aria-hidden="true">
+          <source src="videos/hero-1280.mp4" type="video/mp4" media="(max-width: 1024px)" />
+          <source src="videos/hero-1920.mp4" type="video/mp4" />
+        </video>
       </div>
       <div class="slide__content">
         <p class="slide__eyebrow"><span class="reveal">Melbourne · Victoria</span></p>

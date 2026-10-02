@@ -31,26 +31,6 @@ export const company = {
   },
 };
 
-/**
- * Photos for the opening hero slide; one is picked at random on each visit
- * (from project-assets/, optimised by `npm run images`).
- */
-export const introImages = [
-  { project: 'la-storia', file: 'IMG_10350_038-1200x800.jpg', position: '50% 60%', alt: 'La Storia, Carlton, at dusk' },
-  {
-    project: 'mvrc-thomas-street',
-    file: '181219_EXTERIOR_PARK-Copy-Large-1200x800.jpeg',
-    position: '50% 50%',
-    alt: 'MVRC – Thomas Street, Moonee Ponds, from the park',
-  },
-  {
-    project: 'la-storia',
-    file: 'DUGA11024_La-Storia_E02_Hero-Cardigan-St_Crop-1600x1726.jpg',
-    position: '50% 62%',
-    alt: 'La Storia, Carlton, from Cardigan Street',
-  },
-];
-
 /** Other portfolio names (no published location yet), shown as a strip in "What we build". */
 export const moreProjects = [
   'United Co.',

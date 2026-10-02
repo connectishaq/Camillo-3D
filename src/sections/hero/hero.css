@@ -58,6 +58,11 @@
     transform: scale(1);
   }
 }
+/* the film moves on its own: no push-in on top */
+.slide .slide__video {
+  animation: none !important;
+  object-position: 50% 60%;
+}
 /* readability: dark from the bottom left, where the text sits; the top keeps the header legible */
 .slide__media::after {
   content: '';

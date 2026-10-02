@@ -29,6 +29,7 @@ export function init({ ready, stage }) {
   const pad = (n) => String(n + 1).padStart(2, '0');
 
   let current = 0;
+  let onHero = true; // the hero is (at least partly) on screen
   let tl = null;
   let userPaused = reduce; // reduced motion: the visitor moves through slides themselves
   const holds = new Set(['loader']); // reasons autoplay is waiting (hover, focus, offscreen…)
@@ -66,6 +67,18 @@ export function init({ ready, stage }) {
     syncPlayback();
   };
 
+  /* ---------- background film on the first slide ---------- */
+  const video = $('[data-hero-video]', root);
+  // reduced motion or data saver: the poster frame stays
+  const filmAllowed = video && !reduce && !navigator.connection?.saveData;
+  const syncFilm = () => {
+    if (!filmAllowed) return;
+    const show = current === 0 && onHero && !document.hidden;
+    if (show && video.paused)
+      video.play().catch(() => {}); // blocked or failed: the poster stays
+    else if (!show && !video.paused) video.pause();
+  };
+
   const markTabs = (index) => {
     tabs.forEach((t, j) => {
       t.classList.toggle('is-active', j === index);
@@ -89,6 +102,7 @@ export function init({ ready, stage }) {
     const from = slides[current];
     const to = slides[next];
     current = next;
+    if (next === 0) syncFilm(); // back to the film: play it as it wipes in
     markTabs(next);
     await ensure(next);
     if (current !== next) return; // a newer go() took over while the image loaded
@@ -107,6 +121,7 @@ export function init({ ready, stage }) {
       to.classList.replace('is-entering', 'is-active');
       gsap.set([from, to, a.media, b.media, ...a.reveals, ...a.extras], { clearProps: 'all' });
       tl = null;
+      syncFilm(); // left the film: pause it once it's out of sight
     };
 
     tl = gsap.timeline({ onComplete: done });
@@ -154,7 +169,10 @@ export function init({ ready, stage }) {
   });
   root.addEventListener('focusin', () => hold('focus', true));
   root.addEventListener('focusout', (e) => !root.contains(e.relatedTarget) && hold('focus', false));
-  document.addEventListener('visibilitychange', () => hold('hidden', document.hidden));
+  document.addEventListener('visibilitychange', () => {
+    hold('hidden', document.hidden);
+    syncFilm();
+  });
 
   // swipe on touch screens
   let x0 = null;
@@ -178,12 +196,12 @@ export function init({ ready, stage }) {
 
   // header style, map drawing and autoplay follow whether the hero is still on screen; worked
   // out from the position on every update (a jump straight past it fires no "toggle")
-  let onHero = true;
   const follow = (self) => {
     stage.setOccluded('hero', self.scroll() < 2);
     const on = self.progress < 1;
     if (on === onHero) return;
     onHero = on;
+    syncFilm();
     setOnPhoto(on);
     setOverMap(!on);
     hold('offscreen', !on);
@@ -212,6 +230,7 @@ export function init({ ready, stage }) {
   hydrate(1);
   ready.then(() => {
     hold('loader', false);
+    syncFilm();
     if (reduce) return;
     gsap.to(first.reveals, { yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08 });
     gsap.to(first.extras, { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.1, delay: 0.35 });

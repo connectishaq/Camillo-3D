@@ -2,8 +2,7 @@
  * Optimised web images from the original photos in project-assets/<slug>/:
  *   public/images/projects/<name>-<width>.webp   640, 1280 and 1920 px wide, or the photo's own
  *   width when it's smaller (never upscaled); real widths go to src/data/images.json.
- * One per project (`image` in src/data/projects/<slug>.js) plus the intro photos
- * (`introImages` in src/data/company.js). Run `npm run images` after adding a photo.
+ * One per project (`image` in src/data/projects/<slug>.js). Run `npm run images` after adding a photo.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,8 +13,8 @@ import { imageName, IMAGE_WIDTHS } from '../vite-plugins/images.js';
 const root = path.resolve(import.meta.dirname, '..');
 const out = path.join(root, 'public/images/projects');
 fs.mkdirSync(out, { recursive: true });
-const { projects, introImages } = await loadSiteData(path.join(root, 'src'));
-const jobs = [...projects.map((p) => ({ project: p.slug, file: p.image.file })), ...introImages];
+const { projects } = await loadSiteData(path.join(root, 'src'));
+const jobs = projects.map((p) => ({ project: p.slug, file: p.image.file }));
 const manifest = {};
 
 for (const { project, file } of jobs) {

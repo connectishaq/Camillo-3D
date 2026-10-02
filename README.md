@@ -104,7 +104,7 @@ The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au
 
 [`src/sections/hero/`](src/sections/hero/) is a full-screen, auto-playing showcase in front of the map:
 
-- **Slide 1** is the company line, "Residential & Commercial Builders", over a project photo picked at random on each visit (`introImages` in `src/data/company.js`; a tiny inline script chooses it before the browser downloads anything).
+- **Slide 1** is the company line, "Residential & Commercial Builders", over a background film (`public/videos/`). It plays only while that slide is showing and the hero is on screen; with reduced motion or data saver the poster frame shows instead and nothing is downloaded.
 - **Then one slide per featured project**, built from `src/data/projects/*.js`: name, summary, a frosted facts card, **View full project** (the project page) and **See on map** (scrolls to that project's chapter; the 3D map flies there as before).
 - Slides wipe in horizontally with a parallax drift, and the text reveals line by line. Everything moves with transforms only, so it never forces layout or repaints.
 - The autoplay timer _is_ the active progress bar's CSS animation: when it ends, the next slide comes in (7 s each, `SLIDE_TIME` in `hero.js`). It holds while the pointer is over the text, card or controls, while keyboard focus is inside, when the tab is hidden and when the hero is scrolled away. The pause button stops it for good, arrow keys and swipes move between slides, and with `prefers-reduced-motion` it doesn't autoplay and slides cross-fade.
@@ -112,7 +112,11 @@ The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au
 
 ### Photos
 
-Originals stay in `project-assets/<slug>/`. `npm run images` (with [sharp](https://sharp.pixelplumbing.com/)) writes optimised WebP copies at 640/1280/1920 px, or the photo's own width when smaller, to `public/images/projects/`, and records the widths in `src/data/images.json` for the templates' `srcset`. Run it after changing a project's `image` or the intro photos, and commit the results (Netlify doesn't run it).
+Originals stay in `project-assets/<slug>/`. `npm run images` (with [sharp](https://sharp.pixelplumbing.com/)) writes optimised WebP copies at 640/1280/1920 px, or the photo's own width when smaller, to `public/images/projects/`, and records the widths in `src/data/images.json` for the templates' `srcset`. Run it after changing a project's `image`, and commit the results (Netlify doesn't run it).
+
+### Hero film
+
+The original is `project-assets/high.mp4`. `npm run video` (needs [ffmpeg](https://ffmpeg.org/): on `PATH`, or set `FFMPEG` to its path) writes `public/videos/hero-1920.mp4` (desktop), `hero-1280.mp4` (screens up to 1024 px) and `hero-poster.webp` (the first frame): H.264, 30 fps, no audio, fast start. To use a different film, replace `high.mp4` and run it again.
 
 ## Structure
 
