@@ -71,30 +71,43 @@ export function init({ ready, stage }) {
   const video = $('[data-hero-video]', root);
   // reduced motion or data saver: the poster frame stays
   const filmAllowed = video && !reduce && !navigator.connection?.saveData;
-  // loop with a dip to dark: fade out over the last moment, restart, fade back in
+  // The first slide lasts one full play of the film: its progress bar follows the film, and
+  // when the film ends the slideshow moves on (or, if it's paused or held, the film loops).
+  // Each end dips to dark over the last moment, so it never jumps from night back to sunset.
   const FADE = 0.7; // seconds, as the CSS transition
+  const filmFill = tabs[0].querySelector('.tab__fill');
   if (filmAllowed) {
+    tabs[0].classList.add('tab--film');
     const watch = () => {
       if (video.duration - video.currentTime < FADE + 0.05) video.classList.add('is-looping');
+      if (current === 0 && video.duration) filmFill.style.transform = `scaleX(${video.currentTime / video.duration})`;
       if (!video.paused) video.requestVideoFrameCallback ? video.requestVideoFrameCallback(watch) : requestAnimationFrame(watch);
     };
     video.addEventListener('playing', watch);
     video.addEventListener('ended', () => {
       video.currentTime = 0;
-      syncFilm();
+      if (current === 0 && !userPaused && holds.size === 0) go(1, 1);
+      else syncFilm();
     });
     video.addEventListener('seeked', () => video.currentTime < 1 && video.classList.remove('is-looping'));
   }
+  // the film can't play (blocked, failed): the poster stays and the slide times out as normal
+  const filmFailed = () => {
+    tabs[0].classList.remove('tab--film');
+    filmFill.style.transform = '';
+  };
+  if (filmAllowed) video.addEventListener('error', filmFailed, true);
   const syncFilm = () => {
     if (!filmAllowed) return;
     // the pause button stops the film too (moving content must be pausable, WCAG 2.2.2)
     const show = current === 0 && onHero && !document.hidden && !userPaused;
     if (show && video.paused)
-      video.play().catch(() => {}); // blocked or failed: the poster stays
+      video.play().catch(filmFailed); // blocked or failed: the poster stays
     else if (!show && !video.paused) video.pause();
   };
 
   const markTabs = (index) => {
+    if (filmAllowed) filmFill.style.transform = ''; // the CSS states take over again
     tabs.forEach((t, j) => {
       t.classList.toggle('is-active', j === index);
       t.classList.toggle('is-done', j < index);

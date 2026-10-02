@@ -273,6 +273,10 @@
 .tab.is-active .tab__fill {
   animation: tabfill var(--slide-time, 7s) linear forwards;
 }
+/* the film's tab is driven by the film itself (hero.js), not by a timer */
+.tab--film.is-active .tab__fill {
+  animation: none;
+}
 .showcase.is-paused .tab.is-active .tab__fill,
 .showcase.is-held .tab.is-active .tab__fill {
   animation-play-state: paused;
