@@ -43,8 +43,12 @@
   padding-bottom: 28px;
 }
 
-/* Readability scrims (page background colour) for text that sits straight on the city */
-.chapter--center::before,
+/*
+ * Readability scrims (page background colour) for text that sits straight on the city.
+ * The Featured Projects intro sits on clouds instead; its scrim is only a fallback for when
+ * the clouds can't run (no WebGL).
+ */
+body.no-clouds .chapter--center::before,
 .chapter--contact::before {
   content: '';
   position: absolute;
@@ -52,7 +56,7 @@
   z-index: -1;
   pointer-events: none;
 }
-.chapter--center::before {
+body.no-clouds .chapter--center::before {
   background: radial-gradient(
     55% 42% at 50% 50%,
     color-mix(in srgb, var(--bg) 92%, transparent),

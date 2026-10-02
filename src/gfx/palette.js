@@ -17,6 +17,11 @@ const TOKENS = {
   windowLit: '--map-window-lit',
   highlight: '--map-highlight',
   highlightHot: '--map-highlight-hot',
+  cloudLight: '--cloud-light',
+  cloudWarm: '--cloud-warm',
+  cloudShade: '--cloud-shade',
+  cloudSkyTop: '--cloud-sky-top',
+  cloudSkyBottom: '--cloud-sky-bottom',
 };
 
 let cache;

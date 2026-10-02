@@ -78,6 +78,10 @@ export function startStage(container, { cameras, office, projects, loader, onPin
   startNext();
 
   return {
+    /** The chapter the camera is showing (or flying to). */
+    get current() {
+      return state.current;
+    },
     go(chapter) {
       state.current = chapter;
       state.impl?.go(chapter, flight);
