@@ -71,9 +71,24 @@ export function init({ ready, stage }) {
   const video = $('[data-hero-video]', root);
   // reduced motion or data saver: the poster frame stays
   const filmAllowed = video && !reduce && !navigator.connection?.saveData;
+  // loop with a dip to dark: fade out over the last moment, restart, fade back in
+  const FADE = 0.7; // seconds, as the CSS transition
+  if (filmAllowed) {
+    const watch = () => {
+      if (video.duration - video.currentTime < FADE + 0.05) video.classList.add('is-looping');
+      if (!video.paused) video.requestVideoFrameCallback ? video.requestVideoFrameCallback(watch) : requestAnimationFrame(watch);
+    };
+    video.addEventListener('playing', watch);
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      syncFilm();
+    });
+    video.addEventListener('seeked', () => video.currentTime < 1 && video.classList.remove('is-looping'));
+  }
   const syncFilm = () => {
     if (!filmAllowed) return;
-    const show = current === 0 && onHero && !document.hidden;
+    // the pause button stops the film too (moving content must be pausable, WCAG 2.2.2)
+    const show = current === 0 && onHero && !document.hidden && !userPaused;
     if (show && video.paused)
       video.play().catch(() => {}); // blocked or failed: the poster stays
     else if (!show && !video.paused) video.pause();
@@ -151,6 +166,7 @@ export function init({ ready, stage }) {
   pauseBtn.addEventListener('click', () => {
     userPaused = !userPaused;
     syncPlayback();
+    syncFilm();
   });
   // "See on map": the smooth-scroll link handler flies there; stop the slideshow meanwhile
   $$('[data-see-on-map]', root).forEach((a) => a.addEventListener('click', () => hold('map', true)));

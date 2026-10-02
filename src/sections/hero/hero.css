@@ -62,6 +62,11 @@
 .slide .slide__video {
   animation: none !important;
   object-position: 50% 60%;
+  transition: opacity 0.7s ease-in-out;
+}
+/* dips to dark at the loop point, so the jump from night back to sunset never shows */
+.slide .slide__video.is-looping {
+  opacity: 0;
 }
 /* readability: dark from the bottom left, where the text sits; the top keeps the header legible */
 .slide__media::after {
