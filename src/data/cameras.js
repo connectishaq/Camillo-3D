@@ -5,8 +5,7 @@
 export const cameras = {
   hero: { center: [144.9631, -37.8136], zoom: 14.6, pitch: 62, bearing: -20 },
   office: { center: [144.9246, -37.8309], zoom: 16.8, pitch: 60, bearing: 35 },
-  // low over the CBD skyline, so the towers rise out of the Featured Projects cloud sea
-  projectsIntro: { center: [144.9631, -37.8136], zoom: 15.2, pitch: 72, bearing: -25 },
+  projectsIntro: { center: [144.975, -37.83], zoom: 11.4, pitch: 45, bearing: -10 },
   overview: { center: [144.99, -37.845], zoom: 10.9, pitch: 35, bearing: 0 },
   contact: { center: [144.9246, -37.8309], zoom: 15.4, pitch: 55, bearing: -30 },
 };

@@ -21,7 +21,6 @@ export function startStage(container, { cameras, office, projects, loader, onPin
   const reducedMotion = prefersReducedMotion();
   const state = { impl: null, current: 'hero' };
   const occluders = new Set(); // reasons the map is fully covered (the hero)
-  let clouds = 0;
   // with reduced motion the camera cuts between chapters instead of flying
   const flight = reducedMotion ? { duration: 0 } : undefined;
   const options = {
@@ -72,9 +71,6 @@ export function startStage(container, { cameras, office, projects, loader, onPin
         if (!failed) {
           state.impl = impl;
           impl.setOccluded?.(occluders.size > 0);
-          impl.setClouds?.(clouds);
-          // stages without the cloud sea (map, photoreal): the intro text gets its scrim instead
-          document.body.classList.toggle('no-clouds', !impl.setClouds);
           impl.go(state.current, flight);
         }
       })
@@ -90,11 +86,6 @@ export function startStage(container, { cameras, office, projects, loader, onPin
     go(chapter) {
       state.current = chapter;
       state.impl?.go(chapter, flight);
-    },
-    /** Sea of cloud over the map, 0 = clear … 1 = dense (Featured Projects chapter). */
-    setClouds(v) {
-      clouds = v;
-      state.impl?.setClouds?.(v);
     },
     /** Skip drawing the map while something covers all of it (`reason`: 'hero'…). */
     setOccluded(reason, on) {

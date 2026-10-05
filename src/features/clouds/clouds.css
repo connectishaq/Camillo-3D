@@ -1,0 +1,11 @@
+/* Between the map stage (z 0) and the story text (z 10); only shown while clouds are on screen */
+.clouds {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  visibility: hidden;
+}
+.clouds.is-active {
+  visibility: visible;
+}

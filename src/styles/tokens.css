@@ -86,7 +86,7 @@
   --map-highlight: var(--brand); /* project buildings, HQ, floor outlines, site rings */
   --map-highlight-hot: #8a1a44; /* active site marker */
 
-  /* Sea of cloud over the Featured Projects chapter (features/map/city/cloudsea.js) */
+  /* Cloud curtain behind the Featured Projects heading (features/clouds/CloudCurtain.js) */
   --cloud-light: #fffaf2; /* sunlit tops */
   --cloud-warm: #ffe2bd; /* late-afternoon sun on the rims */
   --cloud-shade: #8e9cad; /* blue-grey undersides */
