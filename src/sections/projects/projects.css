@@ -1,30 +1,7 @@
 /* ---------- Skyline (between the clouds and the first project) ---------- */
-/* tall enough for the clouds to part (SCENE.part) before the caption arrives */
+/* the skyline view: tall enough for the clouds to part (SCENE.part) and the view to hold */
 .chapter--skyline {
   min-height: 190vh;
-  justify-content: center;
-  align-items: flex-end;
-  padding-bottom: 14vh;
-}
-.skyline__caption {
-  display: grid;
-  gap: 4px;
-  padding: 14px 22px;
-  border-radius: var(--radius);
-  background: var(--surface-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sm);
-  text-align: center;
-  font-size: var(--fs-small);
-  color: var(--text);
-}
-.skyline__eyebrow {
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--brand);
 }
 
 /* ---------- Project card: photo header, then the details ---------- */
