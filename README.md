@@ -100,9 +100,19 @@ The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au
 
 **3D colours.** The generated city keeps its realistic material colours (brick, terracotta and Colorbond roofs, render, timber, gardens, deep blue water, a warm late-afternoon sky), defined in the city modules. The brand shows in the site highlights: project rings, pins and floor outlines are burgundy. The Building Explorer's light studio scene, map mode and those highlights read the `--map-*` tokens through [`src/gfx/palette.js`](src/gfx/palette.js). Façade and interior colours inside each project model stay with the model specs, because they describe the real buildings.
 
-## Featured Projects clouds
+## About → Featured Projects → clouds
 
-The Featured Projects heading sits on a curtain of cloud in its own layer between the map and the text ([`src/features/clouds/CloudCurtain.js`](src/features/clouds/CloudCurtain.js); it isn't part of the map). The clouds are photographic cut-outs (`public/images/clouds/cloud-1…7.webp`, transparent WebP; see [Credits and licences](#credits-and-licences)), about 22 of them layered at three depths into a left and a right bank, each drifting slowly on its own rhythm. A soft cloud-white glow on the heading itself (`.intro::before`, strength from `--cloud-wash`) keeps it readable wherever it sits on the screen. As the chapter scrolls in the banks drift in and thicken; as it scrolls out they slide apart to the left and right, the nearer clouds faster, thinning as they go, onto the Melbourne skyline, where the camera has already moved (`skyline` in `src/data/cameras.js`; `src/sections/projects/intro-clouds.js`). A short "Melbourne skyline" chapter holds that view, and the next scroll flies to the first project. They're plain images moved with CSS transforms, so the browser's compositor does the work: no extra canvas, and nothing is redrawn while the page scrolls. The map doesn't draw while it's fully covered. Colours: the `--cloud-*` tokens. Reduced motion: no drift or sliding, it fades.
+One scroll scene ([`src/sections/about/`](src/sections/about/); every timing is in [`scene.js`](src/sections/about/scene.js)). Its stage is CSS-sticky, so it holds on screen while you scroll through it:
+
+1. The **About card** arrives over the city like the other chapters and holds.
+2. A panel the colour of the card **grows out of it to fill the screen** (a `clip-path` from the card's own rectangle and corner radius) while the card's content fades.
+3. **Featured Projects** rises in on the panel, in large type.
+4. At the end of the scene the panel **slides up and away**, revealing a full bank of cloud ([`src/features/clouds/CloudCurtain.js`](src/features/clouds/CloudCurtain.js)), which had already thickened behind it.
+5. On the next scroll the clouds **slide apart** to the left and right (nearer clouds faster) onto the **Melbourne skyline**. While the panel covered the map, the camera had already moved there (`projectsIntro` and `skyline` share a view in `src/data/cameras.js`). Then the projects.
+
+Two empty markers in the scene are the story chapters (`office`, then `projectsIntro`, with `#about` and `#projects` for the nav), so the rail, locator, nav and camera work as before. The map doesn't draw while the panel fills the screen. Everything is scrubbed by scroll, so it reverses on the way back up. With reduced motion the panel fades in instead of growing, and the clouds fade instead of sliding.
+
+The clouds are photographic cut-outs (`public/images/clouds/cloud-1…7.webp`, transparent WebP; see [Credits and licences](#credits-and-licences)): about 22 layered at three depths, each drifting slowly, over a light haze. They're plain images moved with CSS transforms, so the browser's compositor does the work (no extra canvas, nothing redrawn while scrolling). Colours: the `--cloud-*` tokens.
 
 ## The hero: project showcase
 

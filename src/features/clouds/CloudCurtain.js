@@ -2,15 +2,14 @@ import { rng } from '../../gfx/noise.js';
 import { isMobile } from '../../utils/dom.js';
 
 /*
- * A curtain of cloud behind the Featured Projects heading, in its own layer between the map
- * and the text (it isn't part of the map).
+ * A bank of cloud between the Featured Projects panel and the skyline, in its own layer
+ * between the map and the story (it isn't part of the map).
  *
  * Photographic cloud cut-outs (public/images/clouds/, transparent WebP) layered at three
- * depths into a left and a right bank. A soft white glow on the heading itself (`wash`, an
- * element given `--cloud-wash` 0…1) keeps it easy to read wherever it sits on the screen.
+ * depths into a left and a right bank, over a light haze that thickens the full cover.
  * Plain images moved with CSS transforms, so the browser's compositor does all the work
  * (no second WebGL canvas, nothing redrawn per frame). Two values drive it:
- *   cover 0 → 1  the banks drift in and thicken behind the text
+ *   cover 0 → 1  the banks drift in and thicken
  *   part  0 → 1  they slide apart, left to the left and right to the right (nearer clouds
  *                faster), thinning as they go, revealing the map
  * A slow CSS drift keeps them alive while the page is still.
@@ -26,9 +25,8 @@ const LAYERS = [
 ];
 
 export class CloudCurtain {
-  constructor(container, { wash = null, reducedMotion = false } = {}) {
+  constructor(container, { reducedMotion = false } = {}) {
     this.container = container;
-    this.washEl = wash;
     this.reducedMotion = reducedMotion;
     this.mobile = isMobile();
     this.state = { cover: 0, part: 0 };
@@ -37,6 +35,10 @@ export class CloudCurtain {
 
   /** Lays out the banks and waits for every image to decode, so nothing pops in mid-scroll. */
   async build() {
+    this.haze = document.createElement('div');
+    this.haze.className = 'clouds__haze';
+    this.container.append(this.haze);
+
     const r = rng(2026);
     this.puffs = [];
     const decoding = [];
@@ -109,8 +111,8 @@ export class CloudCurtain {
       pf.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${s.toFixed(3)})`;
       pf.el.style.opacity = (pf.alpha * e * (1 - gone)).toFixed(3);
     }
-    // the glow keeps the heading readable, and clears first so the map shows through the gap
-    this.washEl?.style.setProperty('--cloud-wash', (smooth(cover) * (1 - smooth(part / 0.45))).toFixed(3));
+    // the haze clears first, so the skyline shows through the gap as they part
+    this.haze.style.opacity = (smooth(cover) * (1 - smooth(part / 0.45)) * 0.5).toFixed(3);
   }
 
   resize() {
@@ -130,7 +132,6 @@ export class CloudCurtain {
 
   destroy() {
     window.removeEventListener('resize', this.onResize);
-    this.washEl?.style.removeProperty('--cloud-wash');
     this.container.replaceChildren();
   }
 }

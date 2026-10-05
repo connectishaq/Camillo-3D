@@ -11,6 +11,18 @@
   visibility: visible;
 }
 
+/* light haze under the clouds, so the full cover reads as a thick bank */
+.clouds__haze {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse 75% 70% at 50% 50%,
+    var(--cloud-light) 0 40%,
+    color-mix(in srgb, var(--cloud-light) 70%, transparent) 100%
+  );
+}
+
 .clouds__puff {
   position: absolute;
   top: 0;

@@ -1,44 +1,7 @@
-/* ---------- Intro (in the clouds) ---------- */
-.intro {
-  position: relative;
-  isolation: isolate;
-  max-width: 760px;
-  padding: 40px 0;
-}
-/* Soft cloud-white glow behind the heading while the clouds cover the screen (strength set by
-   features/clouds/CloudCurtain.js), so it stays readable wherever the clouds are thick or thin */
-.intro::before {
-  content: '';
-  position: absolute;
-  inset: -45% -38%;
-  z-index: -1;
-  pointer-events: none;
-  opacity: calc(var(--cloud-wash, 0) * 0.94);
-  background: radial-gradient(
-    closest-side,
-    var(--cloud-light) 0 55%,
-    color-mix(in srgb, var(--cloud-light) 55%, transparent) 78%,
-    transparent 100%
-  );
-}
-@media (max-width: 760px) {
-  .intro::before {
-    inset: -30% -18%;
-  }
-}
-.intro__title {
-  font-size: var(--fs-h2);
-}
-.intro__text {
-  margin: 22px auto 0;
-  max-width: 460px;
-  font-size: var(--fs-lede);
-  color: var(--text);
-}
-
 /* ---------- Skyline (between the clouds and the first project) ---------- */
+/* tall enough for the clouds to part (SCENE.part) before the caption arrives */
 .chapter--skyline {
-  min-height: 110vh;
+  min-height: 190vh;
   justify-content: center;
   align-items: flex-end;
   padding-bottom: 14vh;

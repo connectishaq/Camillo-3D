@@ -1,23 +1,43 @@
-<!-- 02 About / Office -->
-<section class="chapter chapter--right" id="about" data-chapter="office" data-nav="about" data-side="right" data-label="Port Melbourne HQ">
-  <article class="card card--about" data-reveal>
-    <p class="eyebrow">About us · Port Melbourne</p>
-    <h2 class="card__title">A big builder’s strength.<br />A small team’s care.</h2>
-    <div class="card__body">
-      <!-- @each company.about as paragraph -->
-      <p>{{ paragraph }}</p>
-      <!-- @end -->
+<!--
+  02 About, opening into 03 Featured projects: one scroll scene (about.js). The About card
+  holds, grows into a full-screen panel with the Featured Projects heading, and the panel then
+  slides up onto the clouds (sections/projects/intro-clouds.js).
+  The two empty markers are the story chapters (they cross the middle of the screen in turn).
+-->
+<section class="scene" id="about" data-scene>
+  <span class="scene__chapter scene__chapter--office" data-chapter="office" data-nav="about" data-side="right" data-label="Port Melbourne HQ"></span>
+  <span class="scene__chapter scene__chapter--intro" id="projects" data-chapter="projectsIntro" data-nav="projects" data-label="Featured projects"></span>
+
+  <div class="scene__stage">
+    <div class="scene__panel" data-scene-panel aria-hidden="true"></div>
+
+    <div class="scene__about" data-scene-about>
+      <article class="card card--about" data-scene-card data-reveal>
+        <p class="eyebrow">About us · Port Melbourne</p>
+        <h2 class="card__title">A big builder’s strength.<br />A small team’s care.</h2>
+        <div class="card__body">
+          <!-- @each company.about as paragraph -->
+          <p>{{ paragraph }}</p>
+          <!-- @end -->
+        </div>
+        <blockquote class="card__quote">“{{ company.promise }}”</blockquote>
+        <dl class="card__meta">
+          <div>
+            <dt>Head office</dt>
+            <dd>{{ company.contact.address }}</dd>
+          </div>
+          <div>
+            <dt>Call</dt>
+            <dd><a href="{{ company.contact.phoneHref }}">{{ company.contact.phone }}</a></dd>
+          </div>
+        </dl>
+      </article>
     </div>
-    <blockquote class="card__quote">“{{ company.promise }}”</blockquote>
-    <dl class="card__meta">
-      <div>
-        <dt>Head office</dt>
-        <dd>{{ company.contact.address }}</dd>
-      </div>
-      <div>
-        <dt>Call</dt>
-        <dd><a href="{{ company.contact.phoneHref }}">{{ company.contact.phone }}</a></dd>
-      </div>
-    </dl>
-  </article>
+
+    <div class="scene__intro intro" data-scene-intro>
+      <p class="eyebrow intro__eyebrow">Featured projects</p>
+      <h2 class="intro__title">Across Melbourne,<br /><em>one address at a time.</em></h2>
+      <p class="intro__text">Keep scrolling to fly to each site. Open any building in 3D to peel back its floors and step inside.</p>
+    </div>
+  </div>
 </section>

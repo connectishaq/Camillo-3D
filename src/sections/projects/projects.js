@@ -3,13 +3,13 @@ import { $$ } from '../../utils/dom.js';
 import { initIntroClouds } from './intro-clouds.js';
 
 /**
- * Project chapters: "Explore in 3D" opens the Building Explorer, and the intro sits in clouds
- * (intro-clouds.js).
+ * Project chapters: "Explore in 3D" opens the Building Explorer; before them, the clouds
+ * between the Featured Projects panel and the skyline (intro-clouds.js).
  * `explorer` is the lazy launcher from app/explorer.js; hovering or focusing a button
  * starts downloading the explorer code so the click opens it straight away.
  */
-export function init({ projects, explorer, stage }) {
-  initIntroClouds({ stage });
+export function init({ projects, explorer }) {
+  initIntroClouds();
 
   $$('[data-explore]').forEach((btn) => {
     const project = projects.find((p) => p.slug === btn.dataset.explore);
