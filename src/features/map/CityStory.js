@@ -18,7 +18,7 @@ import { CityBuildings, createCityMaterials } from './city/buildings.js';
 import { CityTrees, createTreeAssets } from './city/trees.js';
 import { buildWater, ellipseGeo } from './city/water.js';
 import { Neighbourhoods, DETAIL_RADIUS } from './city/detail.js';
-import { ProjectModels, siteClearings } from './city/projects.js';
+import { ProjectModels, siteClearings, HQ_MODEL } from './city/projects.js';
 import { SUBURBS, toXZ } from './geo.js';
 import { chapterCamera, zoomToDistance, sideOffset, buildingFraming } from './camera.js';
 import { createPin } from '../../components/pin/pin.js';
@@ -284,9 +284,9 @@ export class CityStory {
   /* ---------------- camera ---------------- */
 
   /**
-   * Orbit params for a chapter. Project chapters are framed from the building itself (its
-   * size and street front, see camera.js buildingFraming), so it fills the screen; the other
-   * chapters convert their map-style camera (center/zoom/pitch/bearing).
+   * Orbit params for a chapter. Project chapters and the HQ (About) are framed from the
+   * building itself (its size and street front, see camera.js buildingFraming), so it fills
+   * the screen; the other chapters convert their map-style camera (center/zoom/pitch/bearing).
    */
   cameraFor(chapter) {
     const c = chapterCamera(chapter, this);
@@ -297,10 +297,10 @@ export class CityStory {
       height: this.container.clientHeight || window.innerHeight,
       fov: FOV,
     };
-    const slug = chapter.startsWith('project:') && chapter.split(':')[1];
+    const slug = chapter === 'office' ? 'office' : chapter.startsWith('project:') && chapter.split(':')[1];
     const site = slug && this.models?.sites.get(slug);
     if (site) {
-      const { model } = this.projects.find((p) => p.slug === slug);
+      const model = slug === 'office' ? HQ_MODEL : this.projects.find((p) => p.slug === slug).model;
       const f = buildingFraming({ width: model.width, depth: model.depth, height: site.height }, site.site.rotation.y, viewport);
       const bearing = this.clearestBearing(slug, site, model, f);
       return { x: site.x, z: site.z, y: f.lookY, dist: f.dist, pitch: f.pitch, bearing, offsetY: f.offsetY };

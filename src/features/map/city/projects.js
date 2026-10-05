@@ -14,7 +14,7 @@ import { toXZ } from '../geo.js';
  * (+Z) is turned towards the nearest road. The active project gets a burgundy ring,
  * a pulse and a soft light column.
  */
-const HQ_MODEL = {
+export const HQ_MODEL = {
   slug: 'camillo-hq',
   style: 'brick',
   width: 30,
