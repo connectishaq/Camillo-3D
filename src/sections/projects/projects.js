@@ -9,7 +9,7 @@ import { initIntroClouds } from './intro-clouds.js';
  * starts downloading the explorer code so the click opens it straight away.
  */
 export function init({ projects, explorer, stage }) {
-  initIntroClouds({ stage, firstChapter: `project:${projects[0].slug}` });
+  initIntroClouds({ stage });
 
   $$('[data-explore]').forEach((btn) => {
     const project = projects.find((p) => p.slug === btn.dataset.explore);

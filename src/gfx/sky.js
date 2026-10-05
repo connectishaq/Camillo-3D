@@ -30,6 +30,14 @@ export function createSky(options = SUN) {
   u.cloudDensity.value = 0.32;
   u.cloudElevation.value = 0.55;
   u.sunPosition.value.copy(sunDirection(options));
+  // Blend the sky into the distance-haze colour towards the horizon, so the far edge of the
+  // city (which fades to HORIZON in the fog) meets the sky softly instead of in a hard line.
+  u.uHorizon = { value: HORIZON.clone() };
+  sky.material.fragmentShader = sky.material.fragmentShader.replace('void main() {', 'uniform vec3 uHorizon;\nvoid main() {').replace(
+    'gl_FragColor = vec4( texColor, 1.0 );',
+    `float horizonFade = 1.0 - smoothstep( 0.0, 0.18, direction.y );
+      gl_FragColor = vec4( mix( texColor, uHorizon, horizonFade ), 1.0 );`,
+  );
   sky.frustumCulled = false;
   return sky;
 }
