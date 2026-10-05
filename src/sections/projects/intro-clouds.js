@@ -50,11 +50,12 @@ export function initIntroClouds({ stage, reveal = 'skyline' }) {
     scrub: true,
     onUpdate: (self) => ((state.cover = self.progress), update()),
   });
-  // slides apart as the heading leaves and the first project card arrives
+  // slides apart once the heading has moved into the upper part of the screen (timed from the
+  // heading, not the section, so it's the same on every layout)
   ScrollTrigger.create({
-    trigger: intro,
-    start: 'bottom 85%',
-    end: 'bottom 15%',
+    trigger: intro.querySelector('.intro') || intro,
+    start: 'bottom 50%',
+    end: () => `+=${window.innerHeight * 0.75}`,
     scrub: true,
     onUpdate: (self) => ((state.part = self.progress), update()),
   });
