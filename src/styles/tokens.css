@@ -86,12 +86,10 @@
   --map-highlight: var(--brand); /* project buildings, HQ, floor outlines, site rings */
   --map-highlight-hot: #8a1a44; /* active site marker */
 
-  /* Clouds over the Featured Projects chapter (features/clouds): sunlit tops, cool undersides */
-  --cloud-light: #ffffff;
-  --cloud-warm: #fff4e4; /* sun-side highlights */
-  --cloud-shade: #9aa9bb; /* blue-grey undersides */
-  --cloud-sky-top: #8fb6da; /* the sky seen between the clouds */
-  --cloud-sky-bottom: #e4eef5;
+  /* Sea of cloud over the Featured Projects chapter (features/map/city/cloudsea.js) */
+  --cloud-light: #fffaf2; /* sunlit tops */
+  --cloud-warm: #ffe2bd; /* late-afternoon sun on the rims */
+  --cloud-shade: #8e9cad; /* blue-grey undersides */
 }
 
 @media (max-width: 860px) {

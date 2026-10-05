@@ -20,8 +20,6 @@ const TOKENS = {
   cloudLight: '--cloud-light',
   cloudWarm: '--cloud-warm',
   cloudShade: '--cloud-shade',
-  cloudSkyTop: '--cloud-sky-top',
-  cloudSkyBottom: '--cloud-sky-bottom',
 };
 
 let cache;

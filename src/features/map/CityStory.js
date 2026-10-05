@@ -19,6 +19,8 @@ import { CityTrees, createTreeAssets } from './city/trees.js';
 import { buildWater, ellipseGeo } from './city/water.js';
 import { Neighbourhoods, DETAIL_RADIUS } from './city/detail.js';
 import { ProjectModels, siteClearings } from './city/projects.js';
+import { createCloudSea } from './city/cloudsea.js';
+import { palette } from '../../gfx/palette.js';
 import { SUBURBS, toXZ } from './geo.js';
 import { chapterCamera, zoomToDistance, sideOffset, buildingFraming } from './camera.js';
 import { createPin } from '../../components/pin/pin.js';
@@ -188,6 +190,19 @@ export class CityStory {
         this.current = null;
         this.go(current, { duration: 0.01 });
       }
+    });
+
+    // the sea of cloud over the Featured Projects chapter (its noise volume is built here)
+    step(0.05, () => {
+      const p = palette();
+      this.clouds = createCloudSea({
+        sun: this.sunDir,
+        horizon: horizonColor(),
+        colors: { light: p.cloudLight, warm: p.cloudWarm, shade: p.cloudShade },
+        slices: this.mobile ? 14 : 18,
+      });
+      this.clouds.setCover(this.cloudCover || 0);
+      this.scene.add(this.clouds.mesh);
     });
 
     let done = 0;
@@ -486,6 +501,7 @@ export class CityStory {
     this.updateShadows();
     if (this.water) this.water.material.userData.uniforms.uTime.value = time / 1000;
     this.models?.animate(time);
+    this.clouds?.update(time / 1000, this.cam, this.scene.fog);
     if (this.ao) this.ao.enabled = this.cam.dist < 3500;
 
     // fully hidden (e.g. behind the Featured Projects clouds): keep the camera and LOD up to
@@ -498,7 +514,13 @@ export class CityStory {
     this.placeOverlays();
   }
 
-  /** Skip drawing while something opaque covers the whole map (the clouds). */
+  /** Sea of cloud over the city: 0 = clear, 1 = a dense bank (Featured Projects chapter). */
+  setClouds(v) {
+    this.cloudCover = v;
+    this.clouds?.setCover(v);
+  }
+
+  /** Skip drawing while something opaque covers the whole map (the hero). */
   setOccluded(on) {
     this.occluded = on;
   }
