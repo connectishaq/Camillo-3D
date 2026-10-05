@@ -324,6 +324,19 @@ export class CityBuildings {
     return group;
   }
 
+  /** Builds (hidden) the houses of one not-yet-built superblock near a point; false when none is left. */
+  prebuild(tx, tz) {
+    for (const sb of this.outerBySb.keys()) {
+      const s = this.layout.superblocks[sb];
+      if (this.near.has(sb) || Math.hypot(s.cx - tx, s.cz - tz) >= this.nearRadius) continue;
+      const group = this.buildNear(sb);
+      group.visible = false;
+      this.near.set(sb, { group });
+      return true;
+    }
+    return false;
+  }
+
   setNear(sb, on) {
     const entry = this.outerBySb.get(sb);
     let state = this.near.get(sb);
@@ -340,8 +353,11 @@ export class CityBuildings {
     setRangeVisible(rm.rowRoof, sb, !on);
   }
 
-  /** LOD: houses near the camera target, rows elsewhere. Builds at most one superblock per frame. */
-  update(tx, tz, altitude) {
+  /**
+   * LOD: houses near the camera target, rows elsewhere. Builds at most one superblock per frame,
+   * and none while `build` is false (mid-flight; the rows stand in until the camera settles).
+   */
+  update(tx, tz, altitude, build = true) {
     const R = this.nearRadius;
     let built = false;
     this.outerBySb.forEach((_, sb) => {
@@ -351,7 +367,7 @@ export class CityBuildings {
       const isOn = state?.group.visible;
       const want = altitude < 3200 && (isOn ? d < R + 500 : d < R);
       if (want && !state) {
-        if (built) return;
+        if (built || !build) return;
         built = true;
       }
       if (want !== !!isOn || (want && !state)) this.setNear(sb, want);

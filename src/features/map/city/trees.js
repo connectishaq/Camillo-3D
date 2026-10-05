@@ -182,7 +182,22 @@ export class CityTrees {
     return g;
   }
 
-  update(tx, tz, altitude, camX, camZ) {
+  /** Builds (hidden) the street trees of one not-yet-built superblock near a point; false when none is left. */
+  prebuild(tx, tz) {
+    const list = this.layout.superblocks;
+    for (let i = 0; i < list.length; i++) {
+      const sb = list[i];
+      if (!sb.roads.length || this.near.has(i) || Math.hypot(sb.cx - tx, sb.cz - tz) >= this.nearRadius) continue;
+      const g = this.buildStreetTrees(i);
+      g.visible = false;
+      this.near.set(i, g);
+      return true;
+    }
+    return false;
+  }
+
+  /** Street trees near the camera target (none built while `build` is false, mid-flight). */
+  update(tx, tz, altitude, camX, camZ, build = true) {
     const R = this.nearRadius;
     let built = false;
     this.layout.superblocks.forEach((sb, i) => {
@@ -191,7 +206,7 @@ export class CityTrees {
       const state = this.near.get(i);
       const want = altitude < 3200 && (state?.visible ? d < R + 500 : d < R);
       if (want && !state) {
-        if (built) return;
+        if (built || !build) return;
         built = true;
         this.near.set(i, this.buildStreetTrees(i));
       } else if (state) state.visible = want;

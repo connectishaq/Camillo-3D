@@ -3,9 +3,44 @@
   position: fixed;
   inset: 0;
   z-index: 5;
+  overflow: hidden;
   pointer-events: none;
   visibility: hidden;
 }
 .clouds.is-active {
   visibility: visible;
+}
+
+.clouds__puff {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transform-origin: 50% 60%;
+  will-change: transform, opacity;
+}
+
+.clouds__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  animation: cloud-drift 24s ease-in-out infinite alternate;
+}
+.clouds:not(.is-active) .clouds__img {
+  animation-play-state: paused;
+}
+
+@keyframes cloud-drift {
+  from {
+    translate: calc(var(--drift, 2%) * -1) 0;
+  }
+  to {
+    translate: var(--drift, 2%) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clouds__img {
+    animation: none;
+  }
 }

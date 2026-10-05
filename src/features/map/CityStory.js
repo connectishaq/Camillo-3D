@@ -46,6 +46,7 @@ export class CityStory {
     this.onProgress = onProgress;
     this.orbit = false;
     this.paused = false;
+    this.still = 0; // seconds the camera has been still
     this.pins = new Map();
     this.labels = [];
     // y: height the camera aims at (m); offsetY: vertical screen shift (px, mobile close-ups)
@@ -65,9 +66,11 @@ export class CityStory {
       .catch((err) => {
         console.warn('[city] world generation failed:', err);
       })
-      .finally(() => {
+      .finally(async () => {
         this.renderer.setAnimationLoop(this.loop);
+        await this.precompile(); // behind the loader
         requestAnimationFrame(() => onReady?.());
+        this.prebuild();
       });
   }
 
@@ -75,12 +78,17 @@ export class CityStory {
 
   initScene() {
     const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.mobile ? 1.25 : 1.5));
+    // render resolution: starts at maxRatio, stepped down on devices that can't keep up (adapt)
+    this.maxRatio = Math.min(window.devicePixelRatio, this.mobile ? 1.25 : 1.5);
+    this.minRatio = Math.min(this.maxRatio, this.mobile ? 0.75 : 0.85);
+    renderer.setPixelRatio(this.maxRatio);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.82;
     renderer.shadowMap.enabled = !this.mobile;
     renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.shadowMap.autoUpdate = false; // redrawn only when it changes (updateShadows)
+    renderer.shadowMap.needsUpdate = true;
     renderer.debug.checkShaderErrors = import.meta.env.DEV; // faster compiles; no driver-warning noise in production
     renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block';
     this.container.appendChild(renderer.domElement);
@@ -121,11 +129,13 @@ export class CityStory {
     composer.addPass(new RenderPass(scene, camera));
     if (!this.mobile) {
       const ao = new GTAOPass(scene, camera, 512, 512);
-      ao.blendIntensity = 0.55;
+      ao.blendIntensity = 0; // faded in once the camera settles (loop)
       ao.updateGtaoMaterial({ radius: 6, distanceExponent: 1.2, thickness: 4, scale: 1, samples: 10 });
       ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, rings: 2, samples: 8 });
       composer.addPass(ao);
       this.ao = ao;
+      this.aoMix = 0;
+      this.aoAllowed = true;
       this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.1, 0.35, 0.96);
       composer.addPass(this.bloom);
     }
@@ -430,6 +440,7 @@ export class CityStory {
   }
 
   destroy() {
+    this.destroyed = true;
     this.renderer.setAnimationLoop(null);
     this.ro?.disconnect();
     this.tween?.kill();
@@ -438,42 +449,154 @@ export class CityStory {
     this.overlay?.remove();
   }
 
+  /**
+   * Close-up houses and street trees are built when the camera first comes near them, which
+   * would stall a flight mid-scroll. Build them for every chapter's destination ahead of time
+   * instead, one superblock at a time while the browser is idle.
+   */
+  prebuild() {
+    if (!this.buildings) return;
+    const chapters = [...Object.keys(this.cameras), ...this.projects.map((p) => `project:${p.slug}`)];
+    const spots = chapters.map((c) => this.cameraFor(c)).filter((c) => c && c.dist < 6000);
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(() => fn({ timeRemaining: () => 8 }), 50));
+    const step = (deadline) => {
+      if (this.destroyed) return;
+      while (spots.length && deadline.timeRemaining() > 4) {
+        const { x, z } = spots[0];
+        if (!this.buildings.prebuild(x, z) && !this.trees.prebuild(x, z)) spots.shift();
+      }
+      if (spots.length) idle(step, { timeout: 1000 });
+      else this.precompile();
+    };
+    idle(step, { timeout: 1000 });
+  }
+
+  /**
+   * Compiles the shader of every material in the city, close-ups included, without blocking;
+   * otherwise the first view of a new area (the skyline) stalls for a moment while they compile.
+   * Compiled for the composer's buffer, the target they're really drawn into.
+   */
+  precompile() {
+    const renderer = this.renderer;
+    const target = renderer.getRenderTarget();
+    renderer.setRenderTarget(this.composer.readBuffer);
+    const done = renderer.compileAsync(this.scene, this.camera).catch(() => {});
+    renderer.setRenderTarget(target);
+    return done;
+  }
+
   /* ---------------- frame ---------------- */
 
   updateLOD(force = false) {
     if (!this.buildings) return;
     const alt = this.camera.position.y;
     const n = force ? 12 : 1;
+    // building new close-ups takes a few ms each: never mid-flight (prebuild covers the stops)
+    const build = force || !this.tween?.isActive();
     for (let i = 0; i < n; i++) {
-      this.buildings.update(this.cam.x, this.cam.z, alt);
-      this.trees.update(this.cam.x, this.cam.z, alt, this.camera.position.x, this.camera.position.z);
+      this.buildings.update(this.cam.x, this.cam.z, alt, build);
+      this.trees.update(this.cam.x, this.cam.z, alt, this.camera.position.x, this.camera.position.z, build);
     }
     this.hoods.update(this.cam.x, this.cam.z);
   }
 
-  /** Sun shadows cover the area around the camera target: crisp up close, cheap from afar. */
+  /** Seconds the camera has been still (0 on any frame it moves). */
+  updateMotion(dt) {
+    const c = this.cam;
+    const key = [c.x, c.y, c.z, c.dist, c.pitch, c.bearing, c.offsetX, c.offsetY];
+    const same = this.lastCam && key.every((v, i) => v === this.lastCam[i]);
+    this.still = same ? this.still + dt : 0;
+    this.lastCam = key;
+  }
+
+  /**
+   * Sun shadows cover the area around the camera target: crisp up close, cheap from afar.
+   * The shadow map is a second full draw of the city, so it's only redrawn when it changes:
+   * its area steps in coarse jumps (so it moves a few times per flight, not every frame), plus
+   * every few frames while flying (new close-up buildings) and once when the camera stops.
+   */
   updateShadows() {
     if (!this.sun.castShadow) return;
-    const e = THREE.MathUtils.clamp(this.cam.dist * 0.75, 220, 2600);
+    const shadow = this.renderer.shadowMap;
+    // extent in 10% steps, a little larger than needed so the coarse target steps stay covered
+    const want = THREE.MathUtils.clamp(this.cam.dist * 0.82, 240, 2900);
+    const e = 240 * Math.pow(1.1, Math.ceil(Math.log(want / 240) / Math.log(1.1)));
     const sc = this.sun.shadow.camera;
-    if (Math.abs(sc.right - e) / e > 0.04) {
+    if (sc.right !== e) {
       sc.left = sc.bottom = -e;
       sc.right = sc.top = e;
       sc.updateProjectionMatrix();
+      shadow.needsUpdate = true;
     }
-    // snap the target to shadow texels so moving the camera doesn't make edges crawl
-    const texel = (2 * e) / this.sun.shadow.mapSize.x;
-    const tx = Math.round(this.cam.x / texel) * texel;
-    const tz = Math.round(this.cam.z / texel) * texel;
-    this.sun.target.position.set(tx, 0, tz);
-    this.sun.position.set(tx, 0, tz).addScaledVector(this.sunDir, 3200);
-    this.sun.target.updateMatrixWorld();
+    // snap the target to a whole number of shadow texels so edges don't crawl as it moves
+    const step = ((2 * e) / this.sun.shadow.mapSize.x) * 64;
+    const tx = Math.round(this.cam.x / step) * step;
+    const tz = Math.round(this.cam.z / step) * step;
+    if (tx !== this.sun.target.position.x || tz !== this.sun.target.position.z) {
+      this.sun.target.position.set(tx, 0, tz);
+      this.sun.position.set(tx, 0, tz).addScaledVector(this.sunDir, 3200);
+      this.sun.target.updateMatrixWorld();
+      shadow.needsUpdate = true;
+    }
+    if (this.still === 0) {
+      this.shadowSettled = false;
+      if (this.frame % 6 === 0) shadow.needsUpdate = true;
+    } else if (!this.shadowSettled) {
+      this.shadowSettled = true;
+      shadow.needsUpdate = true;
+    }
+  }
+
+  /** Ambient occlusion (another full draw of the city) only while the camera rests; it fades in. */
+  updateAO(dt) {
+    if (!this.ao) return;
+    const want = this.aoAllowed && this.cam.dist < 3500 && this.still > 0.2;
+    this.aoMix = THREE.MathUtils.clamp(this.aoMix + (want ? 2.5 : -5) * dt, 0, 1);
+    // (always on, invisibly, for the first frames behind the loader, so its shaders are
+    // compiled then rather than the first time the camera settles)
+    this.ao.enabled = this.aoMix > 0 || !(this.drawn > 3);
+    this.ao.blendIntensity = 0.55 * this.aoMix * this.aoMix * (3 - 2 * this.aoMix);
+  }
+
+  /**
+   * Keeps the flights smooth on slower devices: while the camera moves, average the frame time
+   * and step the render resolution down when it can't keep up (and back up with headroom).
+   * At the lowest resolution, ambient occlusion and bloom go too.
+   */
+  adapt(ms) {
+    if (this.still > 0 || this.occluded || ms > 250) return; // only judge real, visible motion
+    const q = (this.quality ||= { sum: 0, n: 0, good: 0 });
+    q.sum += ms;
+    if (++q.n < 45) return;
+    const avg = q.sum / q.n;
+    q.sum = q.n = 0;
+    const pr = this.renderer.getPixelRatio();
+    if (avg > 22) {
+      q.good = 0;
+      if (pr > this.minRatio) this.setRatio(Math.max(this.minRatio, pr - 0.25));
+      else {
+        this.aoAllowed = false;
+        if (this.bloom) this.bloom.enabled = false;
+      }
+    } else if (avg < 17.5 && pr < this.maxRatio) {
+      if (++q.good >= 4) {
+        q.good = 0;
+        this.setRatio(Math.min(this.maxRatio, pr + 0.125));
+      }
+    } else q.good = 0;
+  }
+
+  setRatio(pr) {
+    this.renderer.setPixelRatio(pr);
+    this.resize();
   }
 
   loop(time) {
     if (this.paused) return;
-    const dt = this.last === undefined ? 0.016 : Math.min(0.1, (time - this.last) / 1000);
+    const ms = this.last === undefined ? 16 : time - this.last;
+    const dt = Math.min(0.1, ms / 1000);
     this.last = time;
+    this.frame = (this.frame || 0) + 1;
     if (this.orbit && !this.tween?.isActive()) this.cam.bearing += 1.8 * dt;
 
     // fog scales with altitude so wide shots stay legible and close-ups stay crisp
@@ -481,18 +604,22 @@ export class CityStory {
     this.scene.fog.far = this.cam.dist * 8 + 14000;
 
     this.applyCamera();
+    this.updateMotion(dt);
+    this.adapt(ms);
     this.sky.position.copy(this.camera.position);
     this.updateLOD();
     this.updateShadows();
     if (this.water) this.water.material.userData.uniforms.uTime.value = time / 1000;
     this.models?.animate(time);
-    if (this.ao) this.ao.enabled = this.cam.dist < 3500;
+    this.updateAO(dt);
 
     // fully hidden (e.g. behind the Featured Projects clouds): keep the camera and LOD up to
     // date so it's ready when revealed, but skip the expensive draw
     // (but always draw the first few frames, so every post-processing shader is compiled
     // behind the loader rather than on the first frame the visitor scrolls into)
     if (this.occluded && this.drawn > 3) return;
+    // at rest only the water and the marker pulse change: half the frame rate is plenty
+    if (this.still > 1 && !(this.aoMix > 0 && this.aoMix < 1) && this.frame % 2) return;
     this.composer.render();
     this.drawn = (this.drawn || 0) + 1;
     this.placeOverlays();
@@ -506,20 +633,33 @@ export class CityStory {
   placeOverlays() {
     const { w, h } = this.size || {};
     if (!w) return;
-    const v = new THREE.Vector3();
-    const place = (el, pos, maxDist, anchor) => {
+    // only touch the DOM when something changed (each write costs a style pass every frame)
+    const v = (this._v ||= new THREE.Vector3());
+    const set = (item, key, value, apply) => {
+      if (item[key] === value) return;
+      item[key] = value;
+      apply(value);
+    };
+    const place = (item, maxDist, anchor) => {
+      const { el, pos } = item;
       v.copy(pos).project(this.camera);
       const d = this.camera.position.distanceTo(pos);
       const visible = v.z < 1 && Math.abs(v.x) < 1.2 && Math.abs(v.y) < 1.2 && d < maxDist;
-      el.hidden = !visible;
-      if (visible) el.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) ${anchor}`;
+      set(item, '_hidden', !visible, (on) => (el.hidden = on));
+      if (!visible) return false;
+      const x = Math.round(((v.x + 1) / 2) * w * 2) / 2; // half-pixel steps
+      const y = Math.round(((1 - v.y) / 2) * h * 2) / 2;
+      set(item, '_at', `${x},${y}`, () => (el.style.transform = `translate(${x}px, ${y}px) ${anchor}`));
+      return true;
     };
     const far = this.cam.dist;
-    this.labels.forEach(({ el, pos }) => {
-      place(el, pos, Math.max(9000, far * 2.2), 'translate(-50%, -50%)');
-      el.style.opacity = far < 2500 ? '0' : far > 14000 ? '0.55' : '0.85';
+    const labelOpacity = far < 2500 ? '0' : far > 14000 ? '0.55' : '0.85';
+    this.labels.forEach((item) => {
+      set(item, '_opacity', labelOpacity, (o) => (item.el.style.opacity = o));
+      if (labelOpacity === '0') return set(item, '_hidden', true, (on) => (item.el.hidden = on));
+      place(item, Math.max(9000, far * 2.2), 'translate(-50%, -50%)');
     });
-    this.pins.forEach(({ el, pos }) => place(el, pos, 90000, 'translate(-9px, -50%)'));
+    this.pins.forEach((item) => place(item, 90000, 'translate(-9px, -50%)'));
   }
 }
 

@@ -102,7 +102,7 @@ The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au
 
 ## Featured Projects clouds
 
-The Featured Projects heading sits on a curtain of cloud in its own canvas between the map and the text ([`src/features/clouds/CloudCurtain.js`](src/features/clouds/CloudCurtain.js); it isn't part of the map). It's built the way photo-real cloud is: about 90 soft, wispy smoke puffs (textures generated in a web worker, [`src/gfx/smoke.js`](src/gfx/smoke.js)), each partly transparent, layered at three depths into a left and a right bank over a soft white wash that keeps the heading readable. As the chapter scrolls in the banks drift in and thicken; as it scrolls out they slide apart to the left and right, the nearer puffs faster, thinning as they go, onto the Melbourne skyline, where the camera has already moved (`skyline` in `src/data/cameras.js`; `src/sections/projects/intro-clouds.js`). A short "Melbourne skyline" chapter holds that view, and the next scroll flies to the first project. The map doesn't draw while it's fully covered. Colours: the `--cloud-*` tokens. Reduced motion: no drift or sliding, it fades. No WebGL 2: a light scrim behind the text instead.
+The Featured Projects heading sits on a curtain of cloud in its own layer between the map and the text ([`src/features/clouds/CloudCurtain.js`](src/features/clouds/CloudCurtain.js); it isn't part of the map). The clouds are photographic cut-outs (`public/images/clouds/cloud-1…7.webp`, transparent WebP; see [Credits and licences](#credits-and-licences)), about 22 of them layered at three depths into a left and a right bank, each drifting slowly on its own rhythm. A soft cloud-white glow on the heading itself (`.intro::before`, strength from `--cloud-wash`) keeps it readable wherever it sits on the screen. As the chapter scrolls in the banks drift in and thicken; as it scrolls out they slide apart to the left and right, the nearer clouds faster, thinning as they go, onto the Melbourne skyline, where the camera has already moved (`skyline` in `src/data/cameras.js`; `src/sections/projects/intro-clouds.js`). A short "Melbourne skyline" chapter holds that view, and the next scroll flies to the first project. They're plain images moved with CSS transforms, so the browser's compositor does the work: no extra canvas, and nothing is redrawn while the page scrolls. The map doesn't draw while it's fully covered. Colours: the `--cloud-*` tokens. Reduced motion: no drift or sliding, it fades.
 
 ## The hero: project showcase
 
@@ -216,8 +216,9 @@ Built in steps behind the loader. On a laptop this takes about 1–2 s; `console
 - **Water** (`water.js`): the bay, rivers and Albert Park Lake use a PBR water surface. It has two scrolling, procedurally generated normal layers, reflects the sky environment and catches sun glints, with no extra render pass. A sand strip follows the beaches, and there are piers at Station Pier, St Kilda and Brighton.
 - **Close-ups** (`detail.js`): within about 500 m of each project and the HQ, finer houses with fences, driveways and carports (or finer terraces and apartments), dense street trees, parked cars and streetlights.
 - **Light and look** (`gfx/sky.js`): Three.js `Sky` with a warm late-afternoon sun in the north-west, a directional sun with soft shadows whose shadow camera follows the camera target (snapped to texels), hemisphere fill, fog tinted to the horizon and scaled with altitude, and a PMREM environment baked from the sky.
-- **Post-processing**: desktop gets GTAO at half resolution (only up close), very mild bloom and SMAA; mobile gets FXAA only.
-- **LOD and performance**: far away, each street edge of an outer block is one long "house row". Within about 2.2 km of the camera target (1.5 km on mobile), that superblock swaps in individual houses and street trees, built on demand and cached. Park trees are culled by distance, and neighbourhood extras only draw nearby. Mobile uses a lower pixel ratio, no shadows and FXAA only.
+- **Post-processing**: desktop gets GTAO at half resolution (only up close, and only once the camera has settled; it fades in), very mild bloom and SMAA; mobile gets FXAA only.
+- **LOD and performance**: far away, each street edge of an outer block is one long "house row". Within about 2.2 km of the camera target (1.5 km on mobile), that superblock swaps in individual houses and street trees, cached once built. Those around every chapter's destination are built ahead of time while the browser is idle (`prebuild`), and none are built mid-flight (the rows stand in), so flights never stall. Park trees are culled by distance, and neighbourhood extras only draw nearby. Mobile uses a lower pixel ratio, no shadows and FXAA only.
+- **Smooth scrolling** (`CityStory.js`): the sun's shadow map is a second draw of the city, so it's only redrawn when its area moves (in coarse steps), every few frames while flying and once when the camera stops. While the camera flies, the render resolution adapts: if frames average over 22 ms it steps down (to 0.85× on desktop, 0.75× on mobile; at the lowest step AO and bloom switch off too), and it steps back up with headroom. At rest, with only the water and marker pulse moving, it draws at half rate. Every shader, and the AO pass, is compiled behind the loader. Map labels only touch the DOM when they move.
 
 ## Project models
 
@@ -261,6 +262,7 @@ Both paths use **the same model** on the city map (merged into a few draw calls)
 | `draco/*`                               | Draco glTF decoder, copied from `three/examples/jsm/libs/draco/gltf`                                                  | Apache-2.0                                     |
 | `brand/google-maps-logo.svg`            | [Google Maps attribution assets](https://developers.google.com/maps/documentation/tile/policies), photoreal mode only | Google brand asset, for attribution only       |
 | `project-assets/*`, `images/projects/*` | Project renders and photos supplied by Camillo (optimised copies are bundled for the hero and cards)                  | © their owners; used with Camillo's permission |
+| `images/clouds/*`                       | Cut out from iStock **preview** images supplied for this project (checkerboard removed, split into single clouds)     | iStock; **licence before launch** (see below)  |
 
 ## Before launch — to confirm with Camillo
 
@@ -279,6 +281,7 @@ Both paths use **the same model** on the city map (merged into a few draw calls)
 2. **Building data** that isn't published: level counts and unit splits for La Storia, The Lansell, The Righi and MVRC, and real footprints for all projects. Each spec's `assumptions` and `improveWith` lists say what's missing.
 3. **Real floor plans**, so the procedural interiors can follow the actual layouts.
 4. **The production domain**, for canonical links and the sitemap (see [Site URL](#site-url)).
+5. **Cloud images.** `public/images/clouds/` was cut from iStock preview (comp) images, which aren't licensed for a live site. Buy the licences for the two source images (or swap in other licensed or free transparent cloud PNGs), then replace `cloud-1…7.webp`: any transparent cloud images work, largest first. The licensed files are larger and cleaner, so they'll look better too.
 
 ## Next steps
 

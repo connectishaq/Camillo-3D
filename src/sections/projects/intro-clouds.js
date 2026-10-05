@@ -1,6 +1,6 @@
 import '../../features/clouds/clouds.css';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { $, prefersReducedMotion, supportsWebGL } from '../../utils/dom.js';
+import { $, prefersReducedMotion } from '../../utils/dom.js';
 
 /**
  * The Featured Projects heading sits on a curtain of cloud (features/clouds/CloudCurtain.js):
@@ -14,14 +14,13 @@ export function initIntroClouds({ stage, reveal = 'skyline' }) {
   const intro = $('[data-chapter="projectsIntro"]');
   const host = $('[data-clouds]');
   if (!intro || !host) return;
-  if (!supportsWebGL({ webgl2Only: true })) return document.body.classList.add('no-clouds');
 
   const state = { cover: 0, part: 0 };
   let curtain = null;
-  // set up behind the loader (worker noise, texture upload, shader compile), never mid-scroll
+  // set up behind the loader (images decoded up front), never mid-scroll
   import('../../features/clouds/CloudCurtain.js')
     .then(async ({ CloudCurtain }) => {
-      const c = new CloudCurtain(host, { reducedMotion: prefersReducedMotion() });
+      const c = new CloudCurtain(host, { wash: intro.querySelector('.intro'), reducedMotion: prefersReducedMotion() });
       await c.build();
       curtain = c;
       update();
