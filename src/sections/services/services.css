@@ -1,9 +1,33 @@
+.chapter--overview {
+  position: relative;
+}
+/*
+ * The panel's background, drawn full-screen behind the story and clipped to the panel's shape:
+ * as the panel arrives it grows to fill the screen, holds while the content scrolls through,
+ * and leaves with the end of the section (services.js). Without JS the panel keeps its own.
+ */
+.overview-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  visibility: hidden;
+  background: var(--surface);
+  pointer-events: none;
+  will-change: clip-path;
+}
 .overview {
   width: min(1180px, 100%);
   padding: clamp(28px, 4vw, 56px);
   border-radius: calc(var(--radius) + 6px);
   background: var(--surface);
   box-shadow: var(--shadow);
+  transition: box-shadow 0.4s var(--ease);
+}
+.overview.is-grown {
+  box-shadow: none;
+}
+body.has-overview-bg .overview {
+  background: transparent;
 }
 .overview__title {
   font-size: var(--fs-h2);

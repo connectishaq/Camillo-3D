@@ -114,6 +114,10 @@ Two empty markers in the scene are the story chapters (`office`, then `projectsI
 
 The clouds are photographic cut-outs (`public/images/clouds/cloud-1…7.webp`, transparent WebP; see [Credits and licences](#credits-and-licences)): about 22 layered at three depths, each drifting slowly, over a light haze. They're plain images moved with CSS transforms, so the browser's compositor does the work (no extra canvas, nothing redrawn while scrolling). Colours: the `--cloud-*` tokens.
 
+### What we build
+
+The overview panel works the same way ([`src/sections/services/services.js`](src/sections/services/services.js)): its white is drawn by a full-screen layer clipped to the panel's shape, which grows to fill the screen as the panel arrives, holds while the services, stats and portfolio scroll through, and leaves with the end of the section, onto the city for Contact. The map doesn't draw while it's covered. With reduced motion the full-screen white fades in instead.
+
 ## The hero: project showcase
 
 [`src/sections/hero/`](src/sections/hero/) is a full-screen, auto-playing showcase in front of the map:
