@@ -4,8 +4,12 @@ import './project.css';
 import { projects } from '../../data/projects/index.js';
 import { Explorer } from '../../features/explorer/Explorer.js';
 import { hasGLB, loadGLB } from '../../features/explorer/glb.js';
+import { initHero } from './hero.js';
 
-initPage();
+// a page with a full-screen hero manages the header itself
+const hasHero = !!document.querySelector('[data-phero]');
+initPage({ headerOnScroll: !hasHero });
+if (hasHero) initHero();
 
 const project = projects.find((p) => p.slug === document.body.dataset.project);
 const root = document.querySelector('[data-explorer]');

@@ -130,6 +130,10 @@ The photos are listed in [`src/data/gallery.js`](src/data/gallery.js) (project, 
 
 The form is a [Netlify form](https://docs.netlify.com/forms/setup/) (`name="enquiry"`, with a honeypot field). Netlify finds it in the built HTML on deploy, and entries appear under **Forms** in the Netlify dashboard. Turn on **Form notifications → Email** there to have them sent to `enquiries@camillo.com.au`. It sends in place and thanks the visitor by name. Without JavaScript it posts normally and Netlify shows its own confirmation page. It can only send on Netlify: the local dev and preview servers answer with the "didn't send, please email us" message.
 
+## Project page hero
+
+A project with `hero` in its data (so far `the-london.js`) gets a full-screen hero on its page ([`src/pages/project/hero.html`](src/pages/project/hero.html), `hero.css`, `hero.js`). The project photo holds still while you scroll. First the project's name rises over it in one giant line that slides sideways as it goes, then the key figures scroll up over the photo in staggered white boxes (`hero.stats`: a big `value`, a maroon `label`, a line of `text`). The header is white over the bare photo and switches to the light bar as the boxes reach it. After the hero come the summary, facts and the 3D explorer as before. Projects without `hero` keep the plain page header. To give another project the hero, add a `hero.stats` list to its data file (keep the figures to published facts). With reduced motion the name and boxes don't move.
+
 ## The hero: project showcase
 
 [`src/sections/hero/`](src/sections/hero/) is a full-screen, auto-playing showcase in front of the map:

@@ -10,14 +10,24 @@
   <body class="page page--project" data-project="{{ project.slug }}">
     <!-- @include sections/header/header.html -->
 
+    <!-- @if project.hero -->
+    <!-- @include pages/project/hero.html -->
+    <!-- @end -->
+
     <main class="page__main" id="main" tabindex="-1">
       <article class="project-page">
         <header class="project-page__hero">
+          <!-- @if project.hero -->
+          <p class="eyebrow">About the project</p>
+          <p class="project-page__intro">{{ project.summary }}</p>
+          <!-- @include components/tag/tags.html -->
+          <!-- @else -->
           <a class="link-back" href="/#project-{{ project.slug }}">← All projects</a>
           <p class="eyebrow">{{ project.eyebrow }} · {{ project.number }} / {{ project.total }}</p>
           <h1 class="project-page__title">{{ project.name }}</h1>
           <!-- @include components/tag/tags.html -->
           <p class="page__lede">{{ project.summary }}</p>
+          <!-- @end -->
         </header>
 
         <dl class="facts project-page__facts">

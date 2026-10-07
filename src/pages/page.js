@@ -13,7 +13,8 @@ import './page.css';
 import * as header from '../sections/header/header.js';
 import * as footer from '../sections/footer/footer.js';
 
-export function initPage() {
-  header.init({ overMapOnScroll: true });
+/** `headerOnScroll: false` when the page manages the header itself (a project hero). */
+export function initPage({ headerOnScroll = true } = {}) {
+  header.init({ overMapOnScroll: headerOnScroll });
   footer.init();
 }

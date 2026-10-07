@@ -1,0 +1,52 @@
+<!--
+  Full-screen project hero (projects with `hero` in their data; pages/project/hero.js).
+  The photo holds still while, on scroll, the project's name rises over it in a giant line that
+  slides sideways, then the key figures scroll up over it in staggered boxes.
+-->
+<section class="phero" aria-labelledby="phero-title" data-phero>
+  <div class="phero__media">
+    <img
+      class="phero__img"
+      src="{{ project.photo.src }}"
+      srcset="{{ project.photo.srcset }}"
+      sizes="100vw"
+      alt="{{ project.photo.alt }}"
+      style="object-position: {{ project.photo.position }}"
+      fetchpriority="high"
+    />
+  </div>
+
+  <div class="phero__first">
+    <a class="phero__back" href="/#project-{{ project.slug }}">← All projects</a>
+    <div class="phero__meta">
+      <p>{{ project.eyebrow }}</p>
+      <p>{{ project.type }} · {{ project.status }}</p>
+      <p class="phero__scroll" aria-hidden="true">Scroll</p>
+    </div>
+  </div>
+
+  <h1 class="visually-hidden" id="phero-title">{{ project.name }}</h1>
+  <div class="phero__name" aria-hidden="true">
+    <div class="phero__track" data-phero-track>
+      <!-- the name four times, twice over, so the line can loop seamlessly -->
+      <span class="phero__run">
+        <span>{{ project.name }}</span><i class="phero__mark"></i><span>{{ project.name }}</span><i class="phero__mark"></i> <span>{{ project.name }}</span
+        ><i class="phero__mark"></i><span>{{ project.name }}</span><i class="phero__mark"></i>
+      </span>
+      <span class="phero__run">
+        <span>{{ project.name }}</span><i class="phero__mark"></i><span>{{ project.name }}</span><i class="phero__mark"></i> <span>{{ project.name }}</span
+        ><i class="phero__mark"></i><span>{{ project.name }}</span><i class="phero__mark"></i>
+      </span>
+    </div>
+  </div>
+
+  <ul class="phero__stats" role="list">
+    <!-- @each project.hero.stats as stat -->
+    <li class="phero__stat" data-phero-stat>
+      <p class="phero__value">{{ stat.value }}</p>
+      <p class="phero__label">{{ stat.label }}</p>
+      <p class="phero__text">{{ stat.text }}</p>
+    </li>
+    <!-- @end -->
+  </ul>
+</section>
