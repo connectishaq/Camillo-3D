@@ -24,11 +24,20 @@ export function initChapters({ onChange, scrollTo }) {
     onChange(c.dataset.chapter, c);
   };
 
+  // chapters touching the band across the middle of the screen; when two do (a jump can leave
+  // the last one to report being the one that's leaving), the one under the middle line wins
+  const inBand = new Set();
   const io = new IntersectionObserver(
     (entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) activate(chapters.indexOf(e.target));
+      entries.forEach((e) => (e.isIntersecting ? inBand.add(e.target) : inBand.delete(e.target)));
+      if (!inBand.size) return;
+      const mid = window.innerHeight / 2;
+      const list = chapters.filter((c) => inBand.has(c));
+      const hit = list.find((c) => {
+        const r = c.getBoundingClientRect();
+        return r.top <= mid && r.bottom > mid;
       });
+      activate(chapters.indexOf(hit || list.at(-1)));
     },
     { rootMargin: '-48% 0px -48% 0px' },
   );

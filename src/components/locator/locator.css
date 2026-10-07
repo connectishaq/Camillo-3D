@@ -16,7 +16,8 @@
   color: var(--text);
   transition: opacity 0.4s var(--ease);
 }
-body:not(.is-map-full) .locator {
+body:not(.is-map-full) .locator,
+body.is-in-footer .locator {
   opacity: 0;
 }
 .locator__dot {

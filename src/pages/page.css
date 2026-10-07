@@ -6,6 +6,10 @@
   padding: 0 var(--gutter) 28px;
   background: var(--bg);
 }
+/* the maroon footer runs edge to edge, out of the page's side and bottom padding */
+.page .site-footer {
+  margin: clamp(80px, 10vw, 140px) calc(var(--gutter) * -1) -28px;
+}
 .page__main {
   flex: 1;
   width: min(1180px, 100%);

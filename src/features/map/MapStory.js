@@ -57,7 +57,7 @@ export class MapStory {
     this.map.once('load', () => {
       this.loaded = true;
       clearTimeout(failTimer);
-      const credit = document.querySelector('.footer__credit');
+      const credit = document.querySelector('.site-footer__credit');
       if (credit) credit.textContent = 'Map data © OpenStreetMap contributors · OpenFreeMap';
       this.decorate();
       this.addProjects();

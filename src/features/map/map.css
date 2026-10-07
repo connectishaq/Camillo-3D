@@ -83,9 +83,6 @@ body.is-photoreal .stage__vignette {
 body.is-photoreal .locator {
   bottom: 44px;
 }
-body.is-photoreal .chapter--contact {
-  padding-bottom: 48px;
-}
 
 /* Google Maps attribution (required by the Map Tiles API policies) */
 .map-credits {

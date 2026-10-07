@@ -1,8 +1,10 @@
 /*
  * Optimised web images from the original photos in project-assets/<slug>/:
  *   public/images/projects/<name>-<width>.webp   640, 1280 and 1920 px wide, or the photo's own
- *   width when it's smaller (never upscaled); real widths go to src/data/images.json.
- * One per project (`image` in src/data/projects/<slug>.js). Run `npm run images` after adding a photo.
+ *   width when it's smaller (never upscaled); the widths and the photo's size go to
+ *   src/data/images.json.
+ * One per project (`image` in src/data/projects/<slug>.js) plus the Gallery (src/data/gallery.js).
+ * Run `npm run images` after adding a photo.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,13 +15,14 @@ import { imageName, IMAGE_WIDTHS } from '../vite-plugins/images.js';
 const root = path.resolve(import.meta.dirname, '..');
 const out = path.join(root, 'public/images/projects');
 fs.mkdirSync(out, { recursive: true });
-const { projects } = await loadSiteData(path.join(root, 'src'));
-const jobs = projects.map((p) => ({ project: p.slug, file: p.image.file }));
+const { projects, gallery } = await loadSiteData(path.join(root, 'src'));
+const all = [...projects.map((p) => ({ project: p.slug, file: p.image.file })), ...gallery.map(({ project, file }) => ({ project, file }))];
+const jobs = [...new Map(all.map((j) => [imageName(j.project, j.file), j])).values()];
 const manifest = {};
 
 for (const { project, file } of jobs) {
   const src = path.join(root, 'project-assets', project, file);
-  const { width } = await sharp(src).metadata();
+  const { width, height } = await sharp(src).metadata();
   const name = imageName(project, file);
   const widths = [...new Set(IMAGE_WIDTHS.map((w) => Math.min(w, width)))];
   for (const w of widths) {
@@ -27,6 +30,8 @@ for (const { project, file } of jobs) {
     await sharp(src).resize({ width: w }).webp({ quality: 76, effort: 5 }).toFile(dest);
     console.log(path.relative(root, dest), `${Math.round(fs.statSync(dest).size / 1024)} kB`);
   }
-  manifest[name] = widths;
+  manifest[name] = { widths, width, height };
 }
-fs.writeFileSync(path.join(root, 'src/data/images.json'), JSON.stringify(manifest, null, 2) + '\n');
+// widths on one line, as Prettier formats it
+const json = JSON.stringify(manifest, null, 2).replace(/\[\s+([\d,\s]+?)\s+\]/g, (_, list) => `[${list.split(/,\s*/).join(', ')}]`);
+fs.writeFileSync(path.join(root, 'src/data/images.json'), json + '\n');

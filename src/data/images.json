@@ -1,8 +1,57 @@
 {
-  "the-london-thelondon": [640, 1280, 1600],
-  "la-storia-img-10058-2-040": [640, 1280, 1920],
-  "the-lansell-s010-1-render-hero-street": [640, 1280, 1500],
-  "sea-sky-ext01-exterior": [640, 1280, 1600],
-  "the-righi-05-bedroom-windows": [640, 1280, 1920],
-  "mvrc-thomas-street-191023-c-v01-hero-large": [640, 1280]
+  "the-london-thelondon": {
+    "widths": [640, 1280, 1600],
+    "width": 1600,
+    "height": 899
+  },
+  "la-storia-img-10058-2-040": {
+    "widths": [640, 1280, 1920],
+    "width": 2000,
+    "height": 1334
+  },
+  "the-lansell-s010-1-render-hero-street": {
+    "widths": [640, 1280, 1500],
+    "width": 1500,
+    "height": 1000
+  },
+  "sea-sky-ext01-exterior": {
+    "widths": [640, 1280, 1600],
+    "width": 1600,
+    "height": 1702
+  },
+  "the-righi-05-bedroom-windows": {
+    "widths": [640, 1280, 1920],
+    "width": 1920,
+    "height": 1080
+  },
+  "mvrc-thomas-street-191023-c-v01-hero-large": {
+    "widths": [640, 1280],
+    "width": 1280,
+    "height": 853
+  },
+  "la-storia-duga11024-la-storia-e02-hero-cardigan-st": {
+    "widths": [640, 1280, 1600],
+    "width": 1600,
+    "height": 1726
+  },
+  "mvrc-thomas-street-181219-exterior-park-copy-large": {
+    "widths": [640, 1200],
+    "width": 1200,
+    "height": 800
+  },
+  "sea-sky-ext02-garden": {
+    "widths": [640, 800],
+    "width": 800,
+    "height": 993
+  },
+  "la-storia-img-10350-038": {
+    "widths": [640, 1200],
+    "width": 1200,
+    "height": 800
+  },
+  "mvrc-thomas-street-191014-b-v03-southern-facade-large": {
+    "widths": [640, 800],
+    "width": 800,
+    "height": 1000
+  }
 }

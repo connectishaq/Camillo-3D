@@ -382,7 +382,7 @@ export class PhotorealStory {
   }
 
   footerCredit(on) {
-    const el = document.querySelector('.footer__credit');
+    const el = document.querySelector('.site-footer__credit');
     if (!el) return;
     if (on) {
       this.prevCredit ??= el.textContent;

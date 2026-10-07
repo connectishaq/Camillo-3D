@@ -1,10 +1,114 @@
-<footer class="footer">
-  <span>© {{ year }} Camillo Builders</span>
-  <span class="footer__links">
-    <a href="{{ company.contact.linkedin }}" target="_blank" rel="noopener">LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></a>
-    <a href="{{ company.contact.instagram }}" target="_blank" rel="noopener">Instagram<span class="visually-hidden"> (opens in a new tab)</span></a>
-  </span>
-  <!-- @if page.isHome -->
-  <span class="footer__credit">3D Melbourne generated in code · simplified geography, not to survey accuracy</span>
-  <!-- @end -->
+<!--
+  Site footer, in Camillo maroon: an enquiry form beside a project photo, the site links, and a
+  giant Camillo wordmark cropped at the bottom edge (footer.js handles the form).
+  The form is a Netlify form (detected in the built HTML): entries appear under Forms in the
+  Netlify dashboard, and can be emailed from there.
+-->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__top">
+      <div class="site-footer__enquiry" data-reveal>
+        <h2 class="site-footer__title">Start a conversation</h2>
+        <form class="enquiry" name="enquiry" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" data-enquiry>
+          <input type="hidden" name="form-name" value="enquiry" />
+          <p class="enquiry__trap" aria-hidden="true">
+            <label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
+          <div class="enquiry__grid">
+            <div class="field">
+              <input class="field__input" id="enquiry-first" name="first-name" type="text" autocomplete="given-name" required placeholder=" " />
+              <label class="field__label" for="enquiry-first">First name <span aria-hidden="true">*</span></label>
+            </div>
+            <div class="field">
+              <input class="field__input" id="enquiry-last" name="last-name" type="text" autocomplete="family-name" required placeholder=" " />
+              <label class="field__label" for="enquiry-last">Last name <span aria-hidden="true">*</span></label>
+            </div>
+            <div class="field">
+              <input class="field__input" id="enquiry-email" name="email" type="email" autocomplete="email" required placeholder=" " />
+              <label class="field__label" for="enquiry-email">Email <span aria-hidden="true">*</span></label>
+            </div>
+            <div class="field">
+              <input class="field__input" id="enquiry-phone" name="phone" type="tel" autocomplete="tel" placeholder=" " />
+              <label class="field__label" for="enquiry-phone">Phone</label>
+            </div>
+            <div class="field">
+              <select class="field__input field__input--select" id="enquiry-type" name="project-type">
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Fit out">Fit out</option>
+                <option value="Something else">Something else</option>
+              </select>
+              <label class="field__label field__label--fixed" for="enquiry-type">Project type</label>
+            </div>
+            <div class="field">
+              <input class="field__input" id="enquiry-suburb" name="suburb" type="text" autocomplete="address-level2" placeholder=" " />
+              <label class="field__label" for="enquiry-suburb">Suburb</label>
+            </div>
+            <div class="field field--wide">
+              <textarea class="field__input field__input--area" id="enquiry-message" name="message" rows="3" placeholder=" "></textarea>
+              <label class="field__label" for="enquiry-message">Tell us about your project</label>
+            </div>
+          </div>
+          <div class="enquiry__foot">
+            <p class="enquiry__note">By sending this you agree to Camillo contacting you about your enquiry. We never share or sell your details.</p>
+            <button class="enquiry__submit" type="submit">
+              <span>Send enquiry</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </button>
+          </div>
+          <p class="enquiry__status" role="status" data-enquiry-status></p>
+        </form>
+      </div>
+
+      <figure class="site-footer__photo" data-reveal>
+        <img
+          src="{{ footerPhoto.thumb }}"
+          srcset="{{ footerPhoto.srcset }}"
+          sizes="(max-width: 860px) 100vw, 24vw"
+          width="{{ footerPhoto.width }}"
+          height="{{ footerPhoto.height }}"
+          alt="{{ footerPhoto.alt }}"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>{{ footerPhoto.name }}, {{ footerPhoto.suburb }}</figcaption>
+      </figure>
+    </div>
+
+    <nav class="site-footer__cols" aria-label="Footer">
+      <div class="site-footer__col">
+        <h3>Connect</h3>
+        <a href="mailto:{{ company.contact.email }}">{{ company.contact.email }}</a>
+        <a href="{{ company.contact.phoneHref }}">{{ company.contact.phone }}</a>
+      </div>
+      <div class="site-footer__col">
+        <h3>Explore</h3>
+        <a href="{{ page.home }}#about">About</a>
+        <a href="{{ page.home }}#projects">Projects</a>
+        <a href="{{ page.home }}#services">What we build</a>
+        <a href="{{ page.home }}#gallery">Gallery</a>
+      </div>
+      <div class="site-footer__col">
+        <h3>Follow</h3>
+        <a href="{{ company.contact.linkedin }}" target="_blank" rel="noopener">LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></a>
+        <a href="{{ company.contact.instagram }}" target="_blank" rel="noopener">Instagram<span class="visually-hidden"> (opens in a new tab)</span></a>
+      </div>
+      <div class="site-footer__col">
+        <h3>Head office</h3>
+        <address>{{ company.contact.address }}</address>
+      </div>
+    </nav>
+
+    <div class="site-footer__legal">
+      <span>© {{ year }} Camillo Builders</span>
+      <!-- @if page.isHome -->
+      <span class="site-footer__credit">3D Melbourne generated in code · simplified geography, not to survey accuracy</span>
+      <!-- @end -->
+      <span>All rights reserved.</span>
+    </div>
+  </div>
+
+  <div class="site-footer__mark" aria-hidden="true">
+    <!-- @include components/logo/logo.html -->
+  </div>
 </footer>

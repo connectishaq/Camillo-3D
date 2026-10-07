@@ -34,30 +34,6 @@
   justify-content: center;
   min-height: 140vh;
 }
-.chapter--contact {
-  position: relative;
-  min-height: 100vh;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: stretch;
-  padding-bottom: 28px;
-}
-
-/* Readability scrim (page background colour) for the contact text, which sits straight on the city */
-.chapter--contact::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    var(--bg) 0%,
-    color-mix(in srgb, var(--bg) 94%, transparent) 50%,
-    color-mix(in srgb, var(--bg) 60%, transparent) 75%,
-    transparent 95%
-  );
-}
 
 @media (max-width: 860px) {
   .chapter,

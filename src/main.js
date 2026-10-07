@@ -20,6 +20,7 @@ import * as hero from './sections/hero/hero.js';
 import * as about from './sections/about/about.js';
 import * as projectsSection from './sections/projects/projects.js';
 import * as services from './sections/services/services.js';
+import * as gallery from './sections/gallery/gallery.js';
 import * as contact from './sections/contact/contact.js';
 import * as footer from './sections/footer/footer.js';
 
@@ -57,8 +58,8 @@ const stage = startStage(document.getElementById('map'), {
   onPinClick: (project) => explorer.open(project),
 });
 
-const context = { projects, explorer, stage, ready: loader.finished };
-[header, hero, about, projectsSection, services, contact, footer].forEach((section) => section.init(context));
+const context = { projects, explorer, stage, scroll, ready: loader.finished };
+[header, hero, about, projectsSection, services, gallery, contact, footer].forEach((section) => section.init(context));
 
 initChapters({ scrollTo: scroll.scrollTo, onChange: (chapter) => stage.go(chapter) });
 initReveal();

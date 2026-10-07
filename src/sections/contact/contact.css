@@ -1,44 +1,5 @@
-.contact {
-  width: min(1180px, 100%);
-  margin: 0 auto;
-}
-.contact__title {
-  font-size: clamp(2.75rem, 7vw, 6rem);
-  line-height: 1.05;
-}
-.contact__grid {
-  margin-top: 44px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-.contact__item {
-  padding: 22px 24px;
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid transparent;
-  display: grid;
-  gap: 6px;
-  transition: border-color 0.3s;
-}
-a.contact__item:hover {
-  border-color: var(--brand);
-}
-.contact__item span {
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--brand);
-}
-.contact__item strong {
-  font-weight: var(--fw-regular);
-  font-size: var(--fs-lede);
-}
-
-@media (max-width: 860px) {
-  .contact__grid {
-    grid-template-columns: 1fr;
-  }
+/* The last chapter is the footer itself (sections/footer). */
+.contact-chapter {
+  position: relative;
+  pointer-events: auto;
 }

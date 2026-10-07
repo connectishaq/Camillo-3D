@@ -1,0 +1,60 @@
+<!--
+  05b Gallery: project photos drifting up past a giant "Gallery" word that holds at the top
+  (gallery.js). Each photo opens in the lightbox below. Photos: src/data/gallery.js.
+-->
+<section class="gallery" id="gallery" data-chapter="gallery" data-nav="projects" data-label="Gallery" data-gallery>
+  <div class="gallery__word" aria-hidden="true">Gallery</div>
+
+  <div class="gallery__intro">
+    <h2 class="eyebrow gallery__title">Gallery</h2>
+    <p class="gallery__lede">Homes and apartments we’ve built across Melbourne. Select a photo to see it larger.</p>
+  </div>
+
+  <ul class="gallery__grid" role="list">
+    <!-- @each gallery as photo -->
+    <li class="gallery__item gallery__item--{{ photo.shape }}" data-gallery-item>
+      <button class="gallery__open" type="button" data-gallery-open="{{ photo.index }}" aria-label="Open photo {{ photo.number }}: {{ photo.alt }}">
+        <img
+          src="{{ photo.thumb }}"
+          srcset="{{ photo.srcset }}"
+          sizes="(max-width: 860px) 46vw, 30vw"
+          width="{{ photo.width }}"
+          height="{{ photo.height }}"
+          alt="{{ photo.alt }}"
+          style="object-position: {{ photo.position }}"
+          loading="lazy"
+          decoding="async"
+          data-full="{{ photo.src }}"
+          data-name="{{ photo.name }}"
+          data-suburb="{{ photo.suburb }}"
+          data-url="{{ photo.url }}"
+        />
+      </button>
+      <p class="gallery__caption"><span>{{ photo.number }}</span> {{ photo.name }}</p>
+    </li>
+    <!-- @end -->
+  </ul>
+
+  <dialog class="lightbox" data-lightbox aria-label="Gallery photo">
+    <div class="lightbox__frame">
+      <img class="lightbox__img" alt="" data-lightbox-img />
+    </div>
+    <div class="lightbox__bar">
+      <p class="lightbox__caption" aria-live="polite">
+        <span class="lightbox__count" data-lightbox-count></span>
+        <strong data-lightbox-name></strong>
+        <span data-lightbox-suburb></span>
+      </p>
+      <a class="lightbox__link" href="#" data-lightbox-link>View project <span aria-hidden="true">↗</span></a>
+    </div>
+    <button class="lightbox__btn lightbox__btn--prev" type="button" data-lightbox-prev aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <button class="lightbox__btn lightbox__btn--next" type="button" data-lightbox-next aria-label="Next photo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
+    <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+  </dialog>
+</section>

@@ -21,6 +21,7 @@ const importFresh = (file) => import(`${pathToFileURL(file).href}?v=${fs.statSyn
 
 export async function loadSiteData(srcDir) {
   const { company, moreProjects } = await importFresh(path.join(srcDir, 'data/company.js'));
+  const { gallery } = await importFresh(path.join(srcDir, 'data/gallery.js'));
   const projects = await Promise.all(
     projectSlugs(srcDir).map(async (slug) => {
       const project = (await importFresh(path.join(srcDir, `data/projects/${slug}.js`))).default;
@@ -29,23 +30,27 @@ export async function loadSiteData(srcDir) {
     }),
   );
   projects.sort((a, b) => a.order - b.order);
-  return { company, moreProjects, projects };
+  return { company, moreProjects, projects, gallery };
 }
 
 /**
- * An optimised photo for the templates: { src, thumb, srcset, position, alt }, from the
- * widths scripts/images.mjs recorded in src/data/images.json.
+ * An optimised photo for the templates: { src, thumb, srcset, width, height, position, alt },
+ * from what scripts/images.mjs recorded in src/data/images.json.
  */
 function photo(srcDir, { project, file, position = '50% 50%', alt }, prefix) {
   const name = imageName(project, file);
   const manifest = JSON.parse(fs.readFileSync(path.join(srcDir, 'data/images.json'), 'utf8'));
-  const widths = manifest[name];
-  if (!widths) throw new Error(`[site-data] no optimised images for ${project}/${file}: run "npm run images"`);
+  const entry = manifest[name];
+  if (!entry?.widths) throw new Error(`[site-data] no optimised images for ${project}/${file}: run "npm run images"`);
+  const { widths, width, height } = entry;
   const url = (w) => `${prefix}images/projects/${name}-${w}.webp`;
   return {
     src: url(widths.find((w) => w >= 1200) ?? widths.at(-1)),
     thumb: url(widths[0]),
     srcset: widths.map((w) => `${url(w)} ${w}w`).join(', '),
+    width,
+    height,
+    shape: width / height < 1.1 ? 'portrait' : 'landscape',
     position,
     alt,
   };
@@ -88,11 +93,27 @@ export function pageScope(data, page, site, srcDir) {
     ? project.summary
     : "Camillo is a Melbourne construction company backed by 70 years' experience, building bespoke residential, commercial and fit-out projects.";
 
+  // the Gallery: each photo with its project's name, page and an index for the lightbox
+  const gallery = data.gallery.map((g, i) => {
+    const p = projects.find((x) => x.slug === g.project);
+    if (!p) throw new Error(`[site-data] gallery photo ${g.file}: unknown project "${g.project}"`);
+    return { ...photo(srcDir, g, prefix), index: i, number: pad(i + 1), name: p.name, suburb: p.suburb, url: p.url };
+  });
+
   return {
     site,
     company,
     moreProjects,
     projects,
+    gallery,
+    galleryTotal: pad(gallery.length),
+    footerPhoto:
+      gallery[
+        Math.max(
+          0,
+          data.gallery.findIndex((g) => g.footer),
+        )
+      ],
     project,
     intro: { total: String(projects.length + 1).padStart(2, '0') },
     year: new Date().getFullYear(),

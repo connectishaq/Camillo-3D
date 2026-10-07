@@ -118,6 +118,18 @@ The clouds are photographic cut-outs (`public/images/clouds/cloud-1…7.webp`, t
 
 The overview panel works the same way ([`src/sections/services/services.js`](src/sections/services/services.js)): its white is drawn by a full-screen layer clipped to the panel's shape, which grows to fill the screen as the panel arrives, holds while the services, stats and portfolio scroll through, and leaves with the end of the section, onto the city for Contact. The map doesn't draw while it's covered. With reduced motion the full-screen white fades in instead.
 
+## Gallery
+
+[`src/sections/gallery/`](src/sections/gallery/), after What we build: a giant pale "Gallery" holds at the top of the screen while the photos, two to a row and staggered, drift up past it at slightly different speeds (transforms only). It's solid white, so it carries straight on from the What we build panel. Any photo opens a full-screen lightbox (native `<dialog>`: arrow keys, swipe, Esc, focus returns to the photo) with the project's name and a link to its page.
+
+The photos are listed in [`src/data/gallery.js`](src/data/gallery.js) (project, original file in `project-assets/<project>/`, alt text). Add one there, then run `npm run images` to make its optimised copies and commit them. `footer: true` also puts that photo beside the footer's enquiry form.
+
+## Footer and enquiry form
+
+[`src/sections/footer/`](src/sections/footer/), in Camillo maroon (`--brand`, the logo's `#5D0024`), on every page; on the home page it's the Contact chapter. It has a big **Start a conversation** heading, an enquiry form with underlined fields beside a project photo, four link columns (Connect, Explore, Follow, Head office), the legal line and a giant Camillo wordmark cropped at the bottom edge.
+
+The form is a [Netlify form](https://docs.netlify.com/forms/setup/) (`name="enquiry"`, with a honeypot field). Netlify finds it in the built HTML on deploy, and entries appear under **Forms** in the Netlify dashboard. Turn on **Form notifications → Email** there to have them sent to `enquiries@camillo.com.au`. It sends in place and thanks the visitor by name. Without JavaScript it posts normally and Netlify shows its own confirmation page. It can only send on Netlify: the local dev and preview servers answer with the "didn't send, please email us" message.
+
 ## The hero: project showcase
 
 [`src/sections/hero/`](src/sections/hero/) is a full-screen, auto-playing showcase in front of the map:

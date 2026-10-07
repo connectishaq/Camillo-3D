@@ -15,7 +15,8 @@
   transition: opacity 0.4s var(--ease);
 }
 /* hidden while the hero is still a split layout */
-body:not(.is-map-full) .rail {
+body:not(.is-map-full) .rail,
+body.is-in-footer .rail {
   opacity: 0;
   pointer-events: none;
 }
