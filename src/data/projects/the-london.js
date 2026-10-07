@@ -16,7 +16,7 @@ export default {
     'Built on the historic site of the original London Hotel (est. 1861), The London reimagines beachside living with uninterrupted Port Phillip Bay views from every residence.',
   materials: 'Brickwork, raw concrete, charcoal metalwork and timber soffits.',
   // hero / card photo from project-assets/the-london/ (optimised by `npm run images`)
-  image: { file: 'TheLondon-1600x899.jpeg', position: '50% 55%' },
+  image: { file: 'TheLondon.jpeg', position: '50% 55%' },
   camera: { zoom: 17.4, pitch: 64, bearing: -40 },
   // the project page's full-screen hero (pages/project/hero.js): the photo, the name rising over
   // it, then these figures in boxes (all from the published facts above). Projects without
@@ -28,6 +28,23 @@ export default {
       { value: 'Est. 1861', label: 'The London Hotel', text: 'Built on the historic site of the original London Hotel.' },
       { value: 'Opposite', label: 'The beach & Station Pier', text: 'Beachside living, across the road from the sand.' },
       { value: '4 materials', label: 'Crafted façade', text: 'Brickwork, raw concrete, charcoal metalwork and timber soffits.' },
+    ],
+  },
+  // the project page's "About the project" (pages/project/about.html): a big photo, the title
+  // and copy beside it, a small photo below. Photos from project-assets/the-london/.
+  about: {
+    title: 'Beachside living on a historic site',
+    text: [
+      'Built on the site of the original London Hotel, established in 1861, The London reimagines beachside living in Port Melbourne, opposite the beach and Station Pier.',
+      'Seven levels hold thirteen luxury apartments, each with uninterrupted views across Port Phillip Bay. The façade is crafted in brickwork, raw concrete, charcoal metalwork and timber soffits.',
+    ],
+    images: [
+      {
+        file: 'TheLondon-balcony.jpg',
+        alt: 'A balcony at The London, under timber soffits, looking out to the foreshore',
+        position: '50% 50%',
+      },
+      { file: 'TheLondon-living.jpg', alt: 'A living room at The London, with floor-to-ceiling windows', position: '40% 50%' },
     ],
   },
   // published numbers the 3D model must reproduce (checked in dev)

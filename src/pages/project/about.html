@@ -1,0 +1,47 @@
+<!--
+  "About the project" (projects with `about` in their data; pages/project/about.js).
+  A tall photo on the left; on the right a big uppercase title, the copy in small capitals, and a
+  small second photo low in the corner. The photos drift a little against each other on scroll.
+-->
+<section class="pabout" aria-labelledby="pabout-title" data-pabout>
+  <figure class="pabout__media pabout__media--main">
+    <img
+      src="{{ project.about.photos.0.src }}"
+      srcset="{{ project.about.photos.0.srcset }}"
+      sizes="(max-width: 860px) 100vw, 46vw"
+      width="{{ project.about.photos.0.width }}"
+      height="{{ project.about.photos.0.height }}"
+      alt="{{ project.about.photos.0.alt }}"
+      style="object-position: {{ project.about.photos.0.position }}"
+      loading="lazy"
+      decoding="async"
+      data-pabout-drift="-0.06"
+    />
+  </figure>
+
+  <div class="pabout__copy">
+    <p class="pabout__eyebrow">About the project</p>
+    <h2 class="pabout__title" id="pabout-title">{{ project.about.title }}</h2>
+    <div class="pabout__text">
+      <!-- @each project.about.text as para -->
+      <p>{{ para }}</p>
+      <!-- @end -->
+    </div>
+    <!-- @include components/tag/tags.html -->
+  </div>
+
+  <figure class="pabout__media pabout__media--small">
+    <img
+      src="{{ project.about.photos.1.thumb }}"
+      srcset="{{ project.about.photos.1.srcset }}"
+      sizes="(max-width: 860px) 60vw, 16vw"
+      width="{{ project.about.photos.1.width }}"
+      height="{{ project.about.photos.1.height }}"
+      alt="{{ project.about.photos.1.alt }}"
+      style="object-position: {{ project.about.photos.1.position }}"
+      loading="lazy"
+      decoding="async"
+      data-pabout-drift="0.08"
+    />
+  </figure>
+</section>

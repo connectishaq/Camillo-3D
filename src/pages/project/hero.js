@@ -6,7 +6,8 @@ const clamp01 = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t);
 const ease = (t) => 1 - Math.pow(1 - clamp01(t), 3);
 
 /**
- * Project hero (hero.html): the photo holds while the name line slides sideways as it rises,
+ * Project hero (hero.html): the photo holds while the name line, always running sideways like a
+ * marquee (faster while the page scrolls), rises over it,
  * and each figure box eases up into place as it arrives. The header is white over the photo
  * and turns to the light bar once the boxes reach it (white type would vanish on them). All on one scroll handler, writing
  * transforms and opacity only, from positions measured once per layout.
@@ -43,8 +44,7 @@ export function initHero() {
       setOverMap(!over);
     }
     if (reduce) return;
-    // the name slides left as the page scrolls (looping), the photo slowly closes in
-    if (runWidth) track.style.transform = `translate3d(${(-((y * 0.55) % runWidth)).toFixed(1)}px, 0, 0)`;
+    // the photo slowly closes in
     img.style.transform = `scale(${(1 + Math.min(y / vh, 3) * 0.035).toFixed(4)})`;
     // each box rises in over the bottom quarter of the screen
     stats.forEach((el, i) => {
@@ -67,6 +67,34 @@ export function initHero() {
     measure();
     apply();
   };
+  // the name: a marquee that runs on its own and is pushed along by the scroll (back a little
+  // when scrolling up), drawn only while the line is on screen
+  let x = 0;
+  let lastT = 0;
+  let lastY = window.scrollY;
+  let frame = 0;
+  const tick = (t) => {
+    frame = requestAnimationFrame(tick);
+    const dt = lastT ? Math.min((t - lastT) / 1000, 0.05) : 0;
+    lastT = t;
+    const y = window.scrollY;
+    x += window.innerWidth * 0.06 * dt + (y - lastY) * 0.6;
+    lastY = y;
+    if (!runWidth) return;
+    x = ((x % runWidth) + runWidth) % runWidth;
+    track.style.transform = `translate3d(${(-x).toFixed(1)}px, 0, 0)`;
+  };
+  if (!reduce) {
+    new IntersectionObserver(([e]) => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      if (!e.isIntersecting) return;
+      lastT = 0;
+      lastY = window.scrollY;
+      frame = requestAnimationFrame(tick);
+    }).observe($('.phero__name', hero));
+  }
+
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', relayout);
   document.fonts?.ready.then(relayout);

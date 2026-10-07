@@ -1,5 +1,5 @@
 /** Shared naming for the optimised project photos (scripts/images.mjs and the templates). */
-export const IMAGE_WIDTHS = [640, 1280, 1920];
+export const IMAGE_WIDTHS = [640, 1280, 1920, 2560, 3840];
 
 /** `la-storia` + `IMG_10350_038-1200x800.jpg` → `la-storia-img-10350-038` */
 export const imageName = (project, file) =>

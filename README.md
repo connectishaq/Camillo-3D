@@ -132,7 +132,9 @@ The form is a [Netlify form](https://docs.netlify.com/forms/setup/) (`name="enqu
 
 ## Project page hero
 
-A project with `hero` in its data (so far `the-london.js`) gets a full-screen hero on its page ([`src/pages/project/hero.html`](src/pages/project/hero.html), `hero.css`, `hero.js`). The project photo holds still while you scroll. First the project's name rises over it in one giant line that slides sideways as it goes, then the key figures scroll up over the photo in staggered white boxes (`hero.stats`: a big `value`, a maroon `label`, a line of `text`). The header is white over the bare photo and switches to the light bar as the boxes reach it. After the hero come the summary, facts and the 3D explorer as before. Projects without `hero` keep the plain page header. To give another project the hero, add a `hero.stats` list to its data file (keep the figures to published facts). With reduced motion the name and boxes don't move.
+A project with `hero` in its data (so far `the-london.js`) gets a full-screen hero on its page ([`src/pages/project/hero.html`](src/pages/project/hero.html), `hero.css`, `hero.js`). The project photo holds still while you scroll. First the project's name rises over it in one giant line that runs sideways like a marquee (on its own, faster while you scroll, only drawn while on screen), then the key figures scroll up over the photo in staggered white boxes (`hero.stats`: a big `value`, a maroon `label`, a line of `text`). The header is white over the bare photo and switches to the light bar as the boxes reach it. Projects without `hero` keep the plain page header.
+
+A project with `about` in its data gets an **About the project** section after it ([`about.html`](src/pages/project/about.html), `about.css`, `about.js`): a tall photo on the left, a big uppercase `about.title` with the `about.text` paragraphs in small capitals on the right, and a small second photo low in the right corner (`about.images`, two photos from `project-assets/<slug>/`; run `npm run images` after adding them). The copy rises in once and the photos drift slightly on scroll. Then come the facts, in a row, and the 3D explorer. To give another project the hero, add a `hero.stats` list to its data file (keep the figures to published facts). With reduced motion the name and boxes don't move.
 
 ## The hero: project showcase
 
@@ -146,7 +148,7 @@ A project with `hero` in its data (so far `the-london.js`) gets a full-screen he
 
 ### Photos
 
-Originals stay in `project-assets/<slug>/`. `npm run images` (with [sharp](https://sharp.pixelplumbing.com/)) writes optimised WebP copies at 640/1280/1920 px, or the photo's own width when smaller, to `public/images/projects/`, and records the widths in `src/data/images.json` for the templates' `srcset`. Run it after changing a project's `image`, and commit the results (Netlify doesn't run it).
+Originals stay in `project-assets/<slug>/`. `npm run images` (with [sharp](https://sharp.pixelplumbing.com/)) writes optimised WebP copies at 640/1280/1920/2560/3840 px (never wider than the photo itself; the big ones are for full-screen heroes on large or high-density screens), upright from the camera's orientation, to `public/images/projects/`, and records the widths in `src/data/images.json` for the templates' `srcset`. Run it after changing a project's `image` or `about.images`, and commit the results (Netlify doesn't run it).
 
 ### Hero film
 

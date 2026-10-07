@@ -15,7 +15,13 @@
     <!-- @end -->
 
     <main class="page__main" id="main" tabindex="-1">
+      <!-- @if project.about -->
+      <!-- @include pages/project/about.html -->
+      <!-- @end -->
       <article class="project-page">
+        <!-- @if project.about -->
+        <h2 class="visually-hidden">Project details</h2>
+        <!-- @else -->
         <header class="project-page__hero">
           <!-- @if project.hero -->
           <p class="eyebrow">About the project</p>
@@ -29,6 +35,7 @@
           <p class="page__lede">{{ project.summary }}</p>
           <!-- @end -->
         </header>
+        <!-- @end -->
 
         <dl class="facts project-page__facts">
           <!-- @each project.factList as fact -->

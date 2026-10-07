@@ -63,6 +63,7 @@ function decorateProject(p, i, all, srcDir, prefix) {
   return {
     ...p,
     photo: photo(srcDir, { project: p.slug, ...p.image, alt: `${p.name}, ${p.suburb}` }, prefix),
+    ...(p.about && { about: { ...p.about, photos: p.about.images.map((img) => photo(srcDir, { project: p.slug, ...img }, prefix)) } }),
     keyFacts: p.facts.slice(0, 2).map(([label, value]) => ({ label, value })),
     side: i % 2 === 0 ? 'left' : 'right', // chapters alternate sides for rhythm
     number: pad(i + 1),

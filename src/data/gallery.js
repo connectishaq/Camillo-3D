@@ -6,7 +6,7 @@
  * Plain data only (no imports): the build reads this file to write the static HTML.
  */
 export const gallery = [
-  { project: 'the-london', file: 'TheLondon-1600x899.jpeg', alt: 'The London from above, with the Melbourne CBD skyline behind' },
+  { project: 'the-london', file: 'TheLondon.jpeg', alt: 'The London from above, with the Melbourne CBD skyline behind' },
   {
     project: 'la-storia',
     file: 'DUGA11024_La-Storia_E02_Hero-Cardigan-St_Crop-1600x1726.jpg',

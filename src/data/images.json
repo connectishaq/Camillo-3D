@@ -1,11 +1,21 @@
 {
   "the-london-thelondon": {
-    "widths": [640, 1280, 1600],
-    "width": 1600,
-    "height": 899
+    "widths": [640, 1280, 1920, 2560, 3840],
+    "width": 5468,
+    "height": 3073
+  },
+  "the-london-thelondon-balcony": {
+    "widths": [640, 1280, 1920, 2560, 3024],
+    "width": 3024,
+    "height": 4032
+  },
+  "the-london-thelondon-living": {
+    "widths": [640, 1280, 1920, 2560],
+    "width": 2560,
+    "height": 1708
   },
   "la-storia-img-10058-2-040": {
-    "widths": [640, 1280, 1920],
+    "widths": [640, 1280, 1920, 2000],
     "width": 2000,
     "height": 1334
   },

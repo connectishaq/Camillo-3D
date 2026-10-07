@@ -1,6 +1,6 @@
 {
   "slug": "the-london",
-  "sources": ["project-assets/the-london/TheLondon-1600x899.jpeg"],
+  "sources": ["project-assets/the-london/TheLondon.jpeg"],
   "indicative": true,
   "notes": "Aerial from the south-east. Residential block of 7 levels (published) above a 2-level dark-glazed restaurant pavilion on the Beach St corner.",
   "floorHeight": { "value": 3.2, "assumed": true },
