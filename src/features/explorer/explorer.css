@@ -218,3 +218,164 @@
     bottom: auto;
   }
 }
+
+/* ---------- Inline preview (project pages): the model turns behind "See in 3D" ---------- */
+/* the inline explorer is always there; only the 3D picture fades in once the model is built */
+.explorer--inline {
+  opacity: 1;
+}
+.explorer--inline .explorer__canvas {
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+}
+.explorer--inline.is-open .explorer__canvas {
+  opacity: 1;
+}
+.explorer.is-preview .explorer__canvas {
+  pointer-events: none; /* the page scrolls straight past the preview */
+}
+.explorer.is-open.is-preview .explorer__panel,
+.explorer.is-preview .explorer__toolbar,
+.explorer:not(.is-preview) .explorer__cta,
+.explorer:not(.is-preview) .explorer__caption {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.explorer.is-open.is-preview .explorer__panel {
+  transform: translateX(-20px);
+  transition:
+    transform 0.5s var(--ease),
+    opacity 0.5s var(--ease),
+    visibility 0s 0.5s;
+}
+.explorer__panel,
+.explorer__toolbar,
+.explorer__cta,
+.explorer__caption {
+  transition:
+    transform 0.7s var(--ease) 0.15s,
+    opacity 0.7s var(--ease) 0.15s,
+    visibility 0s;
+}
+.explorer.is-preview .explorer__toolbar,
+.explorer:not(.is-preview) .explorer__cta,
+.explorer:not(.is-preview) .explorer__caption {
+  transition:
+    transform 0.5s var(--ease),
+    opacity 0.5s var(--ease),
+    visibility 0s 0.5s;
+}
+.explorer:not(.is-preview) .explorer__cta {
+  transform: translate(-50%, -50%) scale(0.94);
+}
+.explorer:not(.is-preview) .explorer__caption {
+  transform: translateY(24px);
+}
+
+/* the box: maroon, with a notch out of its top-left corner, like a building's stepped massing */
+.explorer__cta {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  justify-items: center;
+  gap: clamp(28px, 3vw, 40px);
+  width: min(330px, calc(100% - 48px));
+  padding: clamp(52px, 5vw, 72px) 20px 20px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  clip-path: polygon(0 13%, 18% 13%, 18% 0, 100% 0, 100% 100%, 0 100%);
+}
+.explorer__cube {
+  width: 64px;
+  height: 64px;
+  overflow: visible;
+}
+.explorer__cube path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.explorer__cube text {
+  fill: currentColor;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: var(--fw-light);
+}
+.explorer__open {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 20px;
+  border: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+.explorer__open:hover {
+  background: var(--bg);
+  color: var(--brand);
+}
+.explorer__open:focus-visible {
+  outline: 2px solid var(--surface);
+  outline-offset: 4px;
+}
+
+/* the big heading, low on the left over the scene */
+.explorer__caption {
+  position: absolute;
+  left: clamp(16px, 2vw, 32px);
+  bottom: clamp(12px, 1.6vw, 24px);
+  right: clamp(16px, 2vw, 32px);
+  pointer-events: none;
+}
+.explorer__kicker {
+  font-size: var(--fs-small);
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.explorer__big {
+  margin: clamp(16px, 2vw, 32px) 0 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-light);
+  font-size: clamp(3rem, 0.6rem + 7.4vw, 8.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.explorer .chip--dark {
+  background: var(--brand);
+  color: var(--brand-ink);
+  border-color: var(--brand);
+}
+.explorer .chip--dark:hover {
+  background: var(--brand-active);
+}
+
+@media (max-width: 860px) {
+  .explorer__cta {
+    top: 44%;
+    width: min(260px, calc(100% - 48px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explorer__panel,
+  .explorer__toolbar,
+  .explorer__cta,
+  .explorer__caption {
+    transition: none;
+  }
+}

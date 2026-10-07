@@ -11,12 +11,19 @@
 .project-page__facts {
   margin: 0;
 }
-.project-page__model {
-  grid-column: 1 / -1;
+/* the 3D model: boxed in the page column, or full-screen and edge to edge after "About the project" */
+.pmodel {
   margin-top: 40px;
 }
-.project-page__heading {
-  font-size: var(--fs-h3);
+.pabout ~ .pmodel {
+  margin: clamp(80px, 10vw, 150px) calc(var(--gutter) * -1) 0;
+}
+.pabout ~ .pmodel .explorer--inline {
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  border-radius: 0;
+  box-shadow: none;
 }
 .project-page__hint {
   margin: 8px 0 20px;
@@ -27,5 +34,17 @@
 @media (max-width: 860px) {
   .project-page {
     grid-template-columns: 1fr;
+  }
+}
+/* full screen, the fixed header covers the stage's top edge: the panel and buttons start below it */
+.pabout ~ .pmodel .explorer__panel {
+  top: calc(var(--header-h) + 16px);
+}
+@media (max-width: 860px) {
+  .pabout ~ .pmodel .explorer__panel {
+    top: auto;
+  }
+  .pabout ~ .pmodel .explorer__toolbar {
+    top: calc(var(--header-h) + 12px);
   }
 }

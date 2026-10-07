@@ -16,7 +16,7 @@ import { buildGLBBuilding, loadedGLB } from './glb.js';
 import { createSky, skyEnvironment, sunDirection } from '../../gfx/sky.js';
 import { palette } from '../../gfx/palette.js';
 import { BREAKPOINT } from '../../config.js';
-import { isMobile } from '../../utils/dom.js';
+import { isMobile, prefersReducedMotion } from '../../utils/dom.js';
 import { escapeHtml } from '../../utils/escape.js';
 import { trapFocus } from '../../utils/focus-trap.js';
 
@@ -44,9 +44,12 @@ const PROGRAM_LABEL = {
  *
  * modal (default): a full-screen dialog that traps focus and closes on Esc.
  * modal: false: embedded in the page (project pages); Esc only steps back out of a floor.
+ * preview: true (embedded only): starts as a preview, the model turning slowly, centred and not
+ *   interactive, behind a "See in 3D" button ([data-ex-open]); "Close 3D" ([data-ex-exit]) and
+ *   Esc go back to it.
  */
 export class Explorer {
-  constructor(root, { modal = true, onOpen, onClose } = {}) {
+  constructor(root, { modal = true, preview = false, onOpen, onClose } = {}) {
     this.root = root;
     this.modal = modal;
     this.onOpen = onOpen;
@@ -57,6 +60,9 @@ export class Explorer {
     this.raycaster = new THREE.Raycaster();
     this.raycaster.layers.set(HIT_LAYER);
     this.mobile = isMobile();
+    this.preview = preview;
+    this.shift = preview ? 0 : 1; // how far the framing is moved aside for the panel (0..1)
+    root.classList.toggle('is-preview', preview);
     this.bindUI();
   }
 
@@ -98,6 +104,7 @@ export class Explorer {
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.maxPolarAngle = Math.PI * 0.49;
+    controls.autoRotateSpeed = 0.45;
 
     const hemi = new THREE.HemisphereLight(p.skyLight, p.groundLight, 0.8);
     scene.add(hemi);
@@ -159,6 +166,7 @@ export class Explorer {
     this.resize();
     this.resume();
     this.introCamera();
+    this.applyPreview(false);
     if (this.modal) {
       clearTimeout(this.closeTimer);
       document.body.classList.add('is-locked');
@@ -193,6 +201,39 @@ export class Explorer {
 
   get isOpen() {
     return !this.root.hidden && this.root.classList.contains('is-open');
+  }
+
+  /**
+   * Preview on/off (embedded explorer). Off: the panel and toolbar come in, the model moves
+   * aside for the panel and can be orbited. On: back to the turning, centred model.
+   * `focus` (from a button or Esc) moves keyboard focus to what's now in front.
+   */
+  setPreview(on, focus = false) {
+    if (on === this.preview) return;
+    this.preview = on;
+    this.root.classList.toggle('is-preview', on);
+    if (!this.building) return; // applied when the model opens
+    if (on) {
+      if (this.state.focused !== null) this.unfocus();
+      if (this.state.exploded) this.toggleExplode();
+    }
+    this.applyPreview(true);
+    if (focus) (on ? this.$('[data-ex-open]') : this.$('[data-floor]'))?.focus({ preventScroll: true });
+  }
+
+  applyPreview(animate) {
+    const on = this.preview;
+    this.controls.enabled = !on;
+    this.controls.autoRotate = on && !prefersReducedMotion();
+    this.setHover(-1);
+    gsap.to(this, {
+      shift: on ? 0 : 1,
+      duration: animate ? 1.3 : 0,
+      ease: 'power3.inOut',
+      overwrite: true,
+      onUpdate: () => this.applyOffset(),
+    });
+    if (animate) this.flyTo(on ? this.previewView() : this.homeView(), 1.4);
   }
 
   /* ---------------- scene ---------------- */
@@ -242,16 +283,28 @@ export class Explorer {
     };
   }
 
-  introCamera() {
+  /** The preview: the whole building centred, a little further back, slowly turning. */
+  previewView() {
     const v = this.homeView();
+    const { h } = this.building.size;
+    v.target.y = h * 0.32;
+    // further back and a little higher than the explorer's view, so the whole site shows
+    const dir = v.position.sub(v.target);
+    dir.y *= 1.25;
+    v.position = dir.multiplyScalar(this.mobile ? 2.6 : 1.9).add(v.target);
+    return v;
+  }
+
+  introCamera() {
+    const v = this.preview ? this.previewView() : this.homeView();
     this.camera.position.copy(v.position).multiplyScalar(1.6);
     this.controls.target.copy(v.target);
     this.flyTo(v, 1.8);
   }
 
   flyTo({ position, target }, duration = 1.2) {
-    gsap.to(this.camera.position, { x: position.x, y: position.y, z: position.z, duration, ease: 'power3.inOut' });
-    gsap.to(this.controls.target, { x: target.x, y: target.y, z: target.z, duration, ease: 'power3.inOut' });
+    gsap.to(this.camera.position, { x: position.x, y: position.y, z: position.z, duration, ease: 'power3.inOut', overwrite: true });
+    gsap.to(this.controls.target, { x: target.x, y: target.y, z: target.z, duration, ease: 'power3.inOut', overwrite: true });
   }
 
   resize() {
@@ -268,9 +321,15 @@ export class Explorer {
     this.bloom.setSize(Math.round(w * k), Math.round(h * k));
     this.labels.setSize(w, h);
     this.camera.aspect = w / h;
-    // shift framing right on desktop so the panel doesn't cover the model
-    const offset = w > BREAKPOINT ? -Math.min(190, w * 0.14) : 0;
-    this.camera.setViewOffset(w, h, offset, h > w ? h * 0.12 : 0, w, h);
+    // shift framing right on desktop (up on a phone) so the panel doesn't cover the model
+    this.offset = [w > BREAKPOINT ? -Math.min(190, w * 0.14) : 0, h > w ? h * 0.12 : 0];
+    this.applyOffset();
+  }
+
+  applyOffset() {
+    if (!this.offset) return;
+    const { clientWidth: w, clientHeight: h } = this.host;
+    this.camera.setViewOffset(w, h, this.offset[0] * this.shift, this.offset[1] * this.shift, w, h);
     this.camera.updateProjectionMatrix();
   }
 
@@ -501,6 +560,8 @@ export class Explorer {
 
   bindUI() {
     this.$('[data-explorer-close]')?.addEventListener('click', () => this.close());
+    this.$('[data-ex-open]')?.addEventListener('click', () => this.setPreview(false, true));
+    this.$('[data-ex-exit]')?.addEventListener('click', () => this.setPreview(true, true));
     this.$('[data-ex-back]').addEventListener('click', () => this.unfocus());
     this.$('[data-ex-inside]').addEventListener('click', () => this.toggleInside());
     this.$('[data-ex-explode]').addEventListener('click', () => this.toggleExplode());
@@ -519,10 +580,11 @@ export class Explorer {
       if (b) this.focusFloor(+b.dataset.floor);
     });
     window.addEventListener('keydown', (e) => {
-      if (e.key !== 'Escape' || !this.isOpen || !this.building) return;
+      if (e.key !== 'Escape' || !this.isOpen || !this.building || this.preview) return;
       if (this.state.inside) this.toggleInside();
       else if (this.state.focused !== null) this.unfocus();
-      else this.close();
+      else if (this.modal) this.close();
+      else if (this.root.contains(document.activeElement)) this.setPreview(true, true);
     });
   }
 }

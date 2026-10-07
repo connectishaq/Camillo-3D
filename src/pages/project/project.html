@@ -49,14 +49,13 @@
             <dd>{{ project.materials }}</dd>
           </div>
         </dl>
-
-        <section class="project-page__model" aria-labelledby="model-heading">
-          <h2 class="project-page__heading" id="model-heading">Explore the building in 3D</h2>
-          <p class="project-page__hint">Drag to orbit, scroll or pinch to zoom. Pick a level to open the floor and step inside.</p>
-          <!-- @include features/explorer/explorer-inline.html -->
-          <noscript><p class="project-page__hint">The 3D model needs JavaScript.</p></noscript>
-        </section>
       </article>
+
+      <!-- the 3D model: a turning preview with "See in 3D", which opens the full explorer -->
+      <section class="pmodel" aria-labelledby="model-heading">
+        <!-- @include features/explorer/explorer-inline.html -->
+        <noscript><p class="project-page__hint">The 3D model needs JavaScript.</p></noscript>
+      </section>
     </main>
 
     <!-- @include sections/footer/footer.html -->

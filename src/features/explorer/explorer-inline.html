@@ -1,4 +1,21 @@
-<!-- Building Explorer (Three.js): embedded in a project page -->
-<div class="explorer explorer--inline" data-explorer aria-label="3D model of {{ project.name }}">
+<!--
+  Building Explorer (Three.js) embedded in a project page. It starts as a preview: the model
+  turns slowly behind a "See in 3D" box and a big heading. The button opens the full explorer
+  (levels panel, orbit, explode); "Close 3D" goes back to the preview.
+-->
+<div class="explorer explorer--inline is-preview" data-explorer aria-label="3D model of {{ project.name }}">
   <!-- @include features/explorer/explorer-body.html -->
+
+  <div class="explorer__cta" data-ex-cta>
+    <svg class="explorer__cube" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 6 54 17v24L32 52 10 41V17Z M10 17l22 11 22-11 M32 28v24" />
+      <text x="41" y="60">3D</text>
+    </svg>
+    <button class="explorer__open" type="button" data-ex-open>See in 3D</button>
+  </div>
+
+  <div class="explorer__caption">
+    <p class="explorer__kicker">Explore the building<br />level by level</p>
+    <h2 class="explorer__big" id="model-heading">Explore in 3D</h2>
+  </div>
 </div>

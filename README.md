@@ -136,6 +136,8 @@ A project with `hero` in its data (so far `the-london.js`) gets a full-screen he
 
 A project with `about` in its data gets an **About the project** section after it ([`about.html`](src/pages/project/about.html), `about.css`, `about.js`): a tall photo on the left, a big uppercase `about.title` with the `about.text` paragraphs in small capitals on the right, and a small second photo low in the right corner (`about.images`, two photos from `project-assets/<slug>/`; run `npm run images` after adding them). The copy rises in once and the photos drift slightly on scroll. Then come the facts, in a row, and the 3D explorer. To give another project the hero, add a `hero.stats` list to its data file (keep the figures to published facts). With reduced motion the name and boxes don't move.
 
+Every project page ends with the **3D model** ([`explorer-inline.html`](src/features/explorer/explorer-inline.html)). It starts as a preview, like [likova.space](https://likova.space/)'s master plan: the building turns slowly in the middle (not interactive, so the page scrolls straight past), behind a maroon box with **See in 3D**, and a big "Explore in 3D" heading low on the left. The button brings in the explorer as before (levels panel, orbit and zoom, explode, step inside); **Close 3D** or Esc goes back to the preview, as does scrolling the model off screen. After "About the project" it fills the screen edge to edge; on other pages it stays in the page column. The preview is `Explorer`'s `preview` option (`setPreview(on)`); the modal explorer on the home page doesn't use it.
+
 ## The hero: project showcase
 
 [`src/sections/hero/`](src/sections/hero/) is a full-screen, auto-playing showcase in front of the map:

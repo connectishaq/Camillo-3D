@@ -17,10 +17,14 @@ const project = projects.find((p) => p.slug === document.body.dataset.project);
 const root = document.querySelector('[data-explorer]');
 
 if (project && root) {
-  const explorer = new Explorer(root, { modal: false });
+  const explorer = new Explorer(root, { modal: false, preview: true });
   (hasGLB(project.slug) ? loadGLB(project.slug, project.model) : Promise.resolve()).then(() => {
     explorer.open(project);
-    // only render while the model is on screen
-    new IntersectionObserver(([entry]) => (entry.isIntersecting ? explorer.resume() : explorer.pause())).observe(root);
+    // only render while the model is on screen; scrolled away, it's back to the preview
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) return explorer.resume();
+      explorer.pause();
+      if (!root.contains(document.activeElement)) explorer.setPreview(true);
+    }).observe(root);
   });
 }
