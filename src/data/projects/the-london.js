@@ -33,7 +33,7 @@ export default {
   // the project page's "About the project" (pages/project/about.html): a big photo, the title
   // and copy beside it, a small photo below. Photos from project-assets/the-london/.
   about: {
-    title: 'Beachside living on a historic site',
+    title: 'The London',
     text: [
       'Built on the site of the original London Hotel, established in 1861, The London reimagines beachside living in Port Melbourne, opposite the beach and Station Pier.',
       'Seven levels hold thirteen luxury apartments, each with uninterrupted views across Port Phillip Bay. The façade is crafted in brickwork, raw concrete, charcoal metalwork and timber soffits.',
