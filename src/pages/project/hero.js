@@ -7,10 +7,11 @@ const ease = (t) => 1 - Math.pow(1 - clamp01(t), 3);
 
 /**
  * Project hero (hero.html): the photo holds while the name line, always running sideways like a
- * marquee (faster while the page scrolls), rises over it,
- * and each figure box eases up into place as it arrives. The header is white over the photo
- * and turns to the light bar once the boxes reach it (white type would vanish on them). All on one scroll handler, writing
- * transforms and opacity only, from positions measured once per layout.
+ * marquee (faster while the page scrolls), rises over it, and each figure box eases up into
+ * place as it arrives. The first screen's small type fades as soon as the page moves. The
+ * header is white over the photo at the very top and turns to its light bar once the page
+ * scrolls, so nothing passing under it collides with the menu. All on one scroll handler,
+ * writing transforms and opacity only, from positions measured once per layout.
  * Returns false when the page has no hero.
  */
 export function initHero() {
@@ -21,28 +22,32 @@ export function initHero() {
   const track = $('[data-phero-track]', hero);
   const run = $('.phero__run', track);
   const stats = $$('[data-phero-stat]', hero);
+  const first = $('.phero__first', hero); // the back link and the line along the bottom
 
   let runWidth = 0;
-  let boxesTop = 0;
   let statTops = [];
   const measure = () => {
     runWidth = run.getBoundingClientRect().width;
     stats.forEach((el) => (el.style.transform = ''));
     statTops = stats.map((el) => el.getBoundingClientRect().top + window.scrollY);
-    boxesTop = Math.min(...statTops);
   };
 
   let onPhoto = null;
   const apply = () => {
     const y = window.scrollY;
     const vh = window.innerHeight;
-    // the header: white type over the bare photo, the light bar once the boxes reach it
-    const over = y + 80 < boxesTop;
+    // the header: white type over the photo at the top, its light bar as soon as the page
+    // scrolls (so the name and boxes passing under it never run into the menu)
+    const over = y < 24;
     if (over !== onPhoto) {
       onPhoto = over;
       setOnPhoto(over);
       setOverMap(!over);
     }
+    // the first screen's small type fades as the page starts to move, rather than riding up
+    const gone = Math.min(1, y / (vh * 0.18));
+    first.style.opacity = (1 - gone).toFixed(3);
+    first.style.visibility = gone >= 1 ? 'hidden' : 'visible'; // the back link isn't focusable once gone
     if (reduce) return;
     // the photo slowly closes in
     img.style.transform = `scale(${(1 + Math.min(y / vh, 3) * 0.035).toFixed(4)})`;
