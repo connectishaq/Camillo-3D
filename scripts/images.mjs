@@ -18,7 +18,9 @@ const out = path.join(root, 'public/images/projects');
 fs.mkdirSync(out, { recursive: true });
 const { projects, gallery } = await loadSiteData(path.join(root, 'src'));
 const all = [
-  ...projects.flatMap((p) => [p.image, ...(p.about?.images ?? [])].map(({ file }) => ({ project: p.slug, file }))),
+  ...projects.flatMap((p) =>
+    [p.image, p.hero?.image, ...(p.about?.images ?? [])].filter(Boolean).map(({ file }) => ({ project: p.slug, file })),
+  ),
   ...gallery.map(({ project, file }) => ({ project, file })),
 ];
 const jobs = [...new Map(all.map((j) => [imageName(j.project, j.file), j])).values()];

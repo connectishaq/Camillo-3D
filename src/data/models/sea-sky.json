@@ -1,6 +1,6 @@
 {
   "slug": "sea-sky",
-  "sources": ["project-assets/sea-sky/EXT01_Exterior-1600x1702.jpg", "project-assets/sea-sky/EXT02_Garden-800x993.jpg"],
+  "sources": ["project-assets/sea-sky/EXT01_Exterior.jpg", "project-assets/sea-sky/EXT02_Garden.jpg"],
   "indicative": true,
   "notes": "Courtyard renders: white rendered portal frames around paired balcony stacks, charcoal recessed walls, brass balustrade panels on some levels, top level set back under a white roof blade with brass vertical fins.",
   "floorHeight": { "value": 3.15, "assumed": true },

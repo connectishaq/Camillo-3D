@@ -19,17 +19,67 @@
     "width": 2000,
     "height": 1334
   },
+  "la-storia-duga11024-la-storia-e02-hero-cardigan-st": {
+    "widths": [640, 1280, 1920, 2560, 3707],
+    "width": 3707,
+    "height": 4000
+  },
+  "la-storia-lastoria-balcony": {
+    "widths": [640, 1280, 1920, 2560, 3840],
+    "width": 4000,
+    "height": 2667
+  },
   "the-lansell-s010-1-render-hero-street": {
     "widths": [640, 1280, 1500],
     "width": 1500,
     "height": 1000
   },
+  "the-lansell-lansell-garden": {
+    "widths": [640, 1280, 1920, 2500],
+    "width": 2500,
+    "height": 1250
+  },
+  "the-lansell-lansell-private-lobby": {
+    "widths": [640, 900],
+    "width": 900,
+    "height": 1286
+  },
+  "the-lansell-lansell-common-lobby": {
+    "widths": [640, 1280, 1500],
+    "width": 1500,
+    "height": 1000
+  },
   "sea-sky-ext01-exterior": {
-    "widths": [640, 1280, 1600],
-    "width": 1600,
-    "height": 1702
+    "widths": [640, 1280, 1872],
+    "width": 1872,
+    "height": 1991
+  },
+  "sea-sky-ext02-garden": {
+    "widths": [640, 1280, 1753],
+    "width": 1753,
+    "height": 2177
+  },
+  "sea-sky-seasky-lobby": {
+    "widths": [640, 1280, 1920, 2126],
+    "width": 2126,
+    "height": 1642
   },
   "the-righi-05-bedroom-windows": {
+    "widths": [640, 1280, 1920],
+    "width": 1920,
+    "height": 1080
+  },
+  "the-righi-righi-walkway": {
+    "widths": [640, 1280, 1920],
+    "width": 1920,
+    "height": 1080
+  },
+  "the-righi-righi-courtyard": {
+    "widths": [640, 1280, 1920],
+    "width": 1920,
+    "height": 1080
+  },
+  "the-righi-righi-living": {
     "widths": [640, 1280, 1920],
     "width": 1920,
     "height": 1080
@@ -39,29 +89,29 @@
     "width": 1280,
     "height": 853
   },
-  "la-storia-duga11024-la-storia-e02-hero-cardigan-st": {
-    "widths": [640, 1280, 1600],
-    "width": 1600,
-    "height": 1726
-  },
-  "mvrc-thomas-street-181219-exterior-park-copy-large": {
-    "widths": [640, 1200],
-    "width": 1200,
-    "height": 800
-  },
-  "sea-sky-ext02-garden": {
-    "widths": [640, 800],
-    "width": 800,
-    "height": 993
-  },
-  "la-storia-img-10350-038": {
-    "widths": [640, 1200],
-    "width": 1200,
-    "height": 800
+  "mvrc-thomas-street-mvrc-terrace": {
+    "widths": [640, 1280, 1920, 2560, 3600],
+    "width": 3600,
+    "height": 2770
   },
   "mvrc-thomas-street-191014-b-v03-southern-facade-large": {
-    "widths": [640, 800],
-    "width": 800,
-    "height": 1000
+    "widths": [640, 1024],
+    "width": 1024,
+    "height": 1280
+  },
+  "mvrc-thomas-street-mvrc-lobby": {
+    "widths": [640, 1280, 1920, 2160],
+    "width": 2160,
+    "height": 1440
+  },
+  "mvrc-thomas-street-181219-exterior-park-copy-large": {
+    "widths": [640, 1280],
+    "width": 1280,
+    "height": 853
+  },
+  "la-storia-img-10350-038": {
+    "widths": [640, 1280, 1920, 2000],
+    "width": 2000,
+    "height": 1334
   }
 }
