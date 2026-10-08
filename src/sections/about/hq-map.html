@@ -1,0 +1,37 @@
+<!--
+  The 2D map round the head office (about.js, hq-map.css). The streets are one SVG drawn from
+  OpenStreetMap by `npm run map`; the labels are set over it in the page's own type, at the
+  positions in src/data/hq-map.json. "See in 3D" fades the map to show the 3D map behind it,
+  which the story has already flown to the head office.
+-->
+<div class="hq__map" data-hq-map>
+  <div
+    class="hq__canvas"
+    style="--aspect: {{ hqMap.aspect }}"
+    role="img"
+    aria-label="Map of Port Melbourne: Camillo’s head office on Salmon Street, near Westgate Park, Station Pier and the beach, a few kilometres from Southbank and the CBD."
+  >
+    <img class="hq__img" src="{{ hqMap.src }}" width="{{ hqMap.width }}" height="{{ hqMap.height }}" alt="" loading="lazy" decoding="async" />
+    <!-- @each hqMap.items as l -->
+    <span class="hq__label hq__label--{{ l.kind }}" style="left: {{ l.x }}%; top: {{ l.y }}%; --a: {{ l.angle }}deg">{{ l.name }}</span>
+    <!-- @end -->
+    <!-- @each hqMap.projects as p -->
+    <span class="hq__project" style="left: {{ p.x }}%; top: {{ p.y }}%"><i></i>{{ p.name }}</span>
+    <!-- @end -->
+    <span class="hq__pin" style="left: {{ hqMap.hq.x }}%; top: {{ hqMap.hq.y }}%">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path
+          d="M0,24.2c0-7.730,5.930-13.970,15.260-13.970,2.950,0,5.840,.76,8.400,2.220,1.390,.88,1.440,2.220,.46,3.510l-.82,1.030c-.98,1.240-2.010,1.290-3.510,.62-1.270-.6-2.660-.92-4.070-.93-4.490,0-7.730,3.040-7.730,7.370s3.250,7.370,7.730,7.370c1.410,0,2.800-.32,4.070-.93,1.500-.67,2.580-.62,3.510,.62l.82,1.030c.98,1.290,.77,2.780-.93,3.710-2.430,1.340-5.160,2.030-7.940,2.010-9.220,0-15.260-6.080-15.260-13.660"
+          transform="translate(12.7 -5.3) scale(1.55)"
+        />
+      </svg>
+      <b>Camillo HQ</b>
+    </span>
+  </div>
+
+  <button class="hq__toggle" type="button" aria-pressed="false" data-hq-toggle>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 54 17v24L32 52 10 41V17Z M10 17l22 11 22-11 M32 28v24" /></svg>
+    <span data-hq-toggle-label>See HQ in 3D</span>
+  </button>
+  <p class="hq__credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</p>
+</div>

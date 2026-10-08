@@ -1,0 +1,363 @@
+/*
+ * About: the 2D map round the head office (hq-map.html) beside the About panel (about.html).
+ * Layers on the stage: the map, then the white panel that grows out of the About panel
+ * (about.css .scene__panel), then the About content, then the Featured Projects heading.
+ * .hq itself must not form a stacking context (no z-index, opacity or transform) so its
+ * children can sit either side of the growing panel; about.js fades the panel, not .hq.
+ */
+.hq {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  /* half and half: the map, the panel */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.hq__map {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  container-type: size;
+  background: #dcdbd6; /* the map's land colour, while the picture loads */
+  transition: background-color 0.6s var(--ease);
+}
+.scene__panel {
+  z-index: 1;
+}
+.hq__info {
+  position: relative;
+  z-index: 2;
+}
+
+/* the map fills its space like a cover-fitted image, centred near the head office */
+.hq__canvas {
+  --w: max(100cqw, calc(100cqh * var(--aspect)));
+  --h: calc(var(--w) / var(--aspect));
+  position: absolute;
+  left: clamp(calc(100cqw - var(--w)), calc(50cqw - 0.38 * var(--w)), 0px);
+  top: clamp(calc(100cqh - var(--h)), calc(50cqh - 0.55 * var(--h)), 0px);
+  width: var(--w);
+  height: var(--h);
+  transition:
+    opacity 0.6s var(--ease),
+    visibility 0s;
+}
+.hq__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hq__label,
+.hq__project,
+.hq__pin {
+  position: absolute;
+  translate: -50% -50%;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hq__label {
+  rotate: var(--a);
+  color: #6e6c66;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+.hq__label--area {
+  font-family: var(--font-display);
+  font-size: clamp(0.875rem, 0.7rem + 0.5vw, 1.25rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8d8b84;
+}
+.hq__label--water {
+  font-style: italic;
+  font-size: 0.9375rem;
+  letter-spacing: 0.06em;
+  color: #7f8b8d;
+}
+.hq__label--road {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: #8d8b84;
+}
+/* places: a ring and the name beside it */
+.hq__label--place {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  translate: -5px -50%;
+  font-size: 0.8125rem;
+  color: #3e3d3a;
+}
+.hq__label--place::before {
+  content: '';
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px #6e6c66;
+}
+
+/* our projects: the maroon diamond of the 3D map's pins */
+.hq__project {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  translate: -7px -50%;
+  font-size: 0.875rem;
+  font-weight: var(--fw-medium);
+  color: var(--brand);
+}
+.hq__project i {
+  width: 12px;
+  height: 12px;
+  rotate: 45deg;
+  background: var(--brand);
+  box-shadow: 0 0 0 3px var(--surface);
+}
+
+/* the head office: the Camillo mark, with its name under it */
+.hq__pin {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  translate: -50% -32px;
+}
+.hq__pin svg {
+  width: 64px;
+  height: 64px;
+  padding: 10px;
+  background: var(--brand);
+  fill: var(--brand-ink);
+  box-shadow: 0 10px 30px rgba(93, 0, 36, 0.3);
+}
+.hq__pin b {
+  padding: 4px 10px;
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+/* bottom right: the story's chapter chip has the bottom-left corner */
+.hq__toggle {
+  position: absolute;
+  right: clamp(16px, 2vw, 32px);
+  bottom: clamp(30px, 3vw, 44px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 22px 0 16px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+  color: var(--brand-ink);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(93, 0, 36, 0.25);
+  transition: background 0.25s;
+}
+.hq__toggle:hover {
+  background: var(--brand-active);
+}
+.hq__toggle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+.hq__toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.hq__credit {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  font-size: 0.6875rem;
+  color: #6e6c66;
+  transition: opacity 0.6s var(--ease);
+}
+.hq__credit a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* "See in 3D": the 2D map fades and the 3D map behind it (already at the head office) shows */
+.hq.is-3d .hq__map {
+  background: transparent;
+}
+.hq.is-3d .hq__canvas,
+.hq.is-3d .hq__credit {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.6s var(--ease),
+    visibility 0s 0.6s;
+}
+
+/* ---------- The About panel, in big capitals, small-capital copy and figures ---------- */
+.hq__info {
+  display: flex;
+  flex-direction: column;
+  /* wide on the right, clear of the story's chapter dots */
+  padding: calc(var(--header-h) + clamp(24px, 5vh, 64px)) clamp(64px, 6.5vw, 110px) clamp(20px, 3.4vh, 40px) clamp(28px, 4vw, 72px);
+  background: var(--surface);
+  overflow: hidden;
+}
+.hq__eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+.hq__title {
+  margin: clamp(12px, 2vh, 20px) 0 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  font-size: clamp(1.75rem, 0.8rem + 2vw, 3.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.hq__text {
+  max-width: 62ch;
+  margin-top: clamp(18px, 3.4vh, 40px);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.hq__text p + p {
+  margin-top: 0.9em;
+}
+.hq__group {
+  margin: clamp(22px, 4.4vh, 48px) 0 0;
+  padding-top: clamp(14px, 2.4vh, 24px);
+  border-top: 1px solid var(--line);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.hq__group span {
+  color: var(--text-muted);
+  font-weight: var(--fw-regular);
+}
+.hq__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 20px;
+  margin: clamp(10px, 1.6vh, 16px) 0 0;
+}
+/* the figure above its label */
+.hq__stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.hq__stats dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  font-size: clamp(1.75rem, 1rem + 1.8vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.hq__stats small {
+  margin-left: 6px;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.hq__stats dt {
+  font-size: var(--fs-small);
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+.hq__address {
+  margin-top: auto;
+  padding-top: clamp(16px, 3vh, 32px);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.hq__address a {
+  color: var(--brand);
+}
+
+@media (max-width: 860px) {
+  /* the map on top (under the header), the panel below it */
+  .hq {
+    grid-template-columns: none;
+    grid-template-rows: calc(var(--header-h) + 30vh) minmax(0, 1fr);
+  }
+  .hq__info {
+    padding: 20px var(--gutter) 16px;
+  }
+  .hq__title {
+    font-size: 1.625rem;
+  }
+  /* the essentials only: one paragraph, no address (it's in the footer) */
+  .hq__text p + p,
+  .hq__address {
+    display: none;
+  }
+  /* a small map: suburbs, places and pins, without the street and water names */
+  .hq__label--road,
+  .hq__label--water {
+    display: none;
+  }
+  .hq__group {
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+  .hq__stats {
+    gap: 8px 12px;
+  }
+  .hq__stats dt {
+    font-size: var(--fs-xs);
+  }
+  .hq__pin svg {
+    width: 44px;
+    height: 44px;
+    padding: 7px;
+  }
+  .hq__pin {
+    translate: -50% -22px;
+  }
+  .hq__label--place {
+    font-size: 0.6875rem;
+  }
+  .hq__toggle {
+    left: 12px;
+    right: auto;
+    bottom: 12px;
+    min-height: 40px;
+    font-size: var(--fs-xs);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hq__map,
+  .hq__canvas,
+  .hq.is-3d .hq__canvas,
+  .hq__credit {
+    transition: none;
+  }
+}

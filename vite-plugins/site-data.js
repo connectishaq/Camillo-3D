@@ -22,6 +22,8 @@ const importFresh = (file) => import(`${pathToFileURL(file).href}?v=${fs.statSyn
 export async function loadSiteData(srcDir) {
   const { company, moreProjects } = await importFresh(path.join(srcDir, 'data/company.js'));
   const { gallery } = await importFresh(path.join(srcDir, 'data/gallery.js'));
+  const { hqMap } = await importFresh(path.join(srcDir, 'data/hq-map.js'));
+  const { office } = await importFresh(path.join(srcDir, 'data/cameras.js'));
   const projects = await Promise.all(
     projectSlugs(srcDir).map(async (slug) => {
       const project = (await importFresh(path.join(srcDir, `data/projects/${slug}.js`))).default;
@@ -30,7 +32,40 @@ export async function loadSiteData(srcDir) {
     }),
   );
   projects.sort((a, b) => a.order - b.order);
-  return { company, moreProjects, projects, gallery };
+  return { company, moreProjects, projects, gallery, hqMap, office };
+}
+
+/** Straight-line distance in km between two [lng, lat] points (fine at city scale). */
+const km = ([lng1, lat1], [lng2, lat2]) =>
+  Math.hypot((lng2 - lng1) * 111.32 * Math.cos((((lat1 + lat2) / 2) * Math.PI) / 180), (lat2 - lat1) * 110.54);
+
+/**
+ * The About section's map (sections/about/hq-map.html): label positions from
+ * src/data/hq-map.json (written by `npm run map`), the distances from the head office.
+ */
+function aboutMap(srcDir, data, prefix) {
+  const file = path.join(srcDir, 'data/hq-map.json');
+  if (!fs.existsSync(file)) throw new Error('[site-data] no src/data/hq-map.json: run "npm run map"');
+  const labels = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const { west, east, north, south } = data.hqMap.bbox;
+  return {
+    src: `${prefix}images/map/hq-map.svg`,
+    width: labels.width,
+    height: labels.height,
+    aspect: (labels.width / labels.height).toFixed(4),
+    hq: labels.hq,
+    items: labels.items.map((l) => ({ ...l, angle: l.angle ?? 0 })),
+    distances: data.hqMap.distances.map((d) => ({ ...d, km: km(data.office.coords, d.coords).toFixed(1) })),
+    // our projects inside the map, as pins linking to their pages
+    projects: data.projects
+      .filter(({ coords: [lng, lat] }) => lng > west && lng < east && lat > south && lat < north)
+      .map((p) => ({
+        name: p.name,
+        url: `/projects/${p.slug}`,
+        x: (((p.coords[0] - west) / (east - west)) * 100).toFixed(2),
+        y: (((north - p.coords[1]) / (north - south)) * 100).toFixed(2),
+      })),
+  };
 }
 
 /**
@@ -108,6 +143,7 @@ export function pageScope(data, page, site, srcDir) {
     projects,
     gallery,
     galleryTotal: pad(gallery.length),
+    hqMap: isHome ? aboutMap(srcDir, data, prefix) : null,
     footerPhoto:
       gallery[
         Math.max(

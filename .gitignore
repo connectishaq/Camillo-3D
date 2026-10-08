@@ -11,6 +11,7 @@ dist*/
 # logs and caches
 *.log
 .eslintcache
+.cache/
 
 # OS and editor files
 .DS_Store

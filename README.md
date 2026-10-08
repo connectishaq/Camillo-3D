@@ -104,13 +104,19 @@ The look follows Camillo's own site, [camillo.com.au](https://www.camillo.com.au
 
 One scroll scene ([`src/sections/about/`](src/sections/about/); every timing is in [`scene.js`](src/sections/about/scene.js)). Its stage is CSS-sticky, so it holds on screen while you scroll through it:
 
-1. The **About card** arrives over the city like the other chapters and holds.
-2. A panel the colour of the card **grows out of it to fill the screen** (a `clip-path` from the card's own rectangle and corner radius) while the card's content fades.
+1. The **About screen** arrives and holds: a 2D map round the head office on the left, the About panel on the right (see below).
+2. A white panel **grows out of the About panel to fill the screen** (a `clip-path` from the panel's own rectangle), covering the map, while the panel's content fades.
 3. **Featured Projects** rises in on the panel, in large type.
 4. At the end of the scene the panel **slides up and away**, revealing a full bank of cloud ([`src/features/clouds/CloudCurtain.js`](src/features/clouds/CloudCurtain.js)), which had already thickened behind it.
 5. On the next scroll the clouds **slide apart** to the left and right (nearer clouds faster) onto the **Melbourne skyline**. While the panel covered the map, the camera had already moved there (`projectsIntro` and `skyline` share a view in `src/data/cameras.js`). Then the projects.
 
 Two empty markers in the scene are the story chapters (`office`, then `projectsIntro`, with `#about` and `#projects` for the nav), so the rail, locator, nav and camera work as before. The map doesn't draw while the panel fills the screen. Everything is scrubbed by scroll, so it reverses on the way back up. With reduced motion the panel fades in instead of growing, and the clouds fade instead of sliding.
+
+### About: the head office map
+
+In the reference's manner (the "Transit & connectivity" section of [dviga.marketing/masters-en](https://dviga.marketing/masters-en)): a flat map of Port Melbourne fills the left of the screen, with the Camillo mark on the head office, our project The London nearby (any project inside the map gets a pin), the suburbs, piers and parks, and street names; the right is the About panel in big capitals, small-capital copy, the company figures and straight-line distances from the head office (`hqMap.distances`, worked out from the coordinates at build time, rounded to 0.1 km). **See HQ in 3D** fades the flat map away to show the 3D map behind it, which the story has already flown to the head office; **Back to the map** brings it back. While the flat map is up, the 3D map doesn't draw (`stage.setOccluded('about', …)`). On a phone the map sits on top, without the street and water names, and the panel shows one paragraph and no address.
+
+The map is one SVG drawn from [OpenStreetMap](https://www.openstreetmap.org/copyright) by `npm run map` ([`scripts/hq-map.mjs`](scripts/hq-map.mjs)): land, the bay (closed from OSM's coastline), rivers and lakes, parks (dotted), beaches, piers, streets in three weights, rail and tram lines, in the site's quiet palette. It has no text: the labels are HTML set over it in the page's own fonts, at positions the script writes to `src/data/hq-map.json` (street names go on each street's longest straight stretch, clear of the head office pin). The area, labels and distances are in [`src/data/hq-map.js`](src/data/hq-map.js). The OSM download is cached in `.cache/` (not committed); `npm run map -- --fresh` downloads it again. About 190 kB (80 kB compressed), loaded lazily. The page credits "Map data © OpenStreetMap contributors" under the map, as the ODbL requires.
 
 The clouds are photographic cut-outs (`public/images/clouds/cloud-1…7.webp`, transparent WebP; see [Credits and licences](#credits-and-licences)): about 22 layered at three depths, each drifting slowly, over a light haze. They're plain images moved with CSS transforms, so the browser's compositor does the work (no extra canvas, nothing redrawn while scrolling). Colours: the `--cloud-*` tokens.
 
@@ -296,6 +302,7 @@ Both paths use **the same model** on the city map (merged into a few draw calls)
 | `draco/*`                               | Draco glTF decoder, copied from `three/examples/jsm/libs/draco/gltf`                                                  | Apache-2.0                                     |
 | `brand/google-maps-logo.svg`            | [Google Maps attribution assets](https://developers.google.com/maps/documentation/tile/policies), photoreal mode only | Google brand asset, for attribution only       |
 | `project-assets/*`, `images/projects/*` | Project renders and photos supplied by Camillo (optimised copies are bundled for the hero and cards)                  | © their owners; used with Camillo's permission |
+| `images/map/hq-map.svg`                 | Drawn from [OpenStreetMap](https://www.openstreetmap.org/copyright) data by `scripts/hq-map.mjs`                      | ODbL; credited under the map                   |
 | `images/clouds/*`                       | Cut out from iStock **preview** images supplied for this project (checkerboard removed, split into single clouds)     | iStock; **licence before launch** (see below)  |
 
 ## Before launch — to confirm with Camillo

@@ -1,0 +1,184 @@
+{
+  "width": 1464,
+  "height": 1000,
+  "hq": {
+    "x": 34.34,
+    "y": 49.8
+  },
+  "items": [
+    {
+      "kind": "area",
+      "name": "Port Melbourne",
+      "x": 32.92,
+      "y": 58.4
+    },
+    {
+      "kind": "area",
+      "name": "Fishermans Bend",
+      "x": 32.49,
+      "y": 35.2
+    },
+    {
+      "kind": "area",
+      "name": "South Melbourne",
+      "x": 69.65,
+      "y": 54.8
+    },
+    {
+      "kind": "area",
+      "name": "Southbank",
+      "x": 77.15,
+      "y": 40.4
+    },
+    {
+      "kind": "area",
+      "name": "Docklands",
+      "x": 54.98,
+      "y": 24.6
+    },
+    {
+      "kind": "area",
+      "name": "Albert Park",
+      "x": 73.67,
+      "y": 78.8
+    },
+    {
+      "kind": "water",
+      "name": "Port Phillip Bay",
+      "x": 34.77,
+      "y": 90
+    },
+    {
+      "kind": "water",
+      "name": "Yarra River",
+      "x": 44.55,
+      "y": 33.2
+    },
+    {
+      "kind": "road",
+      "name": "Williamstown Road",
+      "x": 26.68,
+      "y": 60.96,
+      "angle": -13.6
+    },
+    {
+      "kind": "road",
+      "name": "Salmon Street",
+      "x": 31.74,
+      "y": 39.57,
+      "angle": 74.8
+    },
+    {
+      "kind": "road",
+      "name": "Plummer Street",
+      "x": 45.09,
+      "y": 49.64,
+      "angle": -14.8
+    },
+    {
+      "kind": "road",
+      "name": "Lorimer Street",
+      "x": 14.44,
+      "y": 37.55,
+      "angle": -35.5
+    },
+    {
+      "kind": "road",
+      "name": "Bay Street",
+      "x": 52.38,
+      "y": 67.85,
+      "angle": -53.8
+    },
+    {
+      "kind": "road",
+      "name": "Beaconsfield Parade",
+      "x": 68.81,
+      "y": 91.2,
+      "angle": 31.4
+    },
+    {
+      "kind": "road",
+      "name": "Ingles Street",
+      "x": 50.08,
+      "y": 42.43,
+      "angle": 46.3
+    },
+    {
+      "kind": "road",
+      "name": "City Road",
+      "x": 67.7,
+      "y": 48.04,
+      "angle": -46.7
+    },
+    {
+      "kind": "road",
+      "name": "Kings Way",
+      "x": 78.03,
+      "y": 48.48,
+      "angle": 51.4
+    },
+    {
+      "kind": "road",
+      "name": "Montague Street",
+      "x": 61.32,
+      "y": 47.75,
+      "angle": 53.7
+    },
+    {
+      "kind": "road",
+      "name": "Graham Street",
+      "x": 55.44,
+      "y": 72.14,
+      "angle": 35.7
+    },
+    {
+      "kind": "road",
+      "name": "Todd Road",
+      "x": 20.38,
+      "y": 45.97,
+      "angle": -89.7
+    },
+    {
+      "kind": "place",
+      "name": "Station Pier",
+      "x": 42.05,
+      "y": 76.4
+    },
+    {
+      "kind": "place",
+      "name": "Princes Pier",
+      "x": 36.51,
+      "y": 70.6
+    },
+    {
+      "kind": "place",
+      "name": "Westgate Park",
+      "x": 15.86,
+      "y": 50.6
+    },
+    {
+      "kind": "place",
+      "name": "South Melbourne Market",
+      "x": 69,
+      "y": 52.6
+    },
+    {
+      "kind": "place",
+      "name": "Albert Park Lake",
+      "x": 84.43,
+      "y": 79.8
+    },
+    {
+      "kind": "place",
+      "name": "Southern Cross",
+      "x": 64.54,
+      "y": 24.8
+    },
+    {
+      "kind": "place",
+      "name": "Crown Melbourne",
+      "x": 71.39,
+      "y": 34.6
+    }
+  ]
+}

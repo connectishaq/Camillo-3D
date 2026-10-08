@@ -1,7 +1,8 @@
 <!--
-  02 About, opening into 03 Featured projects: one scroll scene (about.js). The About card
-  holds, grows into a full-screen panel with the Featured Projects heading, and the panel then
-  slides up onto the clouds (sections/projects/intro-clouds.js).
+  02 About, opening into 03 Featured projects: one scroll scene (about.js). The About screen
+  (a 2D map round the head office, with "See in 3D" to show the 3D map there instead, beside
+  the About panel) holds; the panel grows to fill the screen with the Featured Projects
+  heading, then slides up onto the clouds (sections/projects/intro-clouds.js).
   The two empty markers are the story chapters (they cross the middle of the screen in turn).
 -->
 <section class="scene" id="about" data-scene>
@@ -11,26 +12,41 @@
   <div class="scene__stage">
     <div class="scene__panel" data-scene-panel aria-hidden="true"></div>
 
-    <div class="scene__about" data-scene-about>
-      <article class="card card--about" data-scene-card data-reveal>
-        <p class="eyebrow">About us · Port Melbourne</p>
-        <h2 class="card__title">A big builder’s strength.<br />A small team’s care.</h2>
-        <div class="card__body">
+    <!-- About: a 2D map round the head office (hq-map.html) beside the About panel. The panel
+         is what grows to fill the screen (data-scene-card). -->
+    <div class="scene__about hq" data-scene-about>
+      <!-- @include sections/about/hq-map.html -->
+
+      <article class="hq__info" data-scene-card>
+        <p class="hq__eyebrow">About us · Port Melbourne</p>
+        <h2 class="hq__title">Big builder.<br />Small team.</h2>
+        <div class="hq__text">
           <!-- @each company.about as paragraph -->
           <p>{{ paragraph }}</p>
           <!-- @end -->
         </div>
-        <blockquote class="card__quote">“{{ company.promise }}”</blockquote>
-        <dl class="card__meta">
+
+        <h3 class="hq__group">Behind every build</h3>
+        <dl class="hq__stats">
+          <!-- @each stats as stat -->
           <div>
-            <dt>Head office</dt>
-            <dd>{{ company.contact.address }}</dd>
+            <dt>{{ stat.label }}</dt>
+            <dd>{{ stat.prefix }}{{ stat.value }}{{ stat.suffix }}</dd>
           </div>
-          <div>
-            <dt>Call</dt>
-            <dd><a href="{{ company.contact.phoneHref }}">{{ company.contact.phone }}</a></dd>
-          </div>
+          <!-- @end -->
         </dl>
+
+        <h3 class="hq__group">From our head office <span>· as the crow flies</span></h3>
+        <dl class="hq__stats">
+          <!-- @each hqMap.distances as d -->
+          <div>
+            <dt>{{ d.name }}</dt>
+            <dd>{{ d.km }}<small>km</small></dd>
+          </div>
+          <!-- @end -->
+        </dl>
+
+        <p class="hq__address">{{ company.contact.address }} · <a href="{{ company.contact.phoneHref }}">{{ company.contact.phone }}</a></p>
       </article>
     </div>
 
