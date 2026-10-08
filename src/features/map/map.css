@@ -80,9 +80,6 @@ body:not(.is-map-full) .city-overlay {
 body.is-photoreal .stage__vignette {
   background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 60%, transparent), transparent 18%);
 }
-body.is-photoreal .locator {
-  bottom: 44px;
-}
 
 /* Google Maps attribution (required by the Map Tiles API policies) */
 .map-credits {
