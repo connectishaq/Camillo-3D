@@ -8,8 +8,8 @@ import { initIntroClouds } from './intro-clouds.js';
  * `explorer` is the lazy launcher from app/explorer.js; hovering or focusing a button
  * starts downloading the explorer code so the click opens it straight away.
  */
-export function init({ projects, explorer }) {
-  initIntroClouds();
+export function init({ projects, explorer, scroll }) {
+  initIntroClouds({ scroll });
 
   $$('[data-explore]').forEach((btn) => {
     const project = projects.find((p) => p.slug === btn.dataset.explore);
