@@ -28,7 +28,7 @@ export function buildInterior(floor, mats) {
   // Floor finish
   const finish = new THREE.Mesh(metricPlaneUV(new THREE.PlaneGeometry(iw, id), iw, id), mats.floor);
   finish.rotation.x = -Math.PI / 2;
-  finish.position.y = FLOOR_Y + 0.005;
+  finish.position.y = FLOOR_Y + 0.02;
   finish.receiveShadow = true;
   group.add(finish);
 
@@ -36,7 +36,7 @@ export function buildInterior(floor, mats) {
     if (r.type === 'bath' || r.type === 'corridor' || r.type === 'lobby') {
       const t = new THREE.Mesh(metricPlaneUV(new THREE.PlaneGeometry(r.x1 - r.x0, r.z1 - r.z0), r.x1 - r.x0, r.z1 - r.z0), mats.tile);
       t.rotation.x = -Math.PI / 2;
-      t.position.set((r.x0 + r.x1) / 2, FLOOR_Y + 0.01, (r.z0 + r.z1) / 2);
+      t.position.set((r.x0 + r.x1) / 2, FLOOR_Y + 0.03, (r.z0 + r.z1) / 2);
       t.receiveShadow = true;
       group.add(t);
     }

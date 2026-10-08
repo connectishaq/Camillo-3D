@@ -45,7 +45,9 @@ export function createFloorMaterials(band, key = 'model') {
   const wallSystem = band.system === 'glass-curtain' ? 'metal' : band.system;
   const mk = (role, params, baseOpacity = 1) => {
     const m = new THREE.MeshStandardMaterial({ transparent: true, opacity: baseOpacity, ...params });
-    m.userData = { baseOpacity, role, key: `${key}:${role}` };
+    // glazing, balustrades and metal are always see-through: they never write depth or cast shadow
+    const clear = params.depthWrite === false;
+    m.userData = { baseOpacity, role, key: `${key}:${role}`, writesDepth: !clear, noShadow: clear };
     return m;
   };
   return {
@@ -84,8 +86,21 @@ export function featureMaterial(hex, system = 'render', extra = {}) {
 export function createInteriorMaterials() {
   const s = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.8, ...extra });
   return {
-    floor: s('#ffffff', { ...textured('timber', '#b8905f'), roughness: 0.65 }),
-    tile: s('#ffffff', { ...textured('stone', '#ebe8e2'), roughness: 0.45 }),
+    // floor finishes lie on the slab: pulled forward in depth so they never flicker through it
+    floor: s('#ffffff', {
+      ...textured('timber', '#b8905f'),
+      roughness: 0.65,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
+    }),
+    tile: s('#ffffff', {
+      ...textured('stone', '#ebe8e2'),
+      roughness: 0.45,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+      polygonOffsetUnits: -4,
+    }),
     wall: s('#efeae2', { roughness: 0.95 }),
     core: s('#ffffff', textured('concrete', '#b9b5ad')),
     fabric: s('#3c3f45'),

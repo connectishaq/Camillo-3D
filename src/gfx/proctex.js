@@ -31,7 +31,7 @@ const hexToRgb = (hex) => {
 function toTexture(c, { srgb = true, repeat = 1 } = {}) {
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  t.anisotropy = 4;
+  t.anisotropy = 8; // crisp at grazing angles (slabs and ground seen edge-on)
   t.repeat.set(repeat, repeat);
   t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
   return t;

@@ -21,6 +21,25 @@ import { escapeHtml } from '../../utils/escape.js';
 import { trapFocus } from '../../utils/focus-trap.js';
 
 const EXPLODE_GAP = 2.6;
+
+/**
+ * Façade materials fade, so they can be see-through, but a material that is fully opaque is
+ * drawn as solid: in the opaque pass, writing depth. Left "transparent" at full opacity, the
+ * building's parts are only sorted object by object and flicker over each other as the camera
+ * moves; and a faded wall that still wrote depth hid the interior behind it.
+ */
+function syncOpacity(m) {
+  const solid = m.opacity >= 0.999 && m.userData.baseOpacity >= 0.999;
+  if (m.transparent === solid) {
+    m.transparent = !solid;
+    m.needsUpdate = true; // opaque materials get a shader that ignores alpha: switch programs
+  }
+  m.depthWrite = solid && m.userData.writesDepth !== false;
+}
+/** Tween a fading material's opacity, keeping its transparency in step. */
+function fadeTo(m, opacity, duration, ease = 'power2.out') {
+  gsap.to(m, { opacity, duration, ease, overwrite: true, onUpdate: () => syncOpacity(m), onComplete: () => syncOpacity(m) });
+}
 const LIFT = 34;
 // Presentation light: sun from the front-left so the street façade (+Z) is lit, as in the
 // project photography (the city uses the real north-west afternoon sun instead).
@@ -112,8 +131,9 @@ export class Explorer {
     sun.castShadow = true;
     const shadowRes = this.mobile ? 1024 : 2048;
     sun.shadow.mapSize.set(shadowRes, shadowRes);
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.02;
+    // enough bias that surfaces don't shadow themselves in stripes ("acne")
+    sun.shadow.bias = -0.0008;
+    sun.shadow.normalBias = 0.05;
     sun.shadow.radius = 4;
     scene.add(sun, sun.target);
 
@@ -137,7 +157,11 @@ export class Explorer {
   /** Subtle GTAO + bloom. On mobile: bloom only, at reduced resolution. */
   initPost() {
     const { renderer, scene, camera } = this;
-    const composer = new EffectComposer(renderer);
+    // the scene is drawn into the composer's buffer, not the screen, so the renderer's own
+    // antialiasing never applies: multisample the buffer, or thin frames, balustrades and
+    // glass edges crawl and sparkle as the model turns
+    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: this.mobile ? 2 : 4 });
+    const composer = new EffectComposer(renderer, target);
     composer.addPass(new RenderPass(scene, camera));
     if (!this.mobile) {
       const ao = new GTAOPass(scene, camera, 512, 512);
@@ -246,6 +270,7 @@ export class Explorer {
     const ctx = buildContext(b.size, model.width * 7 + model.depth);
     this.scene.add(b.root, ctx);
     this.building = b;
+    b.floors.forEach((f) => Object.values(f.mats).forEach(syncOpacity));
     this.context = ctx;
 
     const R = Math.max(b.size.w, b.size.d);
@@ -335,6 +360,13 @@ export class Explorer {
 
   render() {
     this.controls.update();
+    // the near plane follows the zoom (2% of the way to the target): a fixed 5 cm wasted the
+    // depth buffer's precision, and close surfaces flickered through each other at a distance
+    const near = THREE.MathUtils.clamp(this.camera.position.distanceTo(this.controls.target) * 0.02, 0.05, 4);
+    if (Math.abs(near - this.camera.near) > this.camera.near * 0.1) {
+      this.camera.near = near;
+      this.camera.updateProjectionMatrix();
+    }
     this.sky.position.copy(this.camera.position);
     this.building?.floors.forEach((f) => f.clip?.());
     this.composer.render();
@@ -357,9 +389,7 @@ export class Explorer {
   }
 
   fade(f, factor, duration = 0.5, onComplete) {
-    Object.values(f.mats).forEach((m) =>
-      gsap.to(m, { opacity: m.userData.baseOpacity * factor, duration, ease: 'power2.out', overwrite: true }),
-    );
+    Object.values(f.mats).forEach((m) => fadeTo(m, m.userData.baseOpacity * factor, duration));
     if (onComplete) gsap.delayedCall(duration, onComplete);
   }
 
@@ -399,7 +429,7 @@ export class Explorer {
     // open up the façade of the selected level
     Object.entries(f.mats).forEach(([key, m]) => {
       const target = key === 'slab' || key === 'soffit' ? 1 : key === 'glass' || key === 'balustrade' ? 0.12 : 0.18;
-      gsap.to(m, { opacity: m.userData.baseOpacity * target, duration: 0.6, overwrite: true });
+      fadeTo(m, m.userData.baseOpacity * target, 0.6);
     });
     this.layoutFloors(1.1);
 
@@ -484,7 +514,7 @@ export class Explorer {
   insideLook(f, on) {
     Object.entries(f.mats).forEach(([key, m]) => {
       const k = key === 'slab' ? 1 : key === 'glass' ? (on ? 0.1 : 0.12) : on ? 0.04 : 0.18;
-      gsap.to(m, { opacity: m.userData.baseOpacity * k, duration: 0.8, overwrite: true });
+      fadeTo(m, m.userData.baseOpacity * k, 0.8);
     });
     const warm = new THREE.Color(on ? palette().windowLit : palette().skyLight);
     gsap.to(this.hemi.color, { r: warm.r, g: warm.g, b: warm.b, duration: 0.8 });

@@ -126,8 +126,9 @@ export function buildGLBBuilding(model, source) {
       const list = Array.isArray(o.material) ? o.material : [o.material];
       const cloned = list.map((m) => {
         const c = m.clone();
-        c.transparent = true;
-        c.userData = { ...c.userData, baseOpacity: m.opacity ?? 1, role: /glass|window/i.test(m.name) ? 'glass' : 'wall' };
+        const glass = /glass|window/i.test(m.name);
+        // the explorer makes it see-through only while it fades (Explorer.js syncOpacity)
+        c.userData = { ...c.userData, baseOpacity: m.opacity ?? 1, role: glass ? 'glass' : 'wall', writesDepth: !(glass || m.transparent) };
         c.clippingPlanes = [lower, upper];
         c.clipShadows = true;
         c.side = THREE.DoubleSide; // cut faces show the inside instead of vanishing
