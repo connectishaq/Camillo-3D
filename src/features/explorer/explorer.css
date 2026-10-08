@@ -365,26 +365,12 @@
   }
 }
 
+/* the hero's white pill (components/button: .btn--light), with a little shadow on the glass */
 .explorer__open {
-  width: 100%;
-  min-height: 50px;
-  padding: 0 20px;
-  border: 0;
-  background: var(--brand);
-  color: var(--brand-ink);
-  font-size: var(--fs-small);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.25s;
-}
-.explorer__open:hover {
-  background: var(--brand-active);
+  box-shadow: 0 6px 20px rgba(30, 20, 25, 0.12);
 }
 .explorer__open:focus-visible {
   outline: 2px solid var(--brand);
-  outline-offset: 4px;
 }
 
 /* the big heading, low on the left over the scene */
