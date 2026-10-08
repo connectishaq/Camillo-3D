@@ -47,24 +47,42 @@ export function initIntroClouds({ scroll } = {}) {
 }
 
 /**
- * "Explore in 3D" (the hero's link, [data-enter-3d]): straight into the 3D city through the
- * clouds. It cuts to the full bank of cloud (the Featured Projects panel already gone), where
- * the camera starts flying to the skyline behind it, then glides on as the clouds part onto it.
- * Without JS the link just goes to the skyline chapter (#explore).
+ * "Explore in 3D" (the hero's link, [data-enter-3d]): into the 3D city through the clouds,
+ * with no visible cut. The screen fades into a cloud mist; behind it the page moves into the
+ * full bank of cloud (the Featured Projects panel already gone, the camera heading for the
+ * skyline); the mist thins to show the clouds all round; then the page glides on as they part
+ * onto the skyline. Without JS the link just goes to the skyline chapter (#explore); with
+ * reduced motion it cuts straight to the skyline.
  */
 function initEnter(scene, scroll) {
   const reduce = prefersReducedMotion();
-  let timer = 0;
+  let busy = false;
+  const mist = document.createElement('div');
+  mist.className = 'clouds-mist';
+  mist.setAttribute('aria-hidden', 'true');
+  document.body.append(mist);
+  const fade = (from, to, duration, easing) =>
+    mist.animate([{ opacity: from }, { opacity: to }], { duration, easing, fill: 'forwards' }).finished;
+  const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
   document.querySelectorAll('[data-enter-3d]').forEach((link) =>
-    link.addEventListener('click', (e) => {
+    link.addEventListener('click', async (e) => {
       e.preventDefault();
-      clearTimeout(timer);
+      if (busy) return;
       const into = sceneScroll(scene, SCENE.part[0] - 5); // in the clouds, just before they part
       const out = sceneScroll(scene, SCENE.part[1] + 10); // past them, over the skyline
       if (reduce) return scroll.scrollTo(out, { immediate: true });
+      busy = true;
+      mist.classList.add('is-on');
+      await fade(0, 1, 700, 'cubic-bezier(0.55, 0, 0.75, 0.3)'); // into the mist
       scroll.scrollTo(into, { immediate: true });
-      // a moment in the clouds (they gather round), then slowly through them
-      timer = setTimeout(() => scroll.scrollTo(out, { duration: 3.6, easing: (t) => 1 - Math.pow(1 - t, 3) }), 1400);
+      await frame(); // the clouds laid out at full cover behind the mist
+      const clear = fade(1, 0, 1100, 'cubic-bezier(0.25, 0.6, 0.3, 1)'); // the clouds all round
+      await new Promise((r) => setTimeout(r, 650));
+      scroll.scrollTo(out, { duration: 3.4, easing: (t) => 1 - Math.pow(1 - t, 3) }); // through them
+      await clear;
+      mist.classList.remove('is-on');
+      busy = false;
     }),
   );
 }

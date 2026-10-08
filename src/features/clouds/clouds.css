@@ -56,3 +56,24 @@
     animation: none;
   }
 }
+
+/* "Explore in 3D": the cloud mist the screen fades into on the way to the clouds (intro-clouds.js) */
+.clouds-mist {
+  position: fixed;
+  inset: 0;
+  z-index: 35; /* over the story, under the header */
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 45%, var(--cloud-light) 0 45%, transparent 100%),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--cloud-light) 92%, var(--cloud-shade)),
+      var(--cloud-light) 55%,
+      color-mix(in srgb, var(--cloud-light) 85%, var(--cloud-shade))
+    );
+}
+.clouds-mist.is-on {
+  display: block;
+}
