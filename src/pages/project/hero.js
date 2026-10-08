@@ -7,7 +7,7 @@ const ease = (t) => 1 - Math.pow(1 - clamp01(t), 3);
 
 /**
  * Project hero (hero.html): the photo holds while the name line, always running sideways like a
- * marquee (faster while the page scrolls), rises over it, and each figure box eases up into
+ * marquee (initMarquee), rises over it, and each figure box eases up into
  * place as it arrives. The first screen's small type fades as soon as the page moves. The
  * header is white over the photo at the very top and turns to its light bar once the page
  * scrolls, so nothing passing under it collides with the menu. All on one scroll handler,
@@ -24,10 +24,8 @@ export function initHero() {
   const stats = $$('[data-phero-stat]', hero);
   const first = $('.phero__first', hero); // the back link and the line along the bottom
 
-  let runWidth = 0;
   let statTops = [];
   const measure = () => {
-    runWidth = run.getBoundingClientRect().width;
     stats.forEach((el) => (el.style.transform = ''));
     statTops = stats.map((el) => el.getBoundingClientRect().top + window.scrollY);
   };
@@ -72,38 +70,73 @@ export function initHero() {
     measure();
     apply();
   };
-  // the name: a marquee that runs on its own and is pushed along by the scroll (back a little
-  // when scrolling up), drawn only while the line is on screen
-  let x = 0;
-  let lastT = 0;
-  let lastY = window.scrollY;
-  let frame = 0;
-  const tick = (t) => {
-    frame = requestAnimationFrame(tick);
-    const dt = lastT ? Math.min((t - lastT) / 1000, 0.05) : 0;
-    lastT = t;
-    const y = window.scrollY;
-    x += window.innerWidth * 0.06 * dt + (y - lastY) * 0.6;
-    lastY = y;
-    if (!runWidth) return;
-    x = ((x % runWidth) + runWidth) % runWidth;
-    track.style.transform = `translate3d(${(-x).toFixed(1)}px, 0, 0)`;
-  };
-  if (!reduce) {
-    new IntersectionObserver(([e]) => {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      if (!e.isIntersecting) return;
-      lastT = 0;
-      lastY = window.scrollY;
-      frame = requestAnimationFrame(tick);
-    }).observe($('.phero__name', hero));
-  }
-
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', relayout);
   document.fonts?.ready.then(relayout);
   img.decode?.().then(relayout, relayout);
   relayout();
+  if (!reduce) initMarquee(track, run, $('.phero__name', hero));
   return true;
+}
+
+/**
+ * The name line: a marquee run by the browser's compositor (a Web Animation of a transform),
+ * so it keeps a steady pace however busy the page is, scrolling included. Scrolling, either
+ * way, speeds it up for a moment, eased in and out; it never stops or runs backwards.
+ * Paused while the line is off screen.
+ */
+function initMarquee(track, run, line) {
+  let anim = null;
+  let width = 0;
+  let onScreen = true;
+  const build = () => {
+    const w = run.getBoundingClientRect().width;
+    if (!w || w === width) return;
+    width = w;
+    const duration = (w / (window.innerWidth * 0.06)) * 1000; // 6% of the screen width a second
+    const at = anim ? (anim.currentTime % anim.effect.getTiming().duration) / anim.effect.getTiming().duration : 0;
+    anim?.cancel();
+    anim = track.animate([{ transform: 'translate3d(0, 0, 0)' }, { transform: `translate3d(${-w}px, 0, 0)` }], {
+      duration,
+      iterations: Infinity,
+    });
+    anim.currentTime = at * duration;
+    if (!onScreen) anim.pause();
+  };
+
+  // scroll boost: up to 4× the pace, easing back to 1× once the page stops
+  let boost = 0;
+  let rate = 1;
+  let lastY = window.scrollY;
+  let frame = 0;
+  const ease = () => {
+    boost *= 0.93;
+    if (boost < 0.02) boost = 0;
+    const want = 1 + boost;
+    if (Math.abs(want - rate) > 0.04 || (boost === 0 && rate !== 1)) {
+      rate = boost === 0 ? 1 : want;
+      anim?.updatePlaybackRate(rate);
+    }
+    frame = boost ? requestAnimationFrame(ease) : 0;
+  };
+  window.addEventListener(
+    'scroll',
+    () => {
+      const y = window.scrollY;
+      boost = Math.min(3, boost + Math.abs(y - lastY) * 0.012);
+      lastY = y;
+      if (!frame && onScreen) frame = requestAnimationFrame(ease);
+    },
+    { passive: true },
+  );
+
+  new IntersectionObserver(([e]) => {
+    onScreen = e.isIntersecting;
+    if (!anim) return;
+    if (onScreen) anim.play();
+    else anim.pause();
+  }).observe(line);
+  window.addEventListener('resize', build);
+  document.fonts?.ready.then(build);
+  build();
 }
