@@ -10,8 +10,10 @@ const smooth = (t) => (t = clamp01(t)) * t * (3 - 2 * t);
 const span = (s, [a, b]) => clamp01((s - a) / (b - a));
 
 /**
- * About → Featured Projects (timings in scene.js). The About screen holds (the 2D map round the
- * head office beside the About panel; "See in 3D" swaps the map for the 3D map behind it), then
+ * About → Featured Projects (timings in scene.js). The head office map fills the screen with the
+ * head office in the middle; the About panel slides in from the right (from below the map's
+ * part on a phone) as the map glides to keep the head office in the middle of what's left
+ * ("See in 3D" swaps the map for the 3D map behind it). Then
  * a white panel grows out of the About panel to fill the screen while its content fades, and
  * the Featured Projects heading rises in on it. The stage is CSS-sticky, so at the end of the
  * scene the panel simply scrolls up and away, onto the clouds behind it.
@@ -26,7 +28,18 @@ export function init({ stage }) {
   const card = $('[data-scene-card]', scene);
   const intro = $('[data-scene-intro]', scene);
   const toggle = $('[data-hq-toggle]', scene);
+  const canvas = $('.hq__canvas', scene);
   const reduce = prefersReducedMotion();
+
+  // how far the map glides as the panel comes in: the head office from the middle of the
+  // screen to the middle of the part the panel leaves (left half, or the band above it)
+  let pan = { x: 0, y: 0 };
+  const measurePan = () => {
+    const stageBox = scene.querySelector('.scene__stage').getBoundingClientRect();
+    const narrow = card.offsetWidth >= stageBox.width - 1;
+    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+    pan = narrow ? { x: 0, y: stageBox.height / 2 - (header + card.offsetTop) / 2 } : { x: card.offsetWidth / 2, y: 0 };
+  };
 
   // "See in 3D": fade the 2D map to show the 3D map behind it, already at the head office
   let in3d = false;
@@ -69,8 +82,16 @@ export function init({ stage }) {
       const k = 1 - grow;
       panel.style.clipPath = `inset(${(from.top * k).toFixed(1)}px ${(from.right * k).toFixed(1)}px ${(from.bottom * k).toFixed(1)}px ${(from.left * k).toFixed(1)}px)`;
     }
+    // the About panel slides in (fades in, with reduced motion) and the map glides with it
+    const slide = smooth(span(s, SCENE.slide));
+    if (reduce) card.style.transform = '';
+    else {
+      card.style.transform = `translate3d(${((1 - slide) * 100).toFixed(2)}%, 0, 0)`;
+      canvas.style.transform = `translate3d(${(-pan.x * slide).toFixed(1)}px, ${(-pan.y * slide).toFixed(1)}px, 0)`;
+    }
+    card.style.visibility = slide > 0 ? 'visible' : 'hidden'; // off screen: its links aren't focusable
     // the panel's content fades; the map stays until the growing panel has covered it
-    card.style.opacity = (1 - fade).toFixed(3);
+    card.style.opacity = ((reduce ? slide : 1) * (1 - fade)).toFixed(3);
     about.style.visibility = grow >= 1 ? 'hidden' : 'visible'; // its links aren't focusable once gone
     grown = grow;
     updateCover();
@@ -93,9 +114,11 @@ export function init({ stage }) {
     },
     onRefresh: (self) => {
       from = null;
+      measurePan();
       apply(self.progress * SCENE.hold);
     },
     onUpdate: (self) => apply(self.progress * SCENE.hold),
   });
+  measurePan();
   apply(0);
 }

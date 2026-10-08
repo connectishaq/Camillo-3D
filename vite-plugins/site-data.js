@@ -55,6 +55,8 @@ function aboutMap(srcDir, data, prefix) {
     height: labels.height,
     aspect: (labels.width / labels.height).toFixed(4),
     hq: labels.hq,
+    // the head office's place on the map (0..1), which the map is centred on
+    focus: { x: (labels.hq.x / 100).toFixed(4), y: (labels.hq.y / 100).toFixed(4) },
     items: labels.items.map((l) => ({ ...l, angle: l.angle ?? 0 })),
     distances: data.hqMap.distances.map((d) => ({ ...d, km: km(data.office.coords, d.coords).toFixed(1) })),
     // our projects inside the map, as pins linking to their pages

@@ -1,5 +1,8 @@
 /*
- * About: the 2D map round the head office (hq-map.html) beside the About panel (about.html).
+ * About: the 2D map round the head office (hq-map.html), full screen with the head office in
+ * the middle; on scroll the About panel (about.html) slides in over its right half (the lower
+ * part on a phone) and the map glides to keep the head office in the middle of the rest
+ * (about.js).
  * Layers on the stage: the map, then the white panel that grows out of the About panel
  * (about.css .scene__panel), then the About content, then the Featured Projects heading.
  * .hq itself must not form a stacking context (no z-index, opacity or transform) so its
@@ -8,12 +11,10 @@
 .hq {
   position: absolute;
   inset: 0;
-  display: grid;
-  /* half and half: the map, the panel */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .hq__map {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 0;
   overflow: hidden;
   container-type: size;
@@ -23,18 +24,30 @@
 .scene__panel {
   z-index: 1;
 }
+/* half the screen, on the right; about.js slides it in from off screen */
 .hq__info {
-  position: relative;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
   z-index: 2;
+  will-change: transform;
 }
 
-/* the map fills its space like a cover-fitted image, centred near the head office */
+/*
+ * The map covers the screen, zoomed in enough (--zoom) that it can be centred on the head
+ * office (--fx, --fy: where it is on the map) and still glide aside without showing an edge.
+ * about.js moves it with a transform.
+ */
 .hq__canvas {
-  --w: max(100cqw, calc(100cqh * var(--aspect)));
+  --zoom: 1.6;
+  --w: calc(max(100cqw, 100cqh * var(--aspect)) * var(--zoom));
   --h: calc(var(--w) / var(--aspect));
   position: absolute;
-  left: clamp(calc(100cqw - var(--w)), calc(50cqw - 0.38 * var(--w)), 0px);
-  top: clamp(calc(100cqh - var(--h)), calc(50cqh - 0.55 * var(--h)), 0px);
+  left: calc(50cqw - var(--fx) * var(--w));
+  top: calc(50cqh - var(--fy) * var(--h));
+  will-change: transform;
   width: var(--w);
   height: var(--h);
   transition:
@@ -141,11 +154,11 @@
   color: var(--brand);
 }
 
-/* bottom right: the story's chapter chip has the bottom-left corner */
+/* bottom left, clear of the panel when it's in */
 .hq__toggle {
   position: absolute;
-  right: clamp(16px, 2vw, 32px);
-  bottom: clamp(30px, 3vw, 44px);
+  left: clamp(16px, 2vw, 32px);
+  bottom: clamp(34px, 3.4vw, 50px);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -180,8 +193,8 @@
 }
 .hq__credit {
   position: absolute;
-  right: 10px;
-  bottom: 6px;
+  left: clamp(16px, 2vw, 32px);
+  bottom: 10px;
   font-size: 0.6875rem;
   color: #6e6c66;
   transition: opacity 0.6s var(--ease);
@@ -302,13 +315,15 @@
 }
 
 @media (max-width: 860px) {
-  /* the map on top (under the header), the panel below it */
-  .hq {
-    grid-template-columns: none;
-    grid-template-rows: calc(var(--header-h) + 30vh) minmax(0, 1fr);
-  }
+  /* the panel slides in over the lower part of the screen; the map shows above it */
   .hq__info {
+    top: calc(var(--header-h) + 30vh);
+    left: 0;
+    width: auto;
     padding: 20px var(--gutter) 16px;
+  }
+  .hq__canvas {
+    --zoom: 1.8;
   }
   .hq__title {
     font-size: 1.625rem;
@@ -344,12 +359,19 @@
   .hq__label--place {
     font-size: 0.6875rem;
   }
+  /* at the foot of the map's part of the screen */
   .hq__toggle {
     left: 12px;
-    right: auto;
-    bottom: 12px;
+    top: calc(var(--header-h) + 30vh - 52px);
+    bottom: auto;
     min-height: 40px;
     font-size: var(--fs-xs);
+  }
+  .hq__credit {
+    left: auto;
+    right: 10px;
+    top: calc(var(--header-h) + 30vh - 20px);
+    bottom: auto;
   }
 }
 

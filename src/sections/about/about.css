@@ -1,7 +1,7 @@
 /* ---------- The About → Featured Projects scene (about.js, timings in scene.js) ---------- */
 .scene {
   position: relative;
-  height: calc(100vh + 230vh); /* the stage + SCENE.hold */
+  height: calc(100vh + 280vh); /* the stage + SCENE.hold */
 }
 /* the two story chapters, crossing the middle of the screen in turn (app/chapters.js) */
 .scene__chapter {
@@ -12,10 +12,10 @@
 }
 .scene__chapter--office {
   top: 0;
-  height: 160vh; /* until the panel fills the screen (50vh + SCENE.expand end) */
+  height: 210vh; /* until the panel fills the screen (50vh + SCENE.expand end) */
 }
 .scene__chapter--intro {
-  top: 160vh;
+  top: 210vh;
   bottom: 0;
 }
 
