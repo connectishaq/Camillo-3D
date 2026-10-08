@@ -1,22 +1,19 @@
 import './services.css';
-import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { $, $$, prefersReducedMotion } from '../../utils/dom.js';
+import { $, prefersReducedMotion } from '../../utils/dom.js';
 
 const clamp01 = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t);
 const smooth = (t) => (t = clamp01(t)) * t * (3 - 2 * t);
 
 /**
- * What we build: like the Featured Projects panel, the overview's white grows from the panel
+ * What we build: like the Featured Projects panel, the overview's maroon grows from the panel
  * to fill the whole screen as it arrives (panel top from 85% to 25% of the screen), holds while
- * the content scrolls through, and leaves with the end of the section, onto the city for
- * Contact. Stats count up from 0 the first time the panel scrolls into view.
+ * the content scrolls through, and leaves with the end of the section.
  */
 export function init({ stage }) {
   const panel = $('.overview');
   if (!panel) return;
   initGrow(panel, stage);
-  initCounters(panel);
 }
 
 function initGrow(panel, stage) {
@@ -53,7 +50,7 @@ function initGrow(panel, stage) {
       }
     }
     if (g > 0.02 !== grown) panel.classList.toggle('is-grown', (grown = g > 0.02));
-    // while the white fills the screen, the map underneath doesn't need drawing
+    // while the maroon fills the screen, the map underneath doesn't need drawing
     const full = g >= 1 && top === 0 && bottom === 0;
     if (full !== covered) stage.setOccluded('overview', (covered = full));
   };
@@ -68,30 +65,4 @@ function initGrow(panel, stage) {
     onLeaveBack: apply,
   });
   apply();
-}
-
-function initCounters(panel) {
-  const counters = $$('[data-count]', panel);
-  if (prefersReducedMotion() || !counters.length) return;
-  counters.forEach((el) => (el.textContent = '0'));
-
-  const io = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry.isIntersecting) return;
-      counters.forEach(countUp);
-      io.disconnect();
-    },
-    { threshold: 0.15 },
-  );
-  io.observe(panel);
-}
-
-function countUp(el) {
-  const obj = { v: 0 };
-  gsap.to(obj, {
-    v: +el.dataset.count,
-    duration: 1.8,
-    ease: 'power2.out',
-    onUpdate: () => (el.textContent = Math.round(obj.v)),
-  });
 }

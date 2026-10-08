@@ -144,6 +144,7 @@ export function pageScope(data, page, site, srcDir) {
     gallery,
     galleryTotal: pad(gallery.length),
     hqMap: isHome ? aboutMap(srcDir, data, prefix) : null,
+    servicesPhoto: gallery[Math.max(0, data.gallery.findIndex((g) => g.services))],
     footerPhoto:
       gallery[
         Math.max(

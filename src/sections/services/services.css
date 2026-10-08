@@ -1,25 +1,33 @@
 .chapter--overview {
   position: relative;
+  /* nearly edge to edge, clear of the story's chapter dots on the right */
+  padding-inline: clamp(16px, 2vw, 32px) clamp(56px, 5vw, 80px);
+  color: var(--brand-ink);
 }
 /*
  * The panel's background, drawn full-screen behind the story and clipped to the panel's shape:
  * as the panel arrives it grows to fill the screen, holds while the content scrolls through,
  * and leaves with the end of the section (services.js). Without JS the panel keeps its own.
+ * Camillo maroon, ruled with faint columns.
  */
+.overview-bg,
+.overview {
+  background-color: var(--brand);
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: calc(100% / 6) 100%;
+}
 .overview-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
   visibility: hidden;
-  background: var(--surface);
   pointer-events: none;
   will-change: clip-path;
 }
 .overview {
-  width: min(1180px, 100%);
-  padding: clamp(28px, 4vw, 56px);
+  width: 100%;
+  padding: clamp(28px, 3vw, 48px) clamp(16px, 1.4vw, 24px);
   border-radius: calc(var(--radius) + 6px);
-  background: var(--surface);
   box-shadow: var(--shadow);
   transition: box-shadow 0.4s var(--ease);
 }
@@ -29,77 +37,106 @@
 body.has-overview-bg .overview {
   background: transparent;
 }
-.overview__title {
-  font-size: var(--fs-h2);
-}
 
-/* Service cards */
-.services {
-  margin-top: 44px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+.overview__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
 }
-.service {
-  padding: 26px;
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  border: 1px solid transparent;
-  transition:
-    border-color 0.3s,
-    background 0.3s;
-}
-.service:hover {
-  border-color: var(--brand-line);
-  background: var(--brand-tint);
-}
-.service__num {
-  font-size: var(--fs-small);
-  font-weight: var(--fw-medium);
-  color: var(--brand);
-}
-.service h3 {
-  font-size: var(--fs-h3);
-  margin: 26px 0 10px;
-}
-.service p {
-  color: var(--text-muted);
-  font-size: var(--fs-body);
-}
-
-/* Stats */
-.stats {
-  margin-top: 44px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 34px;
-}
-.stat__value {
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 5vw, 4rem);
-  line-height: 1;
-  font-weight: var(--fw-light);
-  color: var(--brand);
-}
-.stat__label {
-  margin-top: 10px;
-  font-size: var(--fs-small);
-  color: var(--text-muted);
-}
-
-/* Portfolio strip */
-.more {
-  margin-top: 40px;
-}
-.more__label {
+.overview__eyebrow {
+  margin-bottom: clamp(14px, 1.6vw, 22px);
   font-size: var(--fs-xs);
   font-weight: var(--fw-medium);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--brand);
+  color: rgba(255, 255, 255, 0.7);
+}
+.overview__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  font-size: clamp(2.25rem, 0.9rem + 3.9vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--brand-ink);
+}
+.overview__photo {
+  flex: none;
+  width: clamp(140px, 17vw, 280px);
+  aspect-ratio: 8 / 3;
+  margin: 0;
+  overflow: hidden;
+}
+.overview__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* the three disciplines: tall tinted cards, the number faint in the corner, the name low down */
+.services {
+  margin-top: clamp(48px, 7vw, 110px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 1.6vw, 32px);
+}
+.service {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(300px, 28vw, 420px);
+  padding: clamp(24px, 2.2vw, 34px);
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 0.4s var(--ease);
+}
+.service:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+.service__num {
+  position: absolute;
+  top: clamp(20px, 2vw, 30px);
+  right: clamp(24px, 2.2vw, 34px);
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  font-size: clamp(2rem, 1.2rem + 1.6vw, 3rem);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.28);
+}
+.service__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  font-size: clamp(1.75rem, 1rem + 1.6vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--brand-ink);
+}
+.service__text {
+  max-width: 40ch;
+  min-height: calc(1.55em * 3); /* three lines, so the names line up across the cards */
+  margin-top: clamp(18px, 2.4vw, 40px);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* Portfolio strip */
+.more {
+  margin-top: clamp(32px, 4vw, 56px);
+}
+.more__label {
   margin-bottom: 12px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
 }
 .more__list {
   display: flex;
@@ -108,15 +145,29 @@ body.has-overview-bg .overview {
 }
 .more__list li {
   padding: 6px 14px;
-  border: 1px solid var(--line-strong);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: var(--radius-pill);
   font-size: var(--fs-small);
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 @media (max-width: 860px) {
-  .services,
-  .stats {
+  .overview__head {
+    flex-direction: column-reverse;
+  }
+  .overview__photo {
+    width: 46%;
+  }
+  .chapter--overview {
+    padding-inline: var(--gutter);
+  }
+  .services {
     grid-template-columns: 1fr;
+  }
+  .service {
+    min-height: 240px;
+  }
+  .service__text {
+    min-height: 0;
   }
 }

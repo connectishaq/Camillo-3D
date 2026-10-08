@@ -122,11 +122,11 @@ The clouds are photographic cut-outs (`public/images/clouds/cloud-1…7.webp`, t
 
 ### What we build
 
-The overview panel works the same way ([`src/sections/services/services.js`](src/sections/services/services.js)): its white is drawn by a full-screen layer clipped to the panel's shape, which grows to fill the screen as the panel arrives, holds while the services, stats and portfolio scroll through, and leaves with the end of the section, onto the city for Contact. The map doesn't draw while it's covered. With reduced motion the full-screen white fades in instead.
+In the manner of the "Three pillars" section of [dviga.marketing/masters-en](https://dviga.marketing/masters-en), in Camillo maroon ruled with faint columns: a big uppercase title with a small project photo in the corner (the Gallery photo marked `services: true` in `src/data/gallery.js`), the three disciplines (`company.services`) as tall tinted cards with a faint number and the name low down, then the "Also in the portfolio" names. The company figures are in About, so they aren't repeated here. The panel works like Featured Projects ([`src/sections/services/services.js`](src/sections/services/services.js)): its maroon is drawn by a full-screen layer clipped to the panel's shape, which grows to fill the screen as the panel arrives, holds while the content scrolls through, and leaves with the end of the section. The map doesn't draw while it's covered. With reduced motion the full-screen maroon fades in instead.
 
 ## Gallery
 
-[`src/sections/gallery/`](src/sections/gallery/), after What we build: a giant pale "Gallery" holds at the top of the screen while the photos, two to a row and staggered, drift up past it at slightly different speeds (transforms only). It's solid white, so it carries straight on from the What we build panel. Any photo opens a full-screen lightbox (native `<dialog>`: arrow keys, swipe, Esc, focus returns to the photo) with the project's name and a link to its page.
+[`src/sections/gallery/`](src/sections/gallery/), after What we build: a giant pale "Gallery" holds at the top of the screen while the photos, two to a row and staggered, drift up past it at slightly different speeds (transforms only). Any photo opens a full-screen lightbox (native `<dialog>`: arrow keys, swipe, Esc, focus returns to the photo) with the project's name and a link to its page.
 
 The photos are listed in [`src/data/gallery.js`](src/data/gallery.js) (project, original file in `project-assets/<project>/`, alt text). Add one there, then run `npm run images` to make its optimised copies and commit them. `footer: true` also puts that photo beside the footer's enquiry form.
 

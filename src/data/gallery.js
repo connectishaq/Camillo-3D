@@ -2,11 +2,12 @@
  * The Gallery section: project photos, in the order they appear. Originals live in
  * project-assets/<project>/; `npm run images` writes the optimised copies (public/images/projects).
  * `project` is a project slug (its name links the photo to the project page); `footer: true`
- * also puts that photo beside the enquiry form in the footer.
+ * also puts that photo beside the enquiry form in the footer, `services: true` in the corner of
+ * What we build.
  * Plain data only (no imports): the build reads this file to write the static HTML.
  */
 export const gallery = [
-  { project: 'the-london', file: 'TheLondon.jpeg', alt: 'The London from above, with the Melbourne CBD skyline behind' },
+  { project: 'the-london', file: 'TheLondon.jpeg', alt: 'The London from above, with the Melbourne CBD skyline behind', services: true },
   {
     project: 'la-storia',
     file: 'DUGA11024_La-Storia_E02_Hero-Cardigan-St_Crop-1600x1726.jpg',
