@@ -353,15 +353,6 @@
   border-radius: 50%;
   background: radial-gradient(closest-side, rgba(40, 20, 30, 0.22), transparent);
 }
-.explorer__cube-label {
-  position: absolute;
-  right: -30px;
-  bottom: -14px;
-  font-family: var(--font-display);
-  font-size: 1.0625rem;
-  font-weight: var(--fw-medium);
-  color: var(--brand);
-}
 .explorer:not(.is-preview) .cube {
   animation-play-state: paused; /* hidden behind the open explorer */
 }
