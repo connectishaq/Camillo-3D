@@ -1,0 +1,47 @@
+<!--
+  "More projects", before the footer: the next three projects in the story's order (wrapping
+  round), as photo cards linking to their pages (more.css).
+-->
+<section class="pmore" aria-labelledby="pmore-title">
+  <div class="pmore__head">
+    <div>
+      <p class="pmore__eyebrow">Keep exploring</p>
+      <h2 class="pmore__title" id="pmore-title">More projects</h2>
+    </div>
+    <a class="pmore__all" href="/#projects">
+      All projects
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+    </a>
+  </div>
+
+  <ul class="pmore__list" role="list">
+    <!-- @each more as p -->
+    <li class="pmore__item">
+      <a class="pmore__card" href="{{ p.url }}">
+        <span class="pmore__media">
+          <img
+            src="{{ p.photo.thumb }}"
+            srcset="{{ p.photo.srcset }}"
+            sizes="(max-width: 860px) 82vw, 32vw"
+            width="{{ p.photo.width }}"
+            height="{{ p.photo.height }}"
+            alt=""
+            style="object-position: {{ p.photo.position }}"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="pmore__view" aria-hidden="true">
+            View project
+            <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" /></svg>
+          </span>
+        </span>
+        <span class="pmore__meta">
+          <span class="pmore__num">{{ p.number }}</span>
+          <span class="pmore__name">{{ p.name }}</span>
+          <span class="pmore__info">{{ p.suburb }} · {{ p.type }} · {{ p.status }}</span>
+        </span>
+      </a>
+    </li>
+    <!-- @end -->
+  </ul>
+</section>

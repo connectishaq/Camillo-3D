@@ -1,0 +1,185 @@
+/*
+ * "More projects" (more.html): three photo cards before the footer. The photo closes in a
+ * little on hover and a "View project" tag slides up; on a phone the cards scroll sideways.
+ */
+.pmore {
+  margin-top: clamp(96px, 11vw, 170px);
+}
+.pmore__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: clamp(28px, 3.4vw, 48px);
+}
+.pmore__eyebrow {
+  margin-bottom: clamp(10px, 1.2vw, 16px);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+.pmore__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  font-size: clamp(2.25rem, 1rem + 3.6vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.pmore__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  padding-bottom: 6px;
+  border-bottom: 1px solid currentColor;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+.pmore__all svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.35s var(--ease);
+}
+.pmore__all:hover svg {
+  transform: translateX(4px);
+}
+
+.pmore__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.8vw, 28px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pmore__card {
+  display: block;
+  color: var(--text);
+}
+.pmore__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.pmore__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1s var(--ease);
+}
+.pmore__view {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--fs-small);
+  color: var(--text);
+  opacity: 0;
+  translate: 0 12px;
+  transition:
+    opacity 0.4s var(--ease),
+    translate 0.4s var(--ease);
+}
+.pmore__view svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pmore__card:hover .pmore__media img,
+.pmore__card:focus-visible .pmore__media img {
+  transform: scale(1.05);
+}
+.pmore__card:hover .pmore__view,
+.pmore__card:focus-visible .pmore__view {
+  opacity: 1;
+  translate: none;
+}
+.pmore__card:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+}
+
+.pmore__meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 14px;
+  padding-top: 16px;
+}
+.pmore__num {
+  grid-row: span 2;
+  padding-top: 4px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+}
+.pmore__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  font-size: clamp(1.25rem, 0.9rem + 0.9vw, 1.75rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+.pmore__info {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+@media (max-width: 860px) {
+  .pmore__head {
+    flex-wrap: wrap;
+  }
+  /* a row that scrolls sideways, each card most of the screen wide */
+  .pmore__list {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 0 var(--gutter) 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .pmore__list::-webkit-scrollbar {
+    display: none;
+  }
+  .pmore__item {
+    scroll-snap-align: start;
+  }
+  .pmore__view {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pmore__media img,
+  .pmore__view,
+  .pmore__all svg {
+    transition: none;
+  }
+}

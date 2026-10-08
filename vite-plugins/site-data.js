@@ -120,6 +120,10 @@ export function pageScope(data, page, site, srcDir) {
   const projects = data.projects.map((p, i, all) => decorateProject(p, i, all, srcDir, prefix));
   const project = page.kind === 'project' ? projects.find((p) => p.slug === page.slug) : null;
   if (page.kind === 'project' && !project) throw new Error(`[site-data] unknown project "${page.slug}"`);
+  // "More projects" on a project page: the next three in the story's order, wrapping round
+  const more = project
+    ? [1, 2, 3].map((k) => projects[(projects.indexOf(project) + k) % projects.length]).filter((p) => p !== project)
+    : [];
 
   const isHome = page.kind === 'home';
   const pagePath = isHome ? '/' : project ? project.url : '/404';
@@ -155,6 +159,7 @@ export function pageScope(data, page, site, srcDir) {
         )
       ],
     project,
+    more,
     intro: { total: String(projects.length + 1).padStart(2, '0') },
     year: new Date().getFullYear(),
     services: company.services.map((s, i) => ({ ...s, number: pad(i + 1) })),

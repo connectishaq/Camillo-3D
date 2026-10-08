@@ -6,6 +6,7 @@ import { Explorer } from '../../features/explorer/Explorer.js';
 import { hasGLB, loadGLB } from '../../features/explorer/glb.js';
 import { initHero } from './hero.js';
 import { initAbout } from './about.js';
+import './more.css';
 
 // a page with a full-screen hero manages the header itself
 const hasHero = !!document.querySelector('[data-phero]');

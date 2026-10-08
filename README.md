@@ -146,6 +146,8 @@ A project with `about` in its data gets an **About the project** section after i
 
 Every project page ends with the **3D model** ([`explorer-inline.html`](src/features/explorer/explorer-inline.html)). It starts as a preview, like [likova.space](https://likova.space/)'s master plan: the building turns slowly in the middle (not interactive, so the page scrolls straight past), behind a maroon box with **See in 3D**, and a big "Explore in 3D" heading low on the left. The button brings in the explorer as before (levels panel, orbit and zoom, explode, step inside); **Close 3D** or Esc goes back to the preview, as does scrolling the model off screen. After "About the project" it fills the screen edge to edge; on other pages it stays in the page column. The preview is `Explorer`'s `preview` option (`setPreview(on)`); the modal explorer on the home page doesn't use it.
 
+After it, before the footer, **More projects** ([`more.html`](src/pages/project/more.html), `more.css`) shows the next three projects in the story's order, wrapping round (`more` in the page data), as photo cards linking to their pages, with **All projects** back to the home page. On a phone the cards scroll sideways.
+
 ## The hero: project showcase
 
 [`src/sections/hero/`](src/sections/hero/) is a full-screen, auto-playing showcase in front of the map:
