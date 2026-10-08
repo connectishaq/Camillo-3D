@@ -1,12 +1,14 @@
 import './footer.css';
-import { $ } from '../../utils/dom.js';
+import { $, prefersReducedMotion } from '../../utils/dom.js';
 
 /**
  * Footer: the enquiry form sends in place (to Netlify Forms, which records it) and thanks the
  * visitor without leaving the page. Without JavaScript it posts normally and Netlify shows its
  * own confirmation page. The year is written at build time.
+ * `scroll` is the home page's smooth scroller (app/smooth-scroll.js); other pages scroll natively.
  */
-export function init() {
+export function init({ scroll } = {}) {
+  initBackToTop(scroll);
   const form = $('[data-enquiry]');
   if (!form) return;
   const status = $('[data-enquiry-status]', form);
@@ -34,5 +36,17 @@ export function init() {
     } finally {
       submit.disabled = false;
     }
+  });
+}
+
+/** "Back to top": a smooth scroll to the top, then keyboard focus to the logo. */
+function initBackToTop(scroll) {
+  const link = $('[data-back-to-top]');
+  if (!link) return;
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (scroll) scroll.scrollTo(0, { duration: 2.2, easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2) });
+    else window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    $('.brand')?.focus({ preventScroll: true });
   });
 }

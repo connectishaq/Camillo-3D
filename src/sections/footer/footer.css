@@ -234,10 +234,61 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: 8px 24px;
   padding-bottom: clamp(24px, 3vw, 40px);
   font-size: var(--fs-xs);
   color: var(--ink-muted);
+}
+
+/* Back to top: the label and a ringed arrow that lifts on hover */
+.site-footer__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.site-footer__back-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--ink-line);
+  border-radius: 50%;
+  transition:
+    background 0.3s var(--ease),
+    border-color 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+.site-footer__back-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.4s var(--ease);
+}
+.site-footer__back:hover .site-footer__back-icon,
+.site-footer__back:focus-visible .site-footer__back-icon {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--brand);
+}
+.site-footer__back:hover svg {
+  transform: translateY(-3px);
+}
+.site-footer__back:focus-visible {
+  outline: none;
+}
+.site-footer__back:focus-visible .site-footer__back-icon {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 /* the wordmark, edge to edge and cut off by the bottom of the page */
