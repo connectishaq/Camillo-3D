@@ -273,7 +273,10 @@
   transform: translateY(24px);
 }
 
-/* the box: maroon, with a notch out of its top-left corner, like a building's stepped massing */
+/*
+ * The box: frosted glass over the turning model (it blurs what's behind it), with a notch out
+ * of its top-left corner like a building's stepped massing, and a light rim.
+ */
 .explorer__cta {
   position: absolute;
   left: 50%;
@@ -281,52 +284,115 @@
   transform: translate(-50%, -50%);
   display: grid;
   justify-items: center;
-  gap: clamp(28px, 3vw, 40px);
+  gap: clamp(30px, 3.2vw, 44px);
   width: min(330px, calc(100% - 48px));
-  padding: clamp(52px, 5vw, 72px) 20px 20px;
-  background: var(--brand);
-  color: var(--brand-ink);
+  padding: clamp(56px, 5.4vw, 78px) 20px 20px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0.24));
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -30px 60px rgba(255, 255, 255, 0.12);
+  color: var(--text);
   clip-path: polygon(0 13%, 18% 13%, 18% 0, 100% 0, 100% 100%, 0 100%);
 }
+
+/* the cube: six whitish glass faces in real 3D, turning slowly */
 .explorer__cube {
-  width: 64px;
-  height: 64px;
-  overflow: visible;
+  --s: 62px;
+  position: relative;
+  width: var(--s);
+  height: var(--s);
+  perspective: 420px;
 }
-.explorer__cube path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.4;
-  stroke-linejoin: round;
+.cube {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(-24deg) rotateY(38deg);
+  animation: cube-turn 12s linear infinite;
 }
-.explorer__cube text {
-  fill: currentColor;
+.cube__face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.18) 60%, rgba(255, 255, 255, 0.4));
+  box-shadow:
+    inset 0 0 14px rgba(255, 255, 255, 0.65),
+    0 0 10px rgba(255, 255, 255, 0.35);
+}
+.cube__face--front {
+  transform: translateZ(calc(var(--s) / 2));
+}
+.cube__face--back {
+  transform: rotateY(180deg) translateZ(calc(var(--s) / 2));
+}
+.cube__face--right {
+  transform: rotateY(90deg) translateZ(calc(var(--s) / 2));
+}
+.cube__face--left {
+  transform: rotateY(-90deg) translateZ(calc(var(--s) / 2));
+}
+.cube__face--top {
+  transform: rotateX(90deg) translateZ(calc(var(--s) / 2));
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.45)); /* lit from above */
+}
+.cube__face--bottom {
+  transform: rotateX(-90deg) translateZ(calc(var(--s) / 2));
+  background: rgba(255, 255, 255, 0.12);
+}
+/* its soft shadow on the glass */
+.explorer__cube::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -24px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(40, 20, 30, 0.22), transparent);
+}
+.explorer__cube-label {
+  position: absolute;
+  right: -30px;
+  bottom: -14px;
   font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: var(--fw-light);
+  font-size: 1.0625rem;
+  font-weight: var(--fw-medium);
+  color: var(--brand);
 }
+.explorer:not(.is-preview) .cube {
+  animation-play-state: paused; /* hidden behind the open explorer */
+}
+@keyframes cube-turn {
+  from {
+    transform: rotateX(-24deg) rotateY(38deg);
+  }
+  to {
+    transform: rotateX(-24deg) rotateY(398deg);
+  }
+}
+
 .explorer__open {
   width: 100%;
   min-height: 50px;
   padding: 0 20px;
   border: 0;
-  background: var(--surface);
-  color: var(--text);
+  background: var(--brand);
+  color: var(--brand-ink);
   font-size: var(--fs-small);
   font-weight: var(--fw-medium);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
-  transition:
-    background 0.25s,
-    color 0.25s;
+  transition: background 0.25s;
 }
 .explorer__open:hover {
-  background: var(--bg);
-  color: var(--brand);
+  background: var(--brand-active);
 }
 .explorer__open:focus-visible {
-  outline: 2px solid var(--surface);
+  outline: 2px solid var(--brand);
   outline-offset: 4px;
 }
 
@@ -377,5 +443,8 @@
   .explorer__cta,
   .explorer__caption {
     transition: none;
+  }
+  .cube {
+    animation: none;
   }
 }

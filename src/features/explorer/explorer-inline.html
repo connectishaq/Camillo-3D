@@ -7,10 +7,18 @@
   <!-- @include features/explorer/explorer-body.html -->
 
   <div class="explorer__cta" data-ex-cta>
-    <svg class="explorer__cube" viewBox="0 0 64 64" aria-hidden="true">
-      <path d="M32 6 54 17v24L32 52 10 41V17Z M10 17l22 11 22-11 M32 28v24" />
-      <text x="41" y="60">3D</text>
-    </svg>
+    <!-- a real 3D cube (CSS), six glass faces turning slowly -->
+    <div class="explorer__cube" aria-hidden="true">
+      <div class="cube">
+        <i class="cube__face cube__face--front"></i>
+        <i class="cube__face cube__face--back"></i>
+        <i class="cube__face cube__face--right"></i>
+        <i class="cube__face cube__face--left"></i>
+        <i class="cube__face cube__face--top"></i>
+        <i class="cube__face cube__face--bottom"></i>
+      </div>
+      <span class="explorer__cube-label">3D</span>
+    </div>
     <button class="explorer__open" type="button" data-ex-open>See in 3D</button>
   </div>
 
