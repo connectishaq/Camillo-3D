@@ -49,7 +49,8 @@ function aboutMap(srcDir, data, prefix) {
   const labels = JSON.parse(fs.readFileSync(file, 'utf8'));
   const { west, east, north, south } = data.hqMap.bbox;
   return {
-    src: `${prefix}images/map/hq-map.svg`,
+    src: `${prefix}images/map/hq-map-${labels.widths[0]}.webp`,
+    srcset: labels.widths.map((w) => `${prefix}images/map/hq-map-${w}.webp ${w}w`).join(', '),
     width: labels.width,
     height: labels.height,
     aspect: (labels.width / labels.height).toFixed(4),

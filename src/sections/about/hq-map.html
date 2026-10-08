@@ -1,5 +1,5 @@
 <!--
-  The 2D map round the head office (about.js, hq-map.css). The streets are one SVG drawn from
+  The 2D map round the head office (about.js, hq-map.css). The streets are one picture drawn from
   OpenStreetMap by `npm run map`; the labels are set over it in the page's own type, at the
   positions in src/data/hq-map.json. "See in 3D" fades the map to show the 3D map behind it,
   which the story has already flown to the head office.
@@ -11,7 +11,17 @@
     role="img"
     aria-label="Map of Port Melbourne: Camillo’s head office on Salmon Street, near Westgate Park, Station Pier and the beach, a few kilometres from Southbank and the CBD."
   >
-    <img class="hq__img" src="{{ hqMap.src }}" width="{{ hqMap.width }}" height="{{ hqMap.height }}" alt="" loading="lazy" decoding="async" />
+    <img
+      class="hq__img"
+      src="{{ hqMap.src }}"
+      srcset="{{ hqMap.srcset }}"
+      sizes="(max-width: 860px) 160vw, 92vw"
+      width="{{ hqMap.width }}"
+      height="{{ hqMap.height }}"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
     <!-- @each hqMap.items as l -->
     <span class="hq__label hq__label--{{ l.kind }}" style="left: {{ l.x }}%; top: {{ l.y }}%; --a: {{ l.angle }}deg">{{ l.name }}</span>
     <!-- @end -->

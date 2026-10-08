@@ -1,8 +1,10 @@
 /*
  * The About section's 2D map around the head office, from OpenStreetMap data:
- *   public/images/map/hq-map.svg   land, the bay, rivers and lakes, parks, beaches, streets and
- *                                  rail, in the site's quiet palette (no text: the page sets
- *                                  the labels in its own font)
+ *   public/images/map/hq-map-<w>.webp  land, the bay, rivers and lakes, parks, beaches, streets
+ *                                  and rail, in the site's quiet palette (no text: the page sets
+ *                                  the labels in its own font). Drawn as an SVG, then saved as
+ *                                  pictures: a detailed SVG is redrawn on the page's main thread
+ *                                  and stutters the scroll, a picture is decoded off it.
  *   src/data/hq-map.json           the map's size and where each label goes (% of the map)
  * The area and the labels are in src/data/hq-map.js. Run `npm run map` after changing them.
  * The OSM data is downloaded once (Overpass API) and kept in .cache/; `--fresh` downloads again.
@@ -10,6 +12,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import sharp from 'sharp';
 import { hqMap } from '../src/data/hq-map.js';
 import { office } from '../src/data/cameras.js';
 
@@ -288,9 +291,19 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" pre
 </g>
 </svg>
 `;
-const svgFile = path.join(root, 'public/images/map/hq-map.svg');
-fs.mkdirSync(path.dirname(svgFile), { recursive: true });
-fs.writeFileSync(svgFile, svg);
+const outDir = path.join(root, 'public/images/map');
+fs.mkdirSync(outDir, { recursive: true });
+fs.rmSync(path.join(outDir, 'hq-map.svg'), { force: true }); // the old vector version
+const MAP_WIDTHS = [1500, 3000];
+const sizes = [];
+for (const w of MAP_WIDTHS) {
+  const file = path.join(outDir, `hq-map-${w}.webp`);
+  await sharp(Buffer.from(svg), { density: (72 * w) / W })
+    .resize({ width: w })
+    .webp({ quality: 82, effort: 6 })
+    .toFile(file);
+  sizes.push(`${w}px ${Math.round(fs.statSync(file).size / 1024)} kB`);
+}
 
 /* ---------- labels ---------- */
 const pct = ([x, y]) => ({ x: +((x / W) * 100).toFixed(2), y: +((y / H) * 100).toFixed(2) });
@@ -325,10 +338,9 @@ const roads = hqMap.roads.flatMap((name) => {
 const labels = {
   width: W,
   height: H,
+  widths: MAP_WIDTHS,
   hq: pct(project(office.coords)),
   items: [...named(hqMap.areas, 'area'), ...named(hqMap.waters, 'water'), ...roads, ...named(hqMap.places, 'place')],
 };
 fs.writeFileSync(path.join(root, 'src/data/hq-map.json'), JSON.stringify(labels, null, 2) + '\n');
-console.log(
-  `hq-map.svg ${Math.round(fs.statSync(svgFile).size / 1024)} kB, ${W}×${H}; ${roads.length}/${hqMap.roads.length} streets named`,
-);
+console.log(`hq-map ${sizes.join(', ')}; ${roads.length}/${hqMap.roads.length} streets named`);
