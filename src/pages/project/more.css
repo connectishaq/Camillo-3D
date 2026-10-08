@@ -22,12 +22,7 @@
 }
 .pmore__title {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: var(--fw-medium);
-  font-size: clamp(2.25rem, 1rem + 3.6vw, 5rem);
-  line-height: 1;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  font-size: var(--fs-h2); /* the site's section heading size */
 }
 .pmore__all {
   display: inline-flex;
@@ -124,24 +119,14 @@
 
 .pmore__meta {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 4px 14px;
+  gap: 4px;
   padding-top: 16px;
-}
-.pmore__num {
-  grid-row: span 2;
-  padding-top: 4px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
-  color: var(--brand);
-  font-variant-numeric: tabular-nums;
 }
 .pmore__name {
   font-family: var(--font-display);
-  font-weight: var(--fw-medium);
-  font-size: clamp(1.25rem, 0.9rem + 0.9vw, 1.75rem);
-  line-height: 1.15;
-  text-transform: uppercase;
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-tight);
 }
 .pmore__info {
   font-size: var(--fs-small);
