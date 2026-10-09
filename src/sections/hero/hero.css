@@ -115,7 +115,10 @@
 .slide__title .line {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.06em; /* room for descenders inside the reveal mask */
+  /* room for descenders (g, j, p, y drop ~0.2em below the line) inside the reveal mask, given
+     back below so the lines keep their spacing */
+  padding-bottom: 0.2em;
+  margin-bottom: -0.14em;
 }
 .reveal {
   display: inline-block;
