@@ -366,11 +366,9 @@
     min-height: 40px;
     font-size: var(--fs-xs);
   }
+  /* no room for it on the map on a phone: the credit is in the footer's small print */
   .hq__credit {
-    left: auto;
-    right: 10px;
-    top: calc(var(--header-h) + 30vh - 20px);
-    bottom: auto;
+    display: none;
   }
 }
 
