@@ -68,3 +68,16 @@
   line-height: 1.5;
   color: var(--text-muted);
 }
+
+/* phones: the shorter timings (scene.js PHONE) */
+@media (max-width: 860px) {
+  .scene {
+    height: calc(100vh + 160vh);
+  }
+  .scene__chapter--office {
+    height: 145vh; /* 50vh + PHONE.expand end */
+  }
+  .scene__chapter--intro {
+    top: 145vh;
+  }
+}

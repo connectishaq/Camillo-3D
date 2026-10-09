@@ -3,6 +3,12 @@
 .chapter--skyline {
   min-height: 190vh;
 }
+/* phones: the clouds part over less scrolling (about/scene.js PHONE) */
+@media (max-width: 860px) {
+  .chapter--skyline {
+    min-height: 120vh;
+  }
+}
 
 /* ---------- Project card: photo header, then the details ---------- */
 .project-card {

@@ -110,6 +110,8 @@ One scroll scene ([`src/sections/about/`](src/sections/about/); every timing is 
 4. At the end of the scene the panel **slides up and away**, revealing a full bank of cloud ([`src/features/clouds/CloudCurtain.js`](src/features/clouds/CloudCurtain.js)), which had already thickened behind it.
 5. On the next scroll the clouds **slide apart** to the left and right (nearer clouds faster) onto the **Melbourne skyline**. While the panel covered the map, the camera had already moved there (`projectsIntro` and `skyline` share a view in `src/data/cameras.js`). Then the projects.
 
+On phones (up to 860px) the same sequence runs over less scrolling (`PHONE` timings in `scene.js`: the scene is 2.6 screens tall instead of 3.8, the skyline chapter 1.2 instead of 1.9); `about.css` and `projects.css` set the matching heights.
+
 Two empty markers in the scene are the story chapters (`office`, then `projectsIntro`, with `#about` and `#projects` for the nav), so the rail, nav, camera and the screen-reader location announcement work as before. The map doesn't draw while the panel fills the screen. Everything is scrubbed by scroll, so it reverses on the way back up. With reduced motion the panel fades in instead of growing, and the clouds fade instead of sliding.
 
 ### About: the head office map

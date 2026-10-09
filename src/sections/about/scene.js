@@ -15,8 +15,13 @@
  *  395 ─ 475  the clouds slide apart onto the skyline
  *
  * The scene is `100 + HOLD` vh tall (about.css), so the stage holds for HOLD vh.
+ * Phones (up to the 860px breakpoint) run the same sequence over less scrolling (PHONE);
+ * about.css and projects.css set the matching heights.
  */
-export const SCENE = {
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { BREAKPOINT } from '../../config.js';
+
+const DESKTOP = {
   slide: [10, 50],
   expand: [90, 160],
   fade: [90, 120],
@@ -25,6 +30,23 @@ export const SCENE = {
   hold: 280,
   part: [395, 475],
 };
+const PHONE = {
+  slide: [5, 30],
+  expand: [45, 95],
+  fade: [45, 65],
+  heading: [85, 110],
+  cover: [95, 120],
+  hold: 160,
+  part: [265, 325],
+};
+
+const phone = window.matchMedia(`(max-width: ${BREAKPOINT}px)`);
+/** The scene's timings for this screen (one object, updated in place when it crosses the breakpoint). */
+export const SCENE = { ...(phone.matches ? PHONE : DESKTOP) };
+phone.addEventListener('change', (e) => {
+  Object.assign(SCENE, e.matches ? PHONE : DESKTOP);
+  ScrollTrigger.refresh();
+});
 
 /** Page scroll position (px) for a scene time (vh), from the scene's laid-out height. */
 export function sceneScroll(scene, vh) {
