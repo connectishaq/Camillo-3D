@@ -1,6 +1,6 @@
 /*
- * "About the project" (about.html / about.js): a tall photo on the left, a big uppercase title
- * and small-capital copy on the right, and a small photo low in the right corner. Edge to edge,
+ * "About the project" (about.html / about.js): a tall photo on the left, a big title
+ * and the copy on the right, and a small photo low in the right corner. Edge to edge,
  * out of the page's side padding, on a 12-column grid.
  */
 .page__main:has(> .pabout) {
@@ -62,20 +62,18 @@
 .pabout__title {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: var(--fw-medium);
-  font-size: clamp(2.25rem, 0.9rem + 3.7vw, 5.25rem);
-  line-height: 1.02;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  font-weight: var(--fw-regular);
+  font-size: clamp(2.25rem, 1rem + 3.4vw, 4.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 .pabout__text {
-  max-width: 64ch;
-  margin-top: clamp(36px, 4.6vw, 72px);
-  font-size: 0.875rem;
-  line-height: 1.55;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  max-width: 56ch;
+  margin-top: clamp(28px, 3.6vw, 56px);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
 }
 .pabout__text p + p {
   margin-top: 1.5em;

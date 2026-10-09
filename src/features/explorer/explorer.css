@@ -395,7 +395,6 @@
   font-size: clamp(3rem, 0.6rem + 7.4vw, 8.5rem);
   line-height: 0.95;
   letter-spacing: -0.01em;
-  text-transform: uppercase;
   color: var(--text);
 }
 

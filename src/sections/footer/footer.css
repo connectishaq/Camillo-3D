@@ -43,7 +43,6 @@
   font-size: clamp(2.5rem, 1.4rem + 4vw, 5.25rem);
   line-height: 0.98;
   letter-spacing: -0.02em;
-  text-transform: uppercase;
   color: var(--ink);
 }
 .site-footer__photo {
@@ -246,10 +245,7 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  font-size: var(--fs-small);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--fs-body);
   color: var(--ink);
 }
 .site-footer__back-icon {

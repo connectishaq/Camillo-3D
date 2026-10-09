@@ -49,11 +49,10 @@ body.has-overview-bg .overview {
 .overview__title {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: var(--fw-medium);
-  font-size: clamp(2.25rem, 0.9rem + 3.9vw, 5.5rem);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  font-weight: var(--fw-regular);
+  font-size: clamp(2.25rem, 1rem + 3.6vw, 5.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
   color: var(--brand-ink);
 }
 
@@ -90,21 +89,18 @@ body.has-overview-bg .overview {
 .service__title {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: var(--fw-medium);
-  font-size: clamp(1.75rem, 1rem + 1.6vw, 3rem);
-  line-height: 1;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  font-weight: var(--fw-regular);
+  font-size: clamp(1.75rem, 1rem + 1.6vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
   color: var(--brand-ink);
 }
 .service__text {
   max-width: 40ch;
-  min-height: calc(1.55em * 3); /* three lines, so the names line up across the cards */
-  margin-top: clamp(18px, 2.4vw, 40px);
-  font-size: 0.8125rem;
-  line-height: 1.55;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  min-height: calc(var(--lh-body) * 3em); /* three lines, so the names line up across the cards */
+  margin-top: clamp(14px, 1.8vw, 28px);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: rgba(255, 255, 255, 0.82);
 }
 

@@ -126,7 +126,6 @@
   font-size: clamp(5rem, 17vw, 18rem);
   line-height: 0.9;
   letter-spacing: -0.03em;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 /* the separator: Camillo's map-pin diamond */
@@ -195,7 +194,6 @@
   font-size: clamp(1.5rem, 0.7rem + 1.5vw, 2.75rem);
   line-height: 1;
   letter-spacing: -0.02em;
-  text-transform: uppercase;
 }
 .phero__label {
   margin-top: 14px;

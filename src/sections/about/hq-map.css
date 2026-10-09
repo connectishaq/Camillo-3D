@@ -170,8 +170,6 @@
   color: var(--brand-ink);
   font-size: var(--fs-small);
   font-weight: var(--fw-medium);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(93, 0, 36, 0.25);
   transition: background 0.25s;
@@ -217,7 +215,7 @@
     visibility 0s 0.6s;
 }
 
-/* ---------- The About panel, in big capitals, small-capital copy and figures ---------- */
+/* ---------- The About panel: a big title, the copy and the figures ---------- */
 .hq__info {
   display: flex;
   flex-direction: column;
@@ -236,19 +234,17 @@
 .hq__title {
   margin: clamp(12px, 2vh, 20px) 0 0;
   font-family: var(--font-display);
-  font-weight: var(--fw-medium);
-  font-size: clamp(1.75rem, 0.8rem + 2vw, 3.25rem);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  font-weight: var(--fw-regular);
+  font-size: clamp(2rem, 1rem + 2.4vw, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
 }
 .hq__text {
-  max-width: 62ch;
-  margin-top: clamp(18px, 3.4vh, 40px);
-  font-size: 0.8125rem;
-  line-height: 1.55;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  max-width: 58ch;
+  margin-top: clamp(16px, 3vh, 32px);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
 }
 .hq__text p + p {
   margin-top: 0.9em;
@@ -326,7 +322,10 @@
     --zoom: 1.8;
   }
   .hq__title {
-    font-size: 1.625rem;
+    font-size: 1.75rem;
+  }
+  .hq__text {
+    font-size: var(--fs-small);
   }
   /* the essentials only: one paragraph, no address (it's in the footer) */
   .hq__text p + p,
