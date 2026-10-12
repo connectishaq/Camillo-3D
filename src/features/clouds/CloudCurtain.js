@@ -1,5 +1,6 @@
 import { rng } from '../../gfx/noise.js';
 import { isMobile } from '../../utils/dom.js';
+import { isLowPower } from '../../utils/device.js';
 
 /*
  * A bank of cloud between the Featured Projects panel and the skyline, in its own layer
@@ -29,6 +30,7 @@ export class CloudCurtain {
     this.container = container;
     this.reducedMotion = reducedMotion;
     this.mobile = isMobile();
+    this.lowPower = isLowPower(); // fewer, so less to composite on a modest GPU
     this.state = { cover: 0, part: 0 };
     this.onResize = () => this.resize();
   }
@@ -43,7 +45,7 @@ export class CloudCurtain {
     this.puffs = [];
     const decoding = [];
     LAYERS.forEach((layer, li) => {
-      const count = layer.count[this.mobile ? 1 : 0];
+      const count = Math.max(2, layer.count[this.mobile ? 1 : 0] - (this.lowPower ? 1 : 0));
       [-1, 1].forEach((side) => {
         for (let i = 0; i < count; i++) {
           const el = document.createElement('div');

@@ -134,6 +134,17 @@ In the manner of the "Three pillars" section of [dviga.marketing/masters-en](htt
 
 The photos are listed in [`src/data/gallery.js`](src/data/gallery.js) (project, original file in `project-assets/<project>/`, alt text). Add one there, then run `npm run images` to make its optimised copies and commit them. `footer: true` also puts that photo beside the footer's enquiry form.
 
+## Performance on modest devices
+
+The 3D works on every device, at full quality where the device can afford it:
+
+- **Low-power devices** (4 or fewer CPU cores, 4 GB or less memory, or data saver on; [`src/utils/device.js`](src/utils/device.js)) start lighter: in the city ([`CityStory.js`](src/features/map/CityStory.js)) no ambient occlusion or bloom, FXAA instead of SMAA, a 1024px shadow map redrawn only when the camera stops, a lower resolution and a smaller close-up radius; in the project explorer no AO and no multisampling; and a few fewer cloud layers. Phones were already on a lighter path (no shadows, no AO).
+- **Every device** watches its own frames during camera flights (`adapt`): if they run slow it gives up, one step per check, AO, then bloom, then redrawing shadows while moving, then resolution in steps, and last draws at a steady 30 fps while the camera moves. Resolution comes back with headroom.
+- While the map is fully covered (the hero, the panels, the footer) the city updates its camera, detail and shadows only every 8th frame, and draws nothing.
+- The hero's film progress bar is a compositor animation, not a style written on every video frame.
+
+Measured with Chrome at 4× CPU slowdown reporting 4 cores: long tasks over a full scroll of the home page went from 248 to 110, and the slowest frames in most sections from 67-83 ms to about 50 ms; a capable desktop stays at 60 fps with full effects.
+
 ## Phone menu
 
 On phones (up to 860px) the header's links give way to a menu button at the top right ([`src/sections/header/`](src/sections/header/)). It opens a full-screen maroon menu with the same links in large type, the email and phone, and an **Enquire** button. While it's open the page doesn't scroll (the home page's smooth scroller is paused), Tab stays on the menu and its close button, and Esc, the button, any link or a wider screen close it; a link closes the menu, then scrolls or navigates as usual. The current section is marked in the menu as in the header.

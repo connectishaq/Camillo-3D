@@ -23,6 +23,7 @@ import { SUBURBS, toXZ } from './geo.js';
 import { chapterCamera, zoomToDistance, sideOffset, buildingFraming } from './camera.js';
 import { createPin } from '../../components/pin/pin.js';
 import { isMobile, nextFrame } from '../../utils/dom.js';
+import { isLowPower } from '../../utils/device.js';
 import { lerp } from '../../utils/math.js';
 import { PROJECT_FRAMING } from '../../config.js';
 
@@ -52,6 +53,8 @@ export class CityStory {
     // y: height the camera aims at (m); offsetY: vertical screen shift (px, mobile close-ups)
     this.cam = { x: 0, y: 0, z: 0, dist: 6000, pitch: 55, bearing: -20, offsetX: 0, offsetY: 0 };
     this.mobile = isMobile();
+    // a modest device (few cores, little memory, data saver): start on lighter settings
+    this.lowPower = isLowPower();
 
     this.initScene();
     if (import.meta.env.DEV) window.__city = this; // debugging handle (dev only)
@@ -79,8 +82,8 @@ export class CityStory {
   initScene() {
     const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
     // render resolution: starts at maxRatio, stepped down on devices that can't keep up (adapt)
-    this.maxRatio = Math.min(window.devicePixelRatio, this.mobile ? 1.25 : 1.5);
-    this.minRatio = Math.min(this.maxRatio, this.mobile ? 0.75 : 0.85);
+    this.maxRatio = Math.min(window.devicePixelRatio, this.mobile ? (this.lowPower ? 1 : 1.25) : this.lowPower ? 1 : 1.5);
+    this.minRatio = Math.min(this.maxRatio, this.mobile || this.lowPower ? 0.7 : 0.85);
     renderer.setPixelRatio(this.maxRatio);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -106,7 +109,9 @@ export class CityStory {
 
     const { sun, hemi } = createLights();
     sun.castShadow = !this.mobile;
-    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.mapSize.set(this.lowPower ? 1024 : 2048, this.lowPower ? 1024 : 2048);
+    // low power: the shadow map (a second draw of the city) is redrawn only when the camera stops
+    this.shadowsAtRest = this.lowPower;
     // bias is in normalised shadow depth (range = far − near); keep it tiny and let the
     // world-space normalBias handle acne, or low houses lose their shadows entirely
     sun.shadow.bias = -0.00003;
@@ -122,12 +127,16 @@ export class CityStory {
     this.initPost();
   }
 
-  /** Light touch: GTAO + very mild bloom + SMAA on desktop; FXAA only on mobile. */
+  /**
+   * Light touch: GTAO + very mild bloom + SMAA on desktop; FXAA only on mobile and on low-power
+   * desktops (AO and bloom are each another pass over the screen, AO another draw of the city).
+   */
   initPost() {
     const { renderer, scene, camera } = this;
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    if (!this.mobile) {
+    const lite = this.mobile || this.lowPower;
+    if (!lite) {
       const ao = new GTAOPass(scene, camera, 512, 512);
       ao.blendIntensity = 0; // faded in once the camera settles (loop)
       ao.updateGtaoMaterial({ radius: 6, distanceExponent: 1.2, thickness: 4, scale: 1, samples: 10 });
@@ -140,7 +149,7 @@ export class CityStory {
       composer.addPass(this.bloom);
     }
     composer.addPass(new OutputPass());
-    if (this.mobile) {
+    if (lite) {
       this.fxaa = new ShaderPass(FXAAShader);
       composer.addPass(this.fxaa);
     } else composer.addPass(new SMAAPass());
@@ -156,7 +165,8 @@ export class CityStory {
     const clear = siteClearings(this.projects, this.office);
     const sites = [toXZ(this.office.coords), ...this.projects.map((p) => toXZ(p.coords))];
     const detailAreas = sites.map(([x, z]) => [x, z, DETAIL_RADIUS]);
-    const nearRadius = this.mobile ? 1500 : 2200;
+    // close-up houses and trees within this distance of the camera (fewer on modest devices)
+    const nearRadius = this.mobile ? 1500 : this.lowPower ? 1700 : 2200;
 
     step(0.15, () => buildMask());
     step(0.1, () => {
@@ -185,7 +195,10 @@ export class CityStory {
       this.scene.add(trees.group);
     });
     step(0.15, () => {
-      this.hoods = new Neighbourhoods(layout, this.mats, trees, sites, { clear, extrasRadius: this.mobile ? 2000 : 3200 });
+      this.hoods = new Neighbourhoods(layout, this.mats, trees, sites, {
+        clear,
+        extrasRadius: this.mobile ? 2000 : this.lowPower ? 2400 : 3200,
+      });
       this.scene.add(this.hoods.group);
     });
     step(0.1, () => {
@@ -540,7 +553,7 @@ export class CityStory {
     }
     if (this.still === 0) {
       this.shadowSettled = false;
-      if (this.frame % 6 === 0) shadow.needsUpdate = true;
+      if (!this.shadowsAtRest && this.frame % 6 === 0) shadow.needsUpdate = true;
     } else if (!this.shadowSettled) {
       this.shadowSettled = true;
       shadow.needsUpdate = true;
@@ -560,24 +573,26 @@ export class CityStory {
 
   /**
    * Keeps the flights smooth on slower devices: while the camera moves, average the frame time
-   * and step the render resolution down when it can't keep up (and back up with headroom).
-   * At the lowest resolution, ambient occlusion and bloom go too.
+   * and, when it can't keep up, give up the costliest extras first, one step per check:
+   * ambient occlusion (another draw of the city), bloom, redrawing shadows while moving, then
+   * resolution in steps, and last of all drawing at a steady 30 fps while the camera moves
+   * (smoother than an uneven 20-40). Resolution comes back up with headroom.
    */
   adapt(ms) {
     if (this.still > 0 || this.occluded || ms > 250) return; // only judge real, visible motion
     const q = (this.quality ||= { sum: 0, n: 0, good: 0 });
     q.sum += ms;
-    if (++q.n < 45) return;
+    if (++q.n < 30) return;
     const avg = q.sum / q.n;
     q.sum = q.n = 0;
     const pr = this.renderer.getPixelRatio();
     if (avg > 22) {
       q.good = 0;
-      if (pr > this.minRatio) this.setRatio(Math.max(this.minRatio, pr - 0.25));
-      else {
-        this.aoAllowed = false;
-        if (this.bloom) this.bloom.enabled = false;
-      }
+      if (this.ao && this.aoAllowed) this.aoAllowed = false;
+      else if (this.bloom?.enabled) this.bloom.enabled = false;
+      else if (this.sun.castShadow && !this.shadowsAtRest) this.shadowsAtRest = true;
+      else if (pr > this.minRatio) this.setRatio(Math.max(this.minRatio, pr - 0.25));
+      else this.halfRate = true;
     } else if (avg < 17.5 && pr < this.maxRatio) {
       if (++q.good >= 4) {
         q.good = 0;
@@ -597,6 +612,9 @@ export class CityStory {
     const dt = Math.min(0.1, ms / 1000);
     this.last = time;
     this.frame = (this.frame || 0) + 1;
+    // fully covered (the hero, the panels, the footer): nothing is drawn, so keep the camera,
+    // detail and shadows up to date only every 8th frame, enough to be ready when revealed
+    if (this.occluded && this.drawn > 3 && this.frame % 8) return;
     if (this.orbit && !this.tween?.isActive()) this.cam.bearing += 1.8 * dt;
 
     // fog scales with altitude so wide shots stay legible and close-ups stay crisp
@@ -618,6 +636,8 @@ export class CityStory {
     // (but always draw the first few frames, so every post-processing shader is compiled
     // behind the loader rather than on the first frame the visitor scrolls into)
     if (this.occluded && this.drawn > 3) return;
+    // can't keep up even at the lowest settings: a steady 30 fps while the camera moves
+    if (this.halfRate && this.still === 0 && this.frame % 2) return;
     // at rest only the water and the marker pulse change: half the frame rate is plenty
     if (this.still > 1 && !(this.aoMix > 0 && this.aoMix < 1) && this.frame % 2) return;
     this.composer.render();

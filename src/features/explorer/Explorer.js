@@ -17,6 +17,7 @@ import { createSky, skyEnvironment, sunDirection } from '../../gfx/sky.js';
 import { palette } from '../../gfx/palette.js';
 import { BREAKPOINT } from '../../config.js';
 import { isMobile, prefersReducedMotion } from '../../utils/dom.js';
+import { isLowPower } from '../../utils/device.js';
 import { escapeHtml } from '../../utils/escape.js';
 import { trapFocus } from '../../utils/focus-trap.js';
 
@@ -79,6 +80,7 @@ export class Explorer {
     this.raycaster = new THREE.Raycaster();
     this.raycaster.layers.set(HIT_LAYER);
     this.mobile = isMobile();
+    this.lowPower = isLowPower(); // modest device: lighter rendering (see initRenderer)
     this.preview = preview;
     this.shift = preview ? 0 : 1; // how far the framing is moved aside for the panel (0..1)
     root.classList.toggle('is-preview', preview);
@@ -91,7 +93,7 @@ export class Explorer {
     if (this.renderer) return;
     const host = this.$('[data-explorer-canvas]');
     const renderer = new THREE.WebGLRenderer({ antialias: !this.mobile, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.mobile ? 1.5 : 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.lowPower ? 1.25 : this.mobile ? 1.5 : 1.75));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.NeutralToneMapping; // keeps the light page colour exact (see CityStory)
     renderer.toneMappingExposure = 1;
@@ -129,7 +131,7 @@ export class Explorer {
     scene.add(hemi);
     const sun = new THREE.DirectionalLight(p.sun, 3.2);
     sun.castShadow = true;
-    const shadowRes = this.mobile ? 1024 : 2048;
+    const shadowRes = this.mobile || this.lowPower ? 1024 : 2048;
     sun.shadow.mapSize.set(shadowRes, shadowRes);
     // enough bias that surfaces don't shadow themselves in stripes ("acne")
     sun.shadow.bias = -0.0008;
@@ -160,10 +162,10 @@ export class Explorer {
     // the scene is drawn into the composer's buffer, not the screen, so the renderer's own
     // antialiasing never applies: multisample the buffer, or thin frames, balustrades and
     // glass edges crawl and sparkle as the model turns
-    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: this.mobile ? 2 : 4 });
+    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: this.lowPower ? 0 : this.mobile ? 2 : 4 });
     const composer = new EffectComposer(renderer, target);
     composer.addPass(new RenderPass(scene, camera));
-    if (!this.mobile) {
+    if (!this.mobile && !this.lowPower) {
       const ao = new GTAOPass(scene, camera, 512, 512);
       ao.blendIntensity = 0.75;
       ao.updateGtaoMaterial({ radius: 1.6, distanceExponent: 1.5, thickness: 1.2, scale: 1, samples: 12 });

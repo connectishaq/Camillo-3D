@@ -76,14 +76,32 @@ export function init({ ready, stage }) {
   // Each end dips to dark over the last moment, so it never jumps from night back to sunset.
   const FADE = 0.7; // seconds, as the CSS transition
   const filmFill = tabs[0].querySelector('.tab__fill');
+  // The bar runs as a compositor animation from where the film is to its end (set once per
+  // play, not written every video frame, which restyled the page on each one).
+  let filmBar = null;
+  let fadeTimer = 0;
+  const stopFilmBar = () => {
+    filmBar?.cancel();
+    filmBar = null;
+    clearTimeout(fadeTimer);
+  };
   if (filmAllowed) {
     tabs[0].classList.add('tab--film');
-    const watch = () => {
-      if (video.duration - video.currentTime < FADE + 0.05) video.classList.add('is-looping');
-      if (current === 0 && video.duration) filmFill.style.transform = `scaleX(${video.currentTime / video.duration})`;
-      if (!video.paused) video.requestVideoFrameCallback ? video.requestVideoFrameCallback(watch) : requestAnimationFrame(watch);
-    };
-    video.addEventListener('playing', watch);
+    video.addEventListener('playing', () => {
+      stopFilmBar();
+      const left = video.duration - video.currentTime;
+      if (!(left > 0)) return;
+      if (current === 0)
+        filmBar = filmFill.animate([{ transform: `scaleX(${video.currentTime / video.duration})` }, { transform: 'scaleX(1)' }], {
+          duration: (left / video.playbackRate) * 1000,
+          fill: 'forwards',
+        });
+      fadeTimer = setTimeout(() => video.classList.add('is-looping'), Math.max(0, (left - FADE - 0.05) / video.playbackRate) * 1000);
+    });
+    video.addEventListener('pause', () => {
+      filmBar?.pause();
+      clearTimeout(fadeTimer);
+    });
     video.addEventListener('ended', () => {
       video.currentTime = 0;
       if (current === 0 && !userPaused && holds.size === 0) go(1, 1);
@@ -94,7 +112,7 @@ export function init({ ready, stage }) {
   // the film can't play (blocked, failed): the poster stays and the slide times out as normal
   const filmFailed = () => {
     tabs[0].classList.remove('tab--film');
-    filmFill.style.transform = '';
+    stopFilmBar();
   };
   if (filmAllowed) video.addEventListener('error', filmFailed, true);
   const syncFilm = () => {
@@ -107,7 +125,7 @@ export function init({ ready, stage }) {
   };
 
   const markTabs = (index) => {
-    if (filmAllowed) filmFill.style.transform = ''; // the CSS states take over again
+    if (filmAllowed) stopFilmBar(); // the CSS states take over again
     tabs.forEach((t, j) => {
       t.classList.toggle('is-active', j === index);
       t.classList.toggle('is-done', j < index);
