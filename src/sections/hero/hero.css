@@ -191,26 +191,6 @@
   font-size: var(--fs-body);
   font-weight: var(--fw-regular);
 }
-.glance {
-  display: grid;
-  gap: 2px;
-  padding: 10px 0;
-  border-top: 1px solid var(--on-photo-line);
-}
-.glance:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-.glance__value {
-  font-size: 2rem;
-  font-weight: var(--fw-light);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-.glance__label {
-  font-size: var(--fs-small);
-  color: var(--on-photo-muted);
-}
 
 .showcase :focus-visible {
   outline-color: var(--on-photo);
