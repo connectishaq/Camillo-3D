@@ -11,4 +11,25 @@
     <a href="#" data-nav="news">News</a>
     <a href="{{ page.home }}#contact" data-nav="contact">Contact</a>
   </nav>
+  <!-- phones: the nav moves into a full-screen menu (header.js) -->
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-toggle>
+    <span class="visually-hidden" data-menu-label>Open menu</span>
+    <span class="menu-toggle__bars" aria-hidden="true"><i></i><i></i></span>
+  </button>
 </header>
+
+<!-- The phone menu: outside the header, whose blurred bar would otherwise contain it -->
+<div class="site-menu" id="site-menu" data-menu hidden>
+  <nav class="site-menu__nav" aria-label="Menu">
+    <a href="{{ page.home }}#about" data-menu-link>About</a>
+    <a href="{{ page.home }}#services" data-menu-link>Services</a>
+    <a href="{{ page.home }}#projects" data-menu-link>Projects</a>
+    <a href="#" data-menu-link>News</a>
+    <a href="{{ page.home }}#contact" data-menu-link>Contact</a>
+  </nav>
+  <div class="site-menu__foot">
+    <a href="mailto:{{ company.contact.email }}">{{ company.contact.email }}</a>
+    <a href="{{ company.contact.phoneHref }}">{{ company.contact.phone }}</a>
+    <a class="btn btn--light site-menu__cta" href="{{ page.home }}#contact" data-menu-link>Enquire</a>
+  </div>
+</div>

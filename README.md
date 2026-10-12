@@ -134,6 +134,10 @@ In the manner of the "Three pillars" section of [dviga.marketing/masters-en](htt
 
 The photos are listed in [`src/data/gallery.js`](src/data/gallery.js) (project, original file in `project-assets/<project>/`, alt text). Add one there, then run `npm run images` to make its optimised copies and commit them. `footer: true` also puts that photo beside the footer's enquiry form.
 
+## Phone menu
+
+On phones (up to 860px) the header's links give way to a menu button at the top right ([`src/sections/header/`](src/sections/header/)). It opens a full-screen maroon menu with the same links in large type, the email and phone, and an **Enquire** button. While it's open the page doesn't scroll (the home page's smooth scroller is paused), Tab stays on the menu and its close button, and Esc, the button, any link or a wider screen close it; a link closes the menu, then scrolls or navigates as usual. The current section is marked in the menu as in the header.
+
 ## Footer and enquiry form
 
 [`src/sections/footer/`](src/sections/footer/), in Camillo maroon (`--brand`, the logo's `#5D0024`), on every page; on the home page it's the Contact chapter. It has a big **Start a conversation** heading, an enquiry form with underlined fields beside a project photo, four link columns (Connect, Explore, Follow, Head office), the legal line and a giant Camillo wordmark cropped at the bottom edge.

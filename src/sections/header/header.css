@@ -91,3 +91,156 @@
     width: 98px;
   }
 }
+
+/* ---------- Phone menu: a toggle in the header, the links on a full-screen maroon panel ---------- */
+.menu-toggle {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.menu-toggle__bars {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 12px;
+}
+.menu-toggle__bars i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition:
+    transform 0.4s var(--ease),
+    top 0.4s var(--ease);
+}
+.menu-toggle__bars i:first-child {
+  top: 0;
+}
+.menu-toggle__bars i:last-child {
+  top: 10.5px;
+}
+/* open: the two bars cross into an × */
+.menu-toggle[aria-expanded='true'] .menu-toggle__bars i {
+  top: 5.25px;
+}
+.menu-toggle[aria-expanded='true'] .menu-toggle__bars i:first-child {
+  transform: rotate(45deg);
+}
+.menu-toggle[aria-expanded='true'] .menu-toggle__bars i:last-child {
+  transform: rotate(-45deg);
+}
+.menu-toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* while the menu is open the header sits on the maroon: white, no bar */
+.site-header.is-menu-open,
+.site-header.is-menu-open .brand {
+  color: var(--brand-ink);
+}
+.site-header.is-menu-open.is-over-map {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
+.site-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 39; /* under the header, which keeps the logo and the close button */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(var(--header-h) + 32px) var(--gutter) max(32px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  background: var(--brand);
+  color: var(--brand-ink);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+.site-menu[hidden] {
+  display: none;
+}
+.site-menu.is-open {
+  opacity: 1;
+}
+.site-menu__nav {
+  display: grid;
+}
+.site-menu__nav a {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 3vw, 2.75rem);
+  font-weight: var(--fw-regular);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  opacity: 0;
+  translate: 0 16px;
+  transition:
+    opacity 0.45s var(--ease),
+    translate 0.45s var(--ease);
+}
+.site-menu.is-open .site-menu__nav a {
+  opacity: 1;
+  translate: none;
+}
+.site-menu.is-open .site-menu__nav a:nth-child(2) {
+  transition-delay: 0.04s;
+}
+.site-menu.is-open .site-menu__nav a:nth-child(3) {
+  transition-delay: 0.08s;
+}
+.site-menu.is-open .site-menu__nav a:nth-child(4) {
+  transition-delay: 0.12s;
+}
+.site-menu.is-open .site-menu__nav a:nth-child(5) {
+  transition-delay: 0.16s;
+}
+.site-menu__nav a[aria-current] {
+  color: rgba(255, 255, 255, 0.6);
+}
+.site-menu__foot {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin-top: 40px;
+  font-size: var(--fs-body);
+  color: rgba(255, 255, 255, 0.8);
+}
+.site-menu__cta {
+  margin-top: 16px;
+}
+.site-menu a:focus-visible {
+  outline: 2px solid var(--brand-ink);
+  outline-offset: 3px;
+}
+
+@media (max-width: 860px) {
+  .menu-toggle {
+    display: grid;
+  }
+}
+@media (min-width: 861px) {
+  .site-menu {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-menu,
+  .site-menu__nav a,
+  .menu-toggle__bars i {
+    transition: none;
+  }
+}
